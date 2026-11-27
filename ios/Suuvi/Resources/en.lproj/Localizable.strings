@@ -23,3 +23,13 @@
 "collection.add" = "Add piece";
 "collection.caption" = "Tap + to add a piece to this collection.";
 "a11y.info" = "Collection info";
+"edit.title" = "New piece";
+"edit.field.title" = "Title";
+"edit.field.place" = "Place";
+"edit.field.tag" = "Tag (optional)";
+"edit.save" = "Save piece";
+"edit.done" = "Done";
+"edit.saved.title" = "Piece saved";
+"edit.saved.body" = "Added to %@.";
+"edit.saved.hint" = "You can edit it anytime.";
+"a11y.saved" = "Saved";

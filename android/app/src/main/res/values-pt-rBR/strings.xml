@@ -26,4 +26,14 @@
     <string name="collection_add">Adicionar peça</string>
     <string name="collection_caption">Toque em + para adicionar uma peça a esta coleção.</string>
     <string name="a11y_info">Info da coleção</string>
+    <string name="edit_title">Nova peça</string>
+    <string name="edit_field_title">Título</string>
+    <string name="edit_field_place">Lugar</string>
+    <string name="edit_field_tag">Tag (opcional)</string>
+    <string name="edit_save">Salvar peça</string>
+    <string name="edit_done">Concluir</string>
+    <string name="edit_saved_title">Peça salva</string>
+    <string name="edit_saved_body">Adicionada a %1$s.</string>
+    <string name="edit_saved_hint">Você pode editar quando quiser.</string>
+    <string name="a11y_saved">Salvo</string>
 </resources>

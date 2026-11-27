@@ -47,7 +47,7 @@ import app.suuvi.ui.components.StatusMark
 
 /** Colecao: voltar + chip, linha "de X" com @lugar/#n/status, grade 2x2 inclinada, legenda e rodape. */
 @Composable
-fun CollectionScreen(id: String, onBack: () -> Unit) {
+fun CollectionScreen(id: String, onBack: () -> Unit, onAdd: () -> Unit = {}) {
     val d = SampleData.collectionDetail(id) ?: return
     val filled = CollectionRules.slots(d.pieces.size)
     Column(
@@ -83,7 +83,7 @@ fun CollectionScreen(id: String, onBack: () -> Unit) {
                             val i = row * 2 + col
                             Box(Modifier.weight(1f)) {
                                 if (filled[i]) PieceCard(d.pieces[i], CollectionRules.tilt(i))
-                                else EmptySlot(CollectionRules.tilt(i))
+                                else EmptySlot(CollectionRules.tilt(i), onAdd)
                             }
                         }
                     }
@@ -103,7 +103,7 @@ fun CollectionScreen(id: String, onBack: () -> Unit) {
                 )
             }
             OutlinedButton(
-                onClick = {},
+                onClick = onAdd,
                 shape = RoundedCornerShape(SuuviRadius.pill),
                 border = BorderStroke(1.dp, SuuviColor.border),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = SuuviColor.text),

@@ -80,6 +80,14 @@ jobs:
           sleep 5
           xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-collection.png
           xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
+          xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute edit
+          sleep 5
+          xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-edit.png
+          xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
+          xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute editdone
+          sleep 5
+          xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-editdone.png
+          xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
           xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute search
           sleep 5
           xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-search.png
@@ -143,6 +151,12 @@ jobs:
             adb shell am start -S -n app.suuvi/.MainActivity --es route collection
             sleep 5
             adb exec-out screencap -p > android-collection.png
+            adb shell am start -S -n app.suuvi/.MainActivity --es route edit
+            sleep 5
+            adb exec-out screencap -p > android-edit.png
+            adb shell am start -S -n app.suuvi/.MainActivity --es route editdone
+            sleep 5
+            adb exec-out screencap -p > android-editdone.png
             adb shell am start -S -n app.suuvi/.MainActivity --es route search
             sleep 5
             adb exec-out screencap -p > android-search.png

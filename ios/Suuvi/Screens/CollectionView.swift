@@ -4,6 +4,7 @@ import SwiftUI
 struct CollectionView: View {
     @Environment(\.dismiss) private var dismiss
     let id: String
+    var onAdd: () -> Void = {}
     private let columns = [GridItem(.flexible(), spacing: SuuviSpace.s4),
                            GridItem(.flexible(), spacing: SuuviSpace.s4)]
 
@@ -41,7 +42,7 @@ struct CollectionView: View {
                             if filled[i] {
                                 PieceCard(piece: d.pieces[i], tilt: CollectionRules.tilt(i))
                             } else {
-                                EmptySlot(tilt: CollectionRules.tilt(i))
+                                EmptySlot(tilt: CollectionRules.tilt(i), action: onAdd)
                             }
                         }
                     }
@@ -54,7 +55,7 @@ struct CollectionView: View {
                 }
             }
             ZStack {
-                Button(action: {}) {
+                Button(action: onAdd) {
                     Text("collection.add")
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(SuuviColor.text)

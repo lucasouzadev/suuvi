@@ -23,3 +23,13 @@
 "collection.add" = "Adicionar peça";
 "collection.caption" = "Toque em + para adicionar uma peça a esta coleção.";
 "a11y.info" = "Info da coleção";
+"edit.title" = "Nova peça";
+"edit.field.title" = "Título";
+"edit.field.place" = "Lugar";
+"edit.field.tag" = "Tag (opcional)";
+"edit.save" = "Salvar peça";
+"edit.done" = "Concluir";
+"edit.saved.title" = "Peça salva";
+"edit.saved.body" = "Adicionada a %@.";
+"edit.saved.hint" = "Você pode editar quando quiser.";
+"a11y.saved" = "Salvo";

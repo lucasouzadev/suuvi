@@ -65,3 +65,7 @@ Values are visual estimates. Animations, transitions and keyboard states were no
 ## Collection (implemented)
 - Header: back + centered chip. Meta line: "from X" (bold) left; @place, #n, status right. 2x2 grid, fixed tilts [-2.5, 2, 1.5, -2] deg, dashed "+" slots. Caption centered. Footer: timer + piece count, "Add piece" pill, info icon. Reached from a Folders card. Profile sheet (info icon) still to do.
 - Parity: `fixtures/collection.json` (slots, tilts). CI route: `-startRoute collection` / `--es route collection`.
+
+## Edit + Edit done (implemented)
+- Left: cascade of 3 overlapping tilted cards (collection pieces + folder emoji). Right: 3 pill fields with numbered circles (title, place, optional tag). Action pill greyed until valid (`fixtures/edit.json`: title+place required, title <= 40, tag optional, normalized). After save: filled pills with check circles, amber check in header, block "Piece saved / Added to X / hint", pill becomes "Done".
+- Reached from Collection ("+" slot or "Add piece"). Not persisted yet (SwiftData/Room wiring pending). CI routes: edit | editdone.

@@ -1,0 +1,19 @@
+{
+  "_about": "Casos compartilhados da Edicao de peca. isValid: titulo e lugar nao vazios apos tirar espacos das pontas, e titulo com no maximo 40 caracteres (apos trim); a tag e opcional. normalizeTag: tira espacos das pontas e '#' inicial, minusculo; vazio continua vazio.",
+  "valid": [
+    {"name": "tudo preenchido", "title": "Moeda de Lisboa", "place": "lisboa", "expect": true},
+    {"name": "titulo vazio", "title": "", "place": "lisboa", "expect": false},
+    {"name": "titulo so espacos", "title": "   ", "place": "lisboa", "expect": false},
+    {"name": "lugar vazio", "title": "Moeda", "place": "", "expect": false},
+    {"name": "lugar so espacos", "title": "Moeda", "place": "  ", "expect": false},
+    {"name": "titulo com 40", "title": "1234567890123456789012345678901234567890", "place": "x", "expect": true},
+    {"name": "titulo com 41", "title": "12345678901234567890123456789012345678901", "place": "x", "expect": false},
+    {"name": "espacos nas pontas nao contam", "title": "  Moeda  ", "place": " lisboa ", "expect": true}
+  ],
+  "tag": [
+    {"in": "  #Viagem ", "expect": "viagem"},
+    {"in": "arte", "expect": "arte"},
+    {"in": "#", "expect": ""},
+    {"in": "   ", "expect": ""}
+  ]
+}

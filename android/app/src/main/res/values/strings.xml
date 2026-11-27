@@ -26,4 +26,14 @@
     <string name="collection_add">Add piece</string>
     <string name="collection_caption">Tap + to add a piece to this collection.</string>
     <string name="a11y_info">Collection info</string>
+    <string name="edit_title">New piece</string>
+    <string name="edit_field_title">Title</string>
+    <string name="edit_field_place">Place</string>
+    <string name="edit_field_tag">Tag (optional)</string>
+    <string name="edit_save">Save piece</string>
+    <string name="edit_done">Done</string>
+    <string name="edit_saved_title">Piece saved</string>
+    <string name="edit_saved_body">Added to %1$s.</string>
+    <string name="edit_saved_hint">You can edit it anytime.</string>
+    <string name="a11y_saved">Saved</string>
 </resources>
