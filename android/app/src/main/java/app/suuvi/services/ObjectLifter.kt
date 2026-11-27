@@ -1,14 +1,19 @@
 package app.suuvi.services
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import app.suuvi.domain.CaptureRules
+import com.google.android.gms.common.moduleinstall.ModuleInstall
+import com.google.android.gms.common.moduleinstall.ModuleInstallRequest
+import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.segmentation.subject.SubjectSegmentation
 import com.google.mlkit.vision.segmentation.subject.SubjectSegmenterOptions
 import java.io.File
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 /**
@@ -16,15 +21,12 @@ import kotlinx.coroutines.suspendCancellableCoroutine
  * cortado na caixa do objeto com margem. Fica atras desta interface porque o ML Kit ainda e beta.
  */
 object ObjectLifter {
-    suspend fun lift(photo: File, out: File) {
+    suspend fun lift(ctx: Context, photo: File, out: File) {
         val input = BitmapFactory.decodeFile(photo.path) ?: error("decode failed")
         val segmenter = SubjectSegmentation.getClient(SubjectSegmenterOptions.Builder().enableForegroundBitmap().build())
         try {
-            val result = suspendCancellableCoroutine { c ->
-                segmenter.process(InputImage.fromBitmap(input, 0))
-                    .addOnSuccessListener { c.resume(it) }
-                    .addOnFailureListener { c.resumeWithException(it) }
-            }
+            ensureModule(ctx, segmenter)
+            val result = processWithRetry { segmenter.process(InputImage.fromBitmap(input, 0)) }
             val fg = result.foregroundBitmap ?: error("no object")
             val w = fg.width; val h = fg.height
             val px = IntArray(w * h)
@@ -37,5 +39,31 @@ object ObjectLifter {
         } finally {
             segmenter.close()
         }
+    }
+
+    /** O modelo vem do Google Play services: pede a instalacao e espera, em vez de falhar na primeira vez. */
+    private suspend fun ensureModule(ctx: Context, api: com.google.android.gms.common.api.OptionalModuleApi) {
+        val client = ModuleInstall.getClient(ctx)
+        if (client.areModulesAvailable(api).await().areModulesAvailable()) return
+        client.installModules(ModuleInstallRequest.newBuilder().addApi(api).build()).await()
+    }
+
+    private suspend fun <T> processWithRetry(attempts: Int = 5, block: () -> Task<T>): T {
+        var last: Exception? = null
+        repeat(attempts) {
+            try {
+                return block().await()
+            } catch (e: Exception) {
+                last = e
+                if (e.message?.contains("optional module", ignoreCase = true) != true) throw e
+                delay(4_000)
+            }
+        }
+        throw last ?: IllegalStateException("lift failed")
+    }
+
+    private suspend fun <T> Task<T>.await(): T = suspendCancellableCoroutine { c ->
+        addOnSuccessListener { c.resume(it) }
+        addOnFailureListener { c.resumeWithException(it) }
     }
 }

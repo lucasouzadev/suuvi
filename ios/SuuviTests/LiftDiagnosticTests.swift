@@ -13,9 +13,9 @@ final class LiftDiagnosticTests: XCTestCase {
         do {
             try ObjectLifter.lift(photo: photo, to: out)
             let size = (try? FileManager.default.attributesOfItem(atPath: out.path)[.size]) ?? 0
-            print("LIFT-DIAG: OK bytes=\(size)")
+            XCTAssertGreaterThan(size as? Int ?? 0, 0)
         } catch {
-            print("LIFT-DIAG: FAILED \(error) | \(String(describing: error as NSError))")
+            throw XCTSkip("LIFT-DIAG FAILED \(error) | \(String(describing: error as NSError))")
         }
     }
 }

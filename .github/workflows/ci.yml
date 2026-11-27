@@ -183,7 +183,7 @@ jobs:
             sleep 5
             adb exec-out screencap -p > android-capture.png
             adb shell am start -S -n app.suuvi/.MainActivity --es route capturelifted
-            sleep 45
+            sleep 100
             adb exec-out screencap -p > android-capturelifted.png
             adb logcat -d -s suuvi:W '*:S' > android-lift-log.txt || true; adb logcat -d | grep -i -E 'mlkit|subject|optional module|dynamite' | tail -40 >> android-lift-log.txt || true
             adb shell am start -S -n app.suuvi/.MainActivity --es route search
