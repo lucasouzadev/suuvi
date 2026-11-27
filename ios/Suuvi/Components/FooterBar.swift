@@ -19,12 +19,12 @@ struct FooterBar: View {
             }
             HStack {
                 HStack(spacing: SuuviSpace.s1) {
-                    if showChevron { Image(systemName: "chevron.right").font(.system(size: 13)) }
+                    if showChevron { SuuviIcon(name: "ic_chevron_right", size: 16) }
                     Text(version).font(.system(size: 15))
                 }
                 .foregroundStyle(SuuviColor.textMuted)
                 Spacer()
-                IconButton(systemName: "tray", label: "a11y.inbox", action: onTray)
+                IconButton(icon: "ic_inbox", label: "a11y.inbox", action: onTray)
             }
         }
         .frame(height: 56)

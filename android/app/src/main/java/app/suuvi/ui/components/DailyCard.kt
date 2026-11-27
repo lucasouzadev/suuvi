@@ -9,14 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CalendarToday
-import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -49,10 +47,10 @@ fun DailyCard(pick: DailyPick, modifier: Modifier = Modifier) {
         )
         Text(pick.note, fontSize = 15.sp, color = SuuviColor.text, maxLines = 3, overflow = TextOverflow.Ellipsis)
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Outlined.CalendarToday, null, Modifier.size(14.dp), tint = SuuviColor.textMuted)
+            Icon(painterResource(R.drawable.ic_calendar), null, Modifier.size(14.dp), tint = SuuviColor.textMuted)
             Text(" $date", fontSize = 13.sp, color = SuuviColor.textMuted)
             Spacer(Modifier.weight(1f))
-            Icon(Icons.Outlined.Place, null, Modifier.size(14.dp), tint = SuuviColor.textMuted)
+            Icon(painterResource(R.drawable.ic_map_pin), null, Modifier.size(14.dp), tint = SuuviColor.textMuted)
             Text(" @${pick.place}", fontSize = 13.sp, color = SuuviColor.textMuted)
         }
     }

@@ -11,7 +11,7 @@ struct BackBar: View {
                 .font(.system(size: 17, weight: .semibold))
                 .foregroundStyle(SuuviColor.text)
             HStack {
-                IconButton(systemName: "chevron.left", label: "a11y.back", action: onBack)
+                IconButton(icon: "ic_chevron_left", label: "a11y.back", action: onBack)
                 Spacer()
             }
         }

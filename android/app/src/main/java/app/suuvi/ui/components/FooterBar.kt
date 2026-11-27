@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ChevronRight
-import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
@@ -18,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -37,10 +35,10 @@ fun FooterBar(
 ) {
     Box(modifier.fillMaxWidth().height(64.dp), contentAlignment = Alignment.Center) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            if (showChevron) Icon(Icons.Outlined.ChevronRight, null, Modifier.size(16.dp), tint = SuuviColor.textMuted)
+            if (showChevron) Icon(painterResource(R.drawable.ic_chevron_right), null, Modifier.size(16.dp), tint = SuuviColor.textMuted)
             Text(version, fontSize = 15.sp, color = SuuviColor.textMuted)
             Spacer(Modifier.weight(1f))
-            IconAction(Icons.Outlined.Inbox, stringResource(R.string.a11y_inbox), onTray)
+            IconAction(R.drawable.ic_inbox, stringResource(R.string.a11y_inbox), onTray)
         }
         OutlinedButton(
             onClick = onCreate,

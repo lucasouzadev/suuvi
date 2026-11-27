@@ -2,14 +2,13 @@ import SwiftUI
 
 /// Botao de icone com area de toque de 44pt.
 struct IconButton: View {
-    let systemName: String
+    let icon: String
     let label: LocalizedStringKey
     var action: () -> Void = {}
 
     var body: some View {
         Button(action: action) {
-            Image(systemName: systemName)
-                .font(.system(size: 18, weight: .regular))
+            SuuviIcon(name: icon)
                 .foregroundStyle(SuuviColor.text)
                 .frame(width: 44, height: 44)
                 .contentShape(Rectangle())

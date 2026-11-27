@@ -48,3 +48,6 @@ Values are visual estimates. Animations, transitions and keyboard states were no
 - Reference footer inconsistent (version 2.3.7 chevron vs 2.3.4 plain; "24h left" vs "24H LEFT"): suuvi standardizes.
 - Small muted letters, circle and cross icons look below 4.5:1 (INFERRED): use `text-muted` #6B6B6B and accent-ink for the check.
 - Status icons and drag bar look under 44pt touch target (INFERRED): enlarge hit area.
+
+## Icons (decided 2026-11-27)
+- Set: Lucide (ISC), rounded 2px stroke on a 24 grid, same drawing on both platforms. Sources in `design/icons/*.svg`; `scripts/gen_icons.py` generates Android VectorDrawables and iOS asset-catalog SVGs. No SF Symbols and no Material icons in the UI.

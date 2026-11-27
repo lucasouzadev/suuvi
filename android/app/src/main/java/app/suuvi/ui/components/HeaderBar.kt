@@ -7,10 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Folder
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,11 +30,11 @@ fun HeaderBar(
     Box(modifier.fillMaxWidth().height(56.dp), contentAlignment = Alignment.Center) {
         Text(title, fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = SuuviColor.text)
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            IconAction(Icons.Outlined.Settings, stringResource(R.string.a11y_settings), onSettings)
+            IconAction(R.drawable.ic_settings, stringResource(R.string.a11y_settings), onSettings)
             Spacer(Modifier.weight(1f))
-            IconAction(Icons.Outlined.Folder, stringResource(R.string.a11y_folders), onFolders)
+            IconAction(R.drawable.ic_folder, stringResource(R.string.a11y_folders), onFolders)
             Box(Modifier.width(1.dp).height(16.dp).background(SuuviColor.border))
-            IconAction(Icons.Outlined.Search, stringResource(R.string.a11y_search), onSearch)
+            IconAction(R.drawable.ic_search, stringResource(R.string.a11y_search), onSearch)
         }
     }
 }

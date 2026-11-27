@@ -8,17 +8,16 @@ struct StatusMark: View {
         Group {
             switch status {
             case .ready:
-                Image(systemName: "checkmark").foregroundStyle(SuuviColor.accentInk)
+                SuuviIcon(name: "ic_check").foregroundStyle(SuuviColor.accentInk)
                     .accessibilityLabel("a11y.status.ready")
             case .draft:
-                Image(systemName: "circle").foregroundStyle(SuuviColor.textMuted)
+                SuuviIcon(name: "ic_circle").foregroundStyle(SuuviColor.textMuted)
                     .accessibilityLabel("a11y.status.draft")
             case .failed:
-                Image(systemName: "xmark").foregroundStyle(SuuviColor.textMuted)
+                SuuviIcon(name: "ic_x").foregroundStyle(SuuviColor.textMuted)
                     .accessibilityLabel("a11y.status.failed")
             }
         }
-        .font(.system(size: 18, weight: .regular))
         .frame(width: 44, height: 44)
     }
 }

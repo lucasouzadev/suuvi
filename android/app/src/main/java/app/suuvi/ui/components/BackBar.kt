@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ChevronLeft
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,7 +21,7 @@ fun BackBar(title: String, onBack: () -> Unit, modifier: Modifier = Modifier) {
     Box(modifier.fillMaxWidth().height(56.dp), contentAlignment = Alignment.Center) {
         Text(title, fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = SuuviColor.text)
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            IconAction(Icons.Outlined.ChevronLeft, stringResource(R.string.a11y_back), onBack)
+            IconAction(R.drawable.ic_chevron_left, stringResource(R.string.a11y_back), onBack)
         }
     }
 }

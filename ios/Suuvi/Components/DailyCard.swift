@@ -23,9 +23,15 @@ struct DailyCard: View {
                 .foregroundStyle(SuuviColor.text)
                 .lineLimit(3)
             HStack {
-                Label(dateText, systemImage: "calendar")
+                HStack(spacing: SuuviSpace.s1) {
+                    SuuviIcon(name: "ic_calendar", size: 14)
+                    Text(dateText)
+                }
                 Spacer()
-                Label("@\(pick.place)", systemImage: "mappin")
+                HStack(spacing: SuuviSpace.s1) {
+                    SuuviIcon(name: "ic_map_pin", size: 14)
+                    Text("@\(pick.place)")
+                }
             }
             .font(.system(size: 13))
             .foregroundStyle(SuuviColor.textMuted)
