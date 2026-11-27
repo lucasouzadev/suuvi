@@ -14,6 +14,7 @@ import app.suuvi.ui.EditScreen
 import app.suuvi.ui.FoldersScreen
 import app.suuvi.ui.SearchScreen
 import app.suuvi.ui.SettingsScreen
+import app.suuvi.ui.ViewerScreen
 import app.suuvi.ui.ShelfScreen
 
 private enum class Screen { SHELF, FOLDERS, SEARCH, COLLECTION, EDIT, SETTINGS, CAPTURE, VIEWER }
