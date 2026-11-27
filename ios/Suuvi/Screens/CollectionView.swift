@@ -5,12 +5,14 @@ struct CollectionView: View {
     @Environment(\.dismiss) private var dismiss
     let id: String
 
-    init(id: String, startProfile: Bool = false, onAdd: @escaping () -> Void = {}) {
+    init(id: String, startProfile: Bool = false, onAdd: @escaping () -> Void = {}, onPiece: @escaping (String) -> Void = { _ in }) {
         self.id = id
         self.onAdd = onAdd
+        self.onPiece = onPiece
         _showProfile = State(initialValue: startProfile)
     }
     var onAdd: () -> Void = {}
+    var onPiece: (String) -> Void = { _ in }
     @State private var showProfile: Bool
     private let columns = [GridItem(.flexible(), spacing: SuuviSpace.s4),
                            GridItem(.flexible(), spacing: SuuviSpace.s4)]
@@ -48,6 +50,7 @@ struct CollectionView: View {
                         ForEach(0..<CollectionRules.capacity, id: \.self) { i in
                             if filled[i] {
                                 PieceCard(piece: d.pieces[i], tilt: CollectionRules.tilt(i))
+                                    .onTapGesture { onPiece(d.pieces[i].title) }
                             } else {
                                 EmptySlot(tilt: CollectionRules.tilt(i), action: onAdd)
                             }

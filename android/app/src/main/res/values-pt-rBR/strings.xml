@@ -68,5 +68,6 @@
     <string name="capture_add">Adicionar foto</string>
     <string name="capture_take">Tirar foto</string>
     <string name="capture_failed">Não foi possível recortar o objeto. Tente de novo ou use outra foto.</string>
+    <string name="viewer_hint">Arraste para girar, pinça para ampliar</string>
     <string name="capture_library">Escolher da galeria</string>
 </resources>

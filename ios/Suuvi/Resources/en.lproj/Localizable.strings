@@ -66,3 +66,4 @@
 "capture.take" = "Take photo";
 "capture.library" = "Choose from library";
 "capture.failed" = "Couldn't cut out the object. Try again or use another photo.";
+"viewer.hint" = "Drag to rotate, pinch to zoom";

@@ -68,5 +68,6 @@
     <string name="capture_add">Add a photo</string>
     <string name="capture_take">Take photo</string>
     <string name="capture_failed">Couldn\'t cut out the object. Try again or use another photo.</string>
+    <string name="viewer_hint">Drag to rotate, pinch to zoom</string>
     <string name="capture_library">Choose from library</string>
 </resources>

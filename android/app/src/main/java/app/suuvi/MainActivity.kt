@@ -16,7 +16,7 @@ import app.suuvi.ui.SearchScreen
 import app.suuvi.ui.SettingsScreen
 import app.suuvi.ui.ShelfScreen
 
-private enum class Screen { SHELF, FOLDERS, SEARCH, COLLECTION, EDIT, SETTINGS, CAPTURE }
+private enum class Screen { SHELF, FOLDERS, SEARCH, COLLECTION, EDIT, SETTINGS, CAPTURE, VIEWER }
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +28,7 @@ class MainActivity : ComponentActivity() {
             "capture", "capturelifted" -> Screen.CAPTURE
             "search" -> Screen.SEARCH
             "collection", "profile" -> Screen.COLLECTION
+            "viewer" -> Screen.VIEWER
             "edit", "editdone" -> Screen.EDIT
             else -> Screen.SHELF
         }
@@ -37,11 +38,13 @@ class MainActivity : ComponentActivity() {
             var collectionId by rememberSaveable { mutableStateOf("f1") }
             var backTo by rememberSaveable { mutableStateOf(Screen.FOLDERS) }
             var captureFrom by rememberSaveable { mutableStateOf(Screen.SHELF) }
+            var pieceTitle by rememberSaveable { mutableStateOf("Moeda de Lisboa") }
             BackHandler(enabled = screen != Screen.SHELF) {
                 screen = when (screen) {
                     Screen.EDIT -> Screen.COLLECTION
                     Screen.COLLECTION -> backTo
                     Screen.CAPTURE -> captureFrom
+                    Screen.VIEWER -> Screen.COLLECTION
                     else -> Screen.SHELF
                 }
             }
@@ -62,7 +65,9 @@ class MainActivity : ComponentActivity() {
                     onBack = { screen = backTo },
                     onAdd = { captureFrom = Screen.COLLECTION; screen = Screen.CAPTURE },
                     startProfile = intent.getStringExtra("route") == "profile",
+                    onPiece = { pieceTitle = it; screen = Screen.VIEWER },
                 )
+                Screen.VIEWER -> ViewerScreen(pieceTitle, onBack = { screen = Screen.COLLECTION })
                 Screen.EDIT -> EditScreen(collectionId, preset, onBack = { screen = Screen.COLLECTION })
                 Screen.CAPTURE -> CaptureScreen(
                     onBack = { screen = captureFrom },

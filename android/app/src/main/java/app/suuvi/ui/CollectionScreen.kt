@@ -1,6 +1,7 @@
 package app.suuvi.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,7 +52,7 @@ import app.suuvi.ui.components.StatusMark
 
 /** Colecao: voltar + chip, linha "de X" com @lugar/#n/status, grade 2x2 inclinada, legenda e rodape. */
 @Composable
-fun CollectionScreen(id: String, onBack: () -> Unit, onAdd: () -> Unit = {}, startProfile: Boolean = false) {
+fun CollectionScreen(id: String, onBack: () -> Unit, onAdd: () -> Unit = {}, startProfile: Boolean = false, onPiece: (String) -> Unit = {}) {
     val d = SampleData.collectionDetail(id) ?: return
     val filled = CollectionRules.slots(d.pieces.size)
     var showProfile by rememberSaveable { mutableStateOf(startProfile) }
@@ -88,7 +89,7 @@ fun CollectionScreen(id: String, onBack: () -> Unit, onAdd: () -> Unit = {}, sta
                         for (col in 0..1) {
                             val i = row * 2 + col
                             Box(Modifier.weight(1f)) {
-                                if (filled[i]) PieceCard(d.pieces[i], CollectionRules.tilt(i))
+                                if (filled[i]) Box(Modifier.clickable { onPiece(d.pieces[i].title) }) { PieceCard(d.pieces[i], CollectionRules.tilt(i)) }
                                 else EmptySlot(CollectionRules.tilt(i), onAdd)
                             }
                         }

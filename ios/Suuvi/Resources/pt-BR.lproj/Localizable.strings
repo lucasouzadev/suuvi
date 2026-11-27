@@ -66,3 +66,4 @@
 "capture.take" = "Tirar foto";
 "capture.library" = "Escolher da galeria";
 "capture.failed" = "Não foi possível recortar o objeto. Tente de novo ou use outra foto.";
+"viewer.hint" = "Arraste para girar, pinça para ampliar";

@@ -7,11 +7,12 @@ enum Route: Hashable {
     case capture(String, sample: Bool)
     case collection(String)
     case edit(String, preset: Bool)
+    case viewer(String)
 }
 
 @main
 struct SuuviApp: App {
-    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders | collection | edit | editdone | profile | settings | capture | capturelifted | search
+    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders | collection | edit | editdone | profile | settings | capture | capturelifted | search | viewer
     private static let start = UserDefaults.standard.string(forKey: "startRoute")
     @State private var path: [Route] = {
         switch SuuviApp.start {
@@ -20,6 +21,7 @@ struct SuuviApp: App {
         case "capture": return [.capture("f1", sample: false)]
         case "capturelifted": return [.capture("f1", sample: true)]
         case "collection", "profile": return [.folders, .collection("f1")]
+        case "viewer": return [.folders, .collection("f1"), .viewer("Moeda de Lisboa")]
         case "edit": return [.folders, .collection("f1"), .edit("f1", preset: false)]
         case "editdone": return [.folders, .collection("f1"), .edit("f1", preset: true)]
         default: return []
@@ -48,8 +50,10 @@ struct SuuviApp: App {
                         case .folders:
                             FoldersView(onOpen: { path.append(.collection($0)) }).toolbar(.hidden, for: .navigationBar)
                         case .collection(let id):
-                            CollectionView(id: id, startProfile: SuuviApp.start == "profile" && path.count == 2, onAdd: { path.append(.capture(id, sample: false)) })
+                            CollectionView(id: id, startProfile: SuuviApp.start == "profile" && path.count == 2, onAdd: { path.append(.capture(id, sample: false)) }, onPiece: { path.append(.viewer($0)) })
                                 .toolbar(.hidden, for: .navigationBar)
+                        case .viewer(let title):
+                            ViewerView(title: title).toolbar(.hidden, for: .navigationBar)
                         case .edit(let id, let preset):
                             EditView(folderId: id, preset: preset).toolbar(.hidden, for: .navigationBar)
                         }

@@ -1,0 +1,86 @@
+{
+ "_about": "Casos compartilhados do Visualizador 3D. drag: yaw += dx*0.5; pitch = clamp(pitch - dy*0.5, -85, 85) (graus). zoom: clamp(scale*pinch, 0.5, 4).",
+ "drag": [
+  {
+   "name": "direita",
+   "yaw": 0,
+   "pitch": 0,
+   "dx": 10,
+   "dy": 0,
+   "expect": [
+    5,
+    0
+   ]
+  },
+  {
+   "name": "baixo inclina",
+   "yaw": 0,
+   "pitch": 0,
+   "dx": 0,
+   "dy": 20,
+   "expect": [
+    0,
+    -10
+   ]
+  },
+  {
+   "name": "limite superior",
+   "yaw": 0,
+   "pitch": 80,
+   "dx": 0,
+   "dy": -40,
+   "expect": [
+    0,
+    85
+   ]
+  },
+  {
+   "name": "limite inferior",
+   "yaw": 0,
+   "pitch": -80,
+   "dx": 0,
+   "dy": 60,
+   "expect": [
+    0,
+    -85
+   ]
+  },
+  {
+   "name": "misto",
+   "yaw": 10,
+   "pitch": 10,
+   "dx": -4,
+   "dy": 2,
+   "expect": [
+    8,
+    9
+   ]
+  }
+ ],
+ "zoom": [
+  {
+   "name": "dobra",
+   "scale": 1,
+   "pinch": 2,
+   "expect": 2
+  },
+  {
+   "name": "teto",
+   "scale": 3,
+   "pinch": 2,
+   "expect": 4
+  },
+  {
+   "name": "piso",
+   "scale": 1,
+   "pinch": 0.1,
+   "expect": 0.5
+  },
+  {
+   "name": "reduz",
+   "scale": 2,
+   "pinch": 0.5,
+   "expect": 1
+  }
+ ]
+}
