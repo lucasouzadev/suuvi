@@ -42,20 +42,31 @@ jobs:
         run: brew install xcodegen
       - name: Gerar projeto
         run: xcodegen generate --spec ios/project.yml --project ios
+      - name: Criar simulador iPhone (runtime mais recente)
+        id: sim
+        run: |
+          RUNTIME=$(xcrun simctl list runtimes iOS -j | jq -r '[.runtimes[] | select(.isAvailable)] | last | .identifier')
+          TYPE=$(xcrun simctl list devicetypes -j | jq -r '[.devicetypes[] | select(.name | startswith("iPhone 1"))] | last | .identifier')
+          UDID=$(xcrun simctl create "suuvi-ci" "$TYPE" "$RUNTIME")
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          echo "Runtime: $RUNTIME  Device: $TYPE  UDID: $UDID"
       - name: Testes no simulador
         run: |
+          set -o pipefail
           xcodebuild test \
             -project ios/Suuvi.xcodeproj -scheme Suuvi \
-            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
             -derivedDataPath ios/build | tee ios/build/test.log | tail -40
       - name: Abrir o app no simulador e tirar print
         run: |
-          APP=$(find ios/build/Build/Products -name 'Suuvi.app' -maxdepth 3 | head -1)
-          xcrun simctl boot "iPhone 16" || true
-          xcrun simctl install booted "$APP"
-          xcrun simctl launch booted app.suuvi.Suuvi
+          APP=$(find ios/build/Build/Products -name 'Suuvi.app' -path '*iphonesimulator*' -maxdepth 4 | head -1)
+          echo "app: $APP"
+          xcrun simctl boot "${{ steps.sim.outputs.udid }}"
+          xcrun simctl bootstatus "${{ steps.sim.outputs.udid }}" -b
+          xcrun simctl install "${{ steps.sim.outputs.udid }}" "$APP"
+          xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
           sleep 5
-          xcrun simctl io booted screenshot ios-catalog.png
+          xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-catalog.png
       - uses: actions/upload-artifact@v4
         with:
           name: ios-catalog
