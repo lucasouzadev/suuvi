@@ -52,3 +52,16 @@ data class Asset(
     /** Caminho relativo dentro da pasta do app (nunca absoluto). */
     val relativePath: String,
 )
+
+/** Peca criada pela Edicao, guardada por colecao (folderId). O #n vem de PieceRules/Numbering. */
+@Entity(tableName = "saved_pieces", indices = [Index("folderId")])
+data class SavedPiece(
+    @PrimaryKey val id: String,
+    val folderId: String,
+    val number: Int,
+    val title: String,
+    val place: String,
+    val tag: String?,
+    val emoji: String,
+    val createdAt: Long,
+)

@@ -12,6 +12,13 @@ interface SuuviDao {
     @Insert suspend fun insertCollection(c: SouvenirCollection)
     @Insert suspend fun insertSouvenir(s: Souvenir)
     @Insert suspend fun insertAsset(a: Asset)
+    @Insert suspend fun insertSavedPiece(p: SavedPiece)
+
+    @Query("SELECT * FROM saved_pieces WHERE folderId = :folderId ORDER BY number")
+    fun savedPieces(folderId: String): Flow<List<SavedPiece>>
+
+    @Query("SELECT number FROM saved_pieces WHERE folderId = :folderId")
+    suspend fun savedNumbers(folderId: String): List<Int>
 
     @Query("SELECT * FROM collections WHERE id = :id") suspend fun collection(id: String): SouvenirCollection?
     @Query("SELECT number FROM souvenirs WHERE collectionId = :id") suspend fun numbers(id: String): List<Int>

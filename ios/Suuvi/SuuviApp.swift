@@ -6,13 +6,13 @@ enum Route: Hashable {
     case settings
     case capture(String, sample: Bool)
     case collection(String)
-    case edit(String, preset: Bool)
+    case edit(String, preset: Bool, auto: Bool = false)
     case viewer(String)
 }
 
 @main
 struct SuuviApp: App {
-    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders | collection | edit | editdone | profile | settings | capture | capturelifted | search | viewer
+    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders | collection | edit | editdone | created | profile | settings | capture | capturelifted | search | viewer
     private static let start = UserDefaults.standard.string(forKey: "startRoute")
     @State private var path: [Route] = {
         switch SuuviApp.start {
@@ -22,6 +22,7 @@ struct SuuviApp: App {
         case "capturelifted": return [.capture("f1", sample: true)]
         case "collection", "profile": return [.folders, .collection("f1")]
         case "viewer": return [.folders, .collection("f1"), .viewer("Moeda de Lisboa")]
+        case "created": return [.folders, .collection("f1"), .edit("f1", preset: false, auto: true)]
         case "edit": return [.folders, .collection("f1"), .edit("f1", preset: false)]
         case "editdone": return [.folders, .collection("f1"), .edit("f1", preset: true)]
         default: return []
@@ -54,13 +55,13 @@ struct SuuviApp: App {
                                 .toolbar(.hidden, for: .navigationBar)
                         case .viewer(let title):
                             ViewerView(title: title).toolbar(.hidden, for: .navigationBar)
-                        case .edit(let id, let preset):
-                            EditView(folderId: id, preset: preset).toolbar(.hidden, for: .navigationBar)
+                        case .edit(let id, let preset, let auto):
+                            EditView(folderId: id, preset: preset, autoCreate: auto).toolbar(.hidden, for: .navigationBar)
                         }
                     }
             }
             .sheet(isPresented: $showSearch) { SearchView() }
         }
-        .modelContainer(for: [SouvenirCollection.self, Souvenir.self, Asset.self])
+        .modelContainer(for: [SouvenirCollection.self, Souvenir.self, Asset.self, SavedPiece.self])
     }
 }

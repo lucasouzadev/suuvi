@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 /// Colecao: voltar + chip, linha "de X" com @lugar/#n/status, grade 2x2 inclinada, legenda e rodape.
 struct CollectionView: View {
@@ -14,12 +15,14 @@ struct CollectionView: View {
     var onAdd: () -> Void = {}
     var onPiece: (String) -> Void = { _ in }
     @State private var showProfile: Bool
+    @Query(sort: \SavedPiece.number) private var saved: [SavedPiece]
     private let columns = [GridItem(.flexible(), spacing: SuuviSpace.s4),
                            GridItem(.flexible(), spacing: SuuviSpace.s4)]
 
     var body: some View {
-        if let detail = SampleData.collectionDetail(id: id) {
-            content(detail)
+        if let base = SampleData.collectionDetail(id: id) {
+            let extra = saved.filter { $0.folderId == id }.map { PieceItem(id: $0.id.uuidString, title: $0.title, emoji: $0.emoji) }
+            content(CollectionDetail(folder: base.folder, status: base.status, pieces: base.pieces + extra))
         }
     }
 

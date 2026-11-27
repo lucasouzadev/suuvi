@@ -23,6 +23,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -42,6 +44,7 @@ import app.suuvi.design.SuuviColor
 import app.suuvi.design.SuuviRadius
 import app.suuvi.design.SuuviSpace
 import app.suuvi.domain.CollectionRules
+import app.suuvi.domain.PieceItem
 import app.suuvi.domain.SampleData
 import app.suuvi.domain.ShelfRules
 import app.suuvi.domain.collectionDetail
@@ -53,7 +56,11 @@ import app.suuvi.ui.components.StatusMark
 /** Colecao: voltar + chip, linha "de X" com @lugar/#n/status, grade 2x2 inclinada, legenda e rodape. */
 @Composable
 fun CollectionScreen(id: String, onBack: () -> Unit, onAdd: () -> Unit = {}, startProfile: Boolean = false, onPiece: (String) -> Unit = {}) {
-    val d = SampleData.collectionDetail(id) ?: return
+    val base = SampleData.collectionDetail(id) ?: return
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val dao = remember { app.suuvi.data.SuuviDb.get(context).dao() }
+    val saved by dao.savedPieces(id).collectAsState(initial = emptyList())
+    val d = base.copy(pieces = base.pieces + saved.map { PieceItem(it.id, it.title, it.emoji) })
     val filled = CollectionRules.slots(d.pieces.size)
     var showProfile by rememberSaveable { mutableStateOf(startProfile) }
     if (showProfile) CollectionProfileSheet(d, onDismiss = { showProfile = false })

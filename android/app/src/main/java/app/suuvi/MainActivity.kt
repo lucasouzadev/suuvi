@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
             "search" -> Screen.SEARCH
             "collection", "profile" -> Screen.COLLECTION
             "viewer" -> Screen.VIEWER
-            "edit", "editdone" -> Screen.EDIT
+            "edit", "editdone", "created" -> Screen.EDIT
             else -> Screen.SHELF
         }
         setContent {
@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
                     onPiece = { pieceTitle = it; screen = Screen.VIEWER },
                 )
                 Screen.VIEWER -> ViewerScreen(pieceTitle, onBack = { screen = Screen.COLLECTION })
-                Screen.EDIT -> EditScreen(collectionId, preset, onBack = { screen = Screen.COLLECTION })
+                Screen.EDIT -> EditScreen(collectionId, preset, autoCreate = intent.getStringExtra("route") == "created", onBack = { screen = Screen.COLLECTION })
                 Screen.CAPTURE -> CaptureScreen(
                     onBack = { screen = captureFrom },
                     onCreate = { screen = Screen.EDIT },

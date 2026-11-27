@@ -1,16 +1,21 @@
 import SwiftUI
+import SwiftData
 
 /// Edicao de peca: cascata a esquerda, tres campos em pilula a direita, botao que muda de rotulo ao salvar.
 struct EditView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var context
+    @Query private var allSaved: [SavedPiece]
     let folderId: String
+    private let autoCreate: Bool
     @State private var title: String
     @State private var place: String
     @State private var tag: String
     @State private var saved: Bool
 
-    init(folderId: String, preset: Bool = false) {
+    init(folderId: String, preset: Bool = false, autoCreate: Bool = false) {
         self.folderId = folderId
+        self.autoCreate = autoCreate
         _title = State(initialValue: preset ? "Moeda de Lisboa" : "")
         _place = State(initialValue: preset ? "lisboa" : "")
         _tag = State(initialValue: preset ? "viagem" : "")
@@ -61,10 +66,7 @@ struct EditView: View {
                 .padding(.top, SuuviSpace.s3)
             }
             Button {
-                if saved { dismiss() } else if valid {
-                    tag = EditRules.normalizeTag(tag)
-                    saved = true
-                }
+                if saved { dismiss() } else { save() }
             } label: {
                 Text(saved ? "edit.done" : "edit.save")
                     .font(.system(size: 17, weight: .semibold))
@@ -80,5 +82,20 @@ struct EditView: View {
         .padding(.horizontal, SuuviSpace.s5)
         .background(SuuviColor.bg)
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            // So para o CI: cria uma peca sozinha, para provar que salvar grava no banco.
+            if autoCreate && !saved { title = "Bonde 29"; place = "lisboa"; tag = "viagem"; save() }
+        }
+    }
+
+    /// Valida, normaliza, emite o #n e grava. Nada acontece se a peca for invalida.
+    private func save() {
+        let existing = allSaved.filter { $0.folderId == folderId }.map(\.number)
+        guard let p = PieceRules.create(title: title, place: place, tag: tag, existing: existing, lastIssued: existing.max() ?? 0)
+        else { return }
+        context.insert(SavedPiece(folderId: folderId, number: p.number, title: p.title, place: p.place, tag: p.tag))
+        try? context.save()
+        tag = p.tag ?? ""
+        saved = true
     }
 }

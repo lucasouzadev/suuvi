@@ -39,6 +39,8 @@ import app.suuvi.design.SuuviColor
 import app.suuvi.design.SuuviRadius
 import app.suuvi.design.SuuviSpace
 import app.suuvi.domain.EditRules
+import app.suuvi.domain.PieceRules
+import kotlinx.coroutines.launch
 import app.suuvi.domain.SampleData
 import app.suuvi.domain.collectionDetail
 import app.suuvi.ui.components.CascadeStack
@@ -47,7 +49,7 @@ import app.suuvi.ui.components.PillField
 
 /** Edicao de peca: cascata a esquerda, tres campos em pilula a direita, botao que muda de rotulo ao salvar. */
 @Composable
-fun EditScreen(folderId: String, preset: Boolean = false, onBack: () -> Unit) {
+fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = false, onBack: () -> Unit) {
     var title by rememberSaveable { mutableStateOf(if (preset) "Moeda de Lisboa" else "") }
     var place by rememberSaveable { mutableStateOf(if (preset) "lisboa" else "") }
     var tag by rememberSaveable { mutableStateOf(if (preset) "viagem" else "") }
@@ -55,6 +57,26 @@ fun EditScreen(folderId: String, preset: Boolean = false, onBack: () -> Unit) {
     val detail = SampleData.collectionDetail(folderId)
     val cascade = ((detail?.pieces?.map { it.emoji } ?: emptyList()) + (detail?.folder?.emoji ?: "🏺")).take(3)
     val valid = EditRules.isValid(title, place)
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    val dao = androidx.compose.runtime.remember { app.suuvi.data.SuuviDb.get(context).dao() }
+
+    /** Valida, normaliza, emite o #n e grava. Nada acontece se a peca for invalida. */
+    fun save() {
+        scope.launch {
+            val existing = dao.savedNumbers(folderId)
+            val p = PieceRules.create(title, place, tag, existing, existing.maxOrNull() ?: 0) ?: return@launch
+            dao.insertSavedPiece(
+                app.suuvi.data.SavedPiece(java.util.UUID.randomUUID().toString(), folderId, p.number, p.title, p.place, p.tag, "🪙", System.currentTimeMillis()),
+            )
+            tag = p.tag ?: ""
+            saved = true
+        }
+    }
+    // So para o CI: cria uma peca sozinha, para provar que salvar grava no banco.
+    androidx.compose.runtime.LaunchedEffect(autoCreate) {
+        if (autoCreate && !saved) { title = "Bonde 29"; place = "lisboa"; tag = "viagem"; save() }
+    }
     val enabled = saved || valid
 
     Column(
@@ -101,10 +123,7 @@ fun EditScreen(folderId: String, preset: Boolean = false, onBack: () -> Unit) {
         Box(Modifier.fillMaxWidth().height(64.dp), contentAlignment = Alignment.Center) {
             OutlinedButton(
                 onClick = {
-                    if (saved) onBack() else if (valid) {
-                        tag = EditRules.normalizeTag(tag)
-                        saved = true
-                    }
+                    if (saved) onBack() else save()
                 },
                 enabled = enabled,
                 shape = RoundedCornerShape(SuuviRadius.pill),

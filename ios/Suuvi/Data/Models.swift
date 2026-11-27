@@ -72,3 +72,27 @@ final class Asset {
         self.relativePath = relativePath
     }
 }
+
+/// Peca criada pela Edicao, guardada por colecao (folderId). O #n vem de PieceRules/Numbering.
+@Model
+final class SavedPiece {
+    @Attribute(.unique) var id: UUID
+    var folderId: String
+    var number: Int
+    var title: String
+    var place: String
+    var tag: String?
+    var emoji: String
+    var createdAt: Date
+
+    init(folderId: String, number: Int, title: String, place: String, tag: String?, emoji: String = "🪙") {
+        self.id = UUID()
+        self.folderId = folderId
+        self.number = number
+        self.title = title
+        self.place = place
+        self.tag = tag
+        self.emoji = emoji
+        self.createdAt = Date()
+    }
+}
