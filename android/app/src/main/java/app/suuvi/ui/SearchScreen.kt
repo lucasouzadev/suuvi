@@ -65,6 +65,7 @@ fun SearchScreen(onClose: () -> Unit = {}) {
             Modifier.weight(1f).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(SuuviSpace.s4),
         ) {
+            Column(verticalArrangement = Arrangement.spacedBy(SuuviSpace.s2)) {
             tags.chunked(3).forEach { row ->
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(SuuviSpace.s2)) {
                     row.forEach { tag ->
@@ -76,6 +77,7 @@ fun SearchScreen(onClose: () -> Unit = {}) {
                     }
                     repeat(3 - row.size) { Box(Modifier.weight(1f)) }
                 }
+            }
             }
             if (results.isEmpty()) {
                 Text(
