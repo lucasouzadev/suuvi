@@ -5,12 +5,15 @@ struct ShelfRow: View {
     let item: ShelfItem
 
     var body: some View {
-        HStack(spacing: SuuviSpace.s3) {
+        HStack(spacing: SuuviSpace.s2) {
             Rectangle().fill(SuuviColor.border).frame(width: 2, height: 12)
             BadgeChip(letter: ShelfRules.chipLetter(item.name), emoji: item.emoji)
             Text("@\(item.place)")
                 .font(.system(size: 17, weight: .semibold))
                 .foregroundStyle(SuuviColor.text)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .layoutPriority(1)
             Spacer(minLength: SuuviSpace.s2)
             Text(String(item.tier.rawValue.prefix(1)).uppercased())
                 .font(.system(size: 13))

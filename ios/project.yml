@@ -12,6 +12,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.suuvi.Suuvi
         GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_CFBundleDisplayName: suuvi
         SWIFT_VERSION: "5.10"
   SuuviTests:
     type: bundle.unit-test
