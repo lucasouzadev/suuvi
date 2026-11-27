@@ -56,3 +56,8 @@ Values are visual estimates. Animations, transitions and keyboard states were no
 - Sheet/screen: title "Search" centered, X in grey circle (32pt visual, 44/48 touch) top right, pill search field, 3-column outlined tag chips (selected = amber), 2-column masonry cards (emoji block with varying height + name and @place caption).
 - Rules (parity): `fixtures/search.json` — query matches name, place or tag; selected tags are AND; empty state "No pieces found".
 - Route for CI screenshots: iOS `-startRoute search`, Android `--es route search`.
+
+## Emojis (padronizados)
+- Fluent Emoji Flat (Microsoft, MIT; licenca em design/emojis/LICENSE-fluent-emoji.txt), mesmas imagens no iOS e no Android. Apple Color Emoji nao pode ser redistribuido.
+- Lista curada em design/emojis.json (166). `EmojiView` (iOS) / `EmojiImage` (Android); glifo fora da lista cai no emoji do sistema.
+- Decisao do dono (2026-11-27): Fluent Flat + lista curada na v1.

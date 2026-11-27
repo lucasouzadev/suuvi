@@ -59,6 +59,7 @@ App nativo (SwiftUI em ios/, Jetpack Compose em android/) para colecionar objeto
 ```bash
 python3 scripts/gen_tokens.py                       # design/tokens.json -> Tokens.swift / Tokens.kt
 python3 scripts/gen_icons.py                         # design/icons/*.svg -> VectorDrawable (Android) + asset catalog (iOS)
+python3 scripts/gen_emojis.py <fluentui-emoji clone>  # design/emojis.json -> PNG iOS+Android (Fluent Flat, MIT); conferir: scripts/check_emojis.py
 python3 scripts/contrast.py design/tokens.json        # WCAG AA dos pares de texto
 # iOS (XcodeGen + Xcode 16+): xcodegen generate -s ios/project.yml && xcodebuild -scheme Suuvi -destination 'platform=iOS Simulator,name=iPhone 16' test
 # Android (JDK 17 + Android SDK): cd android && ./gradlew :app:testDebugUnitTest :app:assembleDebug

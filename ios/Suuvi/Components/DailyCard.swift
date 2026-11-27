@@ -13,7 +13,7 @@ struct DailyCard: View {
         VStack(alignment: .leading, spacing: SuuviSpace.s2) {
             HStack(spacing: SuuviSpace.s1) {
                 Text("shelf.daily.heading")
-                Text(pick.emoji)
+                EmojiView(glyph: pick.emoji, size: 22)
                 Text(pick.title)
             }
             .font(.system(size: 17, weight: .semibold))

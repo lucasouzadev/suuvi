@@ -12,3 +12,5 @@ Newest first. Never delete: mark `SUPERSEDED by <date>`. The current one-line ru
 - [stated] Telas principais primeiro: Shelf, Pastas, Busca, Colecao, Edicao, Configuracoes; camera/3D depois. Notas em docs/ui-reference.md.
 - [stated] Segmentos da Shelf: Colecao / Recebidas. Formato padrao da peca: moeda. Recap fora da v1.1.
 - [stated] Configuracoes: lista nativa agrupada.
+
+- 2026-11-27: emojis padronizados com Fluent Emoji Flat (MIT) nas duas plataformas; seletor da v1 usa lista curada (~150), nao o conjunto completo.

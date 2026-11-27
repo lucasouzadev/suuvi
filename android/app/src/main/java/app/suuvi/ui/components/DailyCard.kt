@@ -41,10 +41,17 @@ fun DailyCard(pick: DailyPick, modifier: Modifier = Modifier) {
             .padding(SuuviSpace.s4),
         verticalArrangement = Arrangement.spacedBy(SuuviSpace.s2),
     ) {
-        Text(
-            "${stringResource(R.string.shelf_daily_heading)} ${pick.emoji} ${pick.title}",
-            fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = SuuviColor.text,
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                "${stringResource(R.string.shelf_daily_heading)} ",
+                fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = SuuviColor.text,
+            )
+            EmojiImage(pick.emoji, 22.dp)
+            Text(
+                " ${pick.title}",
+                fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = SuuviColor.text,
+            )
+        }
         Text(pick.note, fontSize = 15.sp, color = SuuviColor.text, maxLines = 3, overflow = TextOverflow.Ellipsis)
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Icon(painterResource(R.drawable.ic_calendar), null, Modifier.size(14.dp), tint = SuuviColor.textMuted)

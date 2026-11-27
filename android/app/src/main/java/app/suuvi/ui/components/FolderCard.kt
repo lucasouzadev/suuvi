@@ -32,7 +32,7 @@ fun FolderCard(item: FolderItem, modifier: Modifier = Modifier) {
             .border(1.dp, SuuviColor.border, RoundedCornerShape(SuuviRadius.md))
             .semantics(mergeDescendants = true) {},
     ) {
-        Text(item.emoji, fontSize = 36.sp, modifier = Modifier.align(Alignment.Center))
+        EmojiImage(item.emoji, 40.dp, Modifier.align(Alignment.Center))
         Row(
             Modifier.fillMaxSize().padding(SuuviSpace.s3),
             verticalAlignment = Alignment.Bottom,

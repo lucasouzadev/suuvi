@@ -6,7 +6,7 @@ struct FolderCard: View {
 
     var body: some View {
         ZStack {
-            Text(item.emoji).font(.system(size: 36))
+            EmojiView(glyph: item.emoji, size: 40)
             VStack {
                 Spacer()
                 HStack(alignment: .firstTextBaseline) {

@@ -7,8 +7,7 @@ struct ResultCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: SuuviSpace.s2) {
-            Text(item.emoji)
-                .font(.system(size: 44))
+            EmojiView(glyph: item.emoji, size: 56)
                 .frame(maxWidth: .infinity, minHeight: height, maxHeight: height)
                 .background(RoundedRectangle(cornerRadius: SuuviRadius.md).fill(SuuviColor.canvas))
             HStack {

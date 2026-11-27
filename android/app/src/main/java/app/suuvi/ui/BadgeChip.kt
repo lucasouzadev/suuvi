@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import app.suuvi.design.SuuviColor
 import app.suuvi.design.SuuviRadius
 import app.suuvi.design.SuuviSpace
+import app.suuvi.ui.components.EmojiImage
 
 /** Chip letra + emoji das referencias (ex.: "P 📋"). */
 @Composable
@@ -30,6 +31,6 @@ fun BadgeChip(letter: String, emoji: String, modifier: Modifier = Modifier) {
         horizontalArrangement = Arrangement.spacedBy(SuuviSpace.s1),
     ) {
         Text(letter, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
-        Text(emoji)
+        EmojiImage(emoji, 20.dp)
     }
 }

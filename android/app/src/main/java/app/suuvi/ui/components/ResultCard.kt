@@ -16,6 +16,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.suuvi.design.SuuviColor
 import app.suuvi.design.SuuviRadius
@@ -33,7 +34,7 @@ fun ResultCard(item: SearchItem, height: Dp, modifier: Modifier = Modifier) {
             Modifier.fillMaxWidth().height(height)
                 .background(SuuviColor.canvas, RoundedCornerShape(SuuviRadius.md)),
             contentAlignment = Alignment.Center,
-        ) { Text(item.emoji, fontSize = 44.sp) }
+        ) { EmojiImage(item.emoji, 56.dp) }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(
                 item.name, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = SuuviColor.text,

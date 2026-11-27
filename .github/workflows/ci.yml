@@ -22,6 +22,8 @@ jobs:
           python3 scripts/gen_tokens.py
           python3 scripts/gen_icons.py
           test -z "$(git status --porcelain -- ios/Suuvi/Design android/app/src/main/java/app/suuvi/design ios/Suuvi/Assets.xcassets android/app/src/main/res/drawable)" || { git status --porcelain; echo "gerados fora de dia: rode scripts/gen_tokens.py e scripts/gen_icons.py"; exit 1; }
+      - name: Emojis da lista curada existem nas duas plataformas
+        run: python3 scripts/check_emojis.py
       - name: Fixtures validos
         run: |
           python3 - <<'PY'

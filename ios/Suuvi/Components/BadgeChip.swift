@@ -8,7 +8,7 @@ struct BadgeChip: View {
     var body: some View {
         HStack(spacing: SuuviSpace.s1) {
             Text(letter).font(.system(size: 15, weight: .semibold))
-            Text(emoji)
+            EmojiView(glyph: emoji, size: 20)
         }
         .padding(.horizontal, SuuviSpace.s3)
         .padding(.vertical, SuuviSpace.s2)
