@@ -58,11 +58,13 @@ def shape_to_d(el) -> str:
     raise SystemExit(f"forma nao suportada: {tag}")
 
 
-def load(path: pathlib.Path) -> str:
+def load(path: pathlib.Path) -> list:
     root = ET.fromstring(re.sub(r"<!--.*?-->", "", path.read_text(), flags=re.S))
     if root.get("viewBox") != "0 0 24 24" or root.get("stroke-width") != "2":
         raise SystemExit(f"{path.name}: esperado viewBox 24 e traco 2")
-    return "".join(shape_to_d(el) for el in root.iter() if el is not root)
+    # Um caminho por forma: um "m" relativo no inicio de uma forma e relativo a origem,
+    # entao juntar tudo em uma string quebraria o desenho (ex.: o X).
+    return [shape_to_d(el) for el in root.iter() if el is not root]
 
 
 def main():
@@ -77,26 +79,29 @@ def main():
     names = []
     for svg in sorted(SRC.glob("*.svg")):
         name = "ic_" + svg.stem.replace("-", "_")
-        d = load(svg)
+        ds = load(svg)
         names.append(name)
         (AND / f"{name}.xml").write_text(
             '<?xml version="1.0" encoding="utf-8"?>\n'
             '<vector xmlns:android="http://schemas.android.com/apk/res/android"\n'
             '    android:width="24dp" android:height="24dp"\n'
             '    android:viewportWidth="24" android:viewportHeight="24">\n'
-            '    <path\n'
-            '        android:pathData="' + d + '"\n'
-            '        android:strokeColor="#FF000000"\n'
-            '        android:strokeWidth="2"\n'
-            '        android:strokeLineCap="round"\n'
-            '        android:strokeLineJoin="round" />\n'
-            '</vector>\n')
+            + "".join(
+                '    <path\n'
+                '        android:pathData="' + d + '"\n'
+                '        android:strokeColor="#FF000000"\n'
+                '        android:strokeWidth="2"\n'
+                '        android:strokeLineCap="round"\n'
+                '        android:strokeLineJoin="round" />\n'
+                for d in ds)
+            + '</vector>\n')
         s = IOS / f"{name}.imageset"
         s.mkdir()
         (s / f"{name}.svg").write_text(
             '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">'
-            f'<path d="{d}" fill="none" stroke="#000000" stroke-width="2" '
-            'stroke-linecap="round" stroke-linejoin="round"/></svg>\n')
+            '<g fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+            + "".join(f'<path d="{d}"/>' for d in ds)
+            + '</g></svg>\n')
         (s / "Contents.json").write_text(json.dumps({
             "images": [{"filename": f"{name}.svg", "idiom": "universal"}],
             "info": {"author": "xcode", "version": 1},
