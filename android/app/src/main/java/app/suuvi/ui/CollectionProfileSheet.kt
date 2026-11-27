@@ -1,5 +1,6 @@
 package app.suuvi.ui
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -18,7 +18,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -28,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,33 +44,45 @@ import app.suuvi.design.SuuviSpace
 import app.suuvi.domain.CollectionDetail
 import app.suuvi.domain.PieceTier
 import app.suuvi.domain.SouvenirStatus
-import app.suuvi.ui.components.CloseButton
 import app.suuvi.ui.components.EmojiImage
-import app.suuvi.ui.components.IconAction
-import app.suuvi.ui.components.SegmentedPill
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-/** Folha de perfil da colecao: fechar, emoji grande, nome, meta, alternador Pecas/Detalhes + compartilhar. */
+/**
+ * Folha de perfil da colecao (nativa Material 3): cabecalho com fechar e compartilhar nas
+ * bordas, SingleChoiceSegmentedButtonRow do sistema e compartilhamento via Intent do Android.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CollectionProfileSheet(detail: CollectionDetail, onDismiss: () -> Unit) {
     var segment by remember { mutableIntStateOf(0) }
+    val context = LocalContext.current
     val date = LocalDate.ofEpochDay(detail.folder.lastUsedEpochDay)
         .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         containerColor = SuuviColor.bg,
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
     ) {
         Column(
-            Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = SuuviSpace.s5),
-            verticalArrangement = Arrangement.spacedBy(SuuviSpace.s4),
+            Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = SuuviSpace.s4),
+            verticalArrangement = Arrangement.spacedBy(SuuviSpace.s3),
         ) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                Box(Modifier.offset(x = SuuviSpace.s2)) { CloseButton(onDismiss) }
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = onDismiss) {
+                    Icon(painterResource(R.drawable.ic_x), stringResource(R.string.a11y_close), tint = SuuviColor.text)
+                }
+                Spacer(Modifier.weight(1f))
+                IconButton(onClick = {
+                    val send = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, "${detail.folder.name} #${detail.folder.number}")
+                    }
+                    context.startActivity(Intent.createChooser(send, null))
+                }) {
+                    Icon(painterResource(R.drawable.ic_share), stringResource(R.string.a11y_share), tint = SuuviColor.text)
+                }
             }
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(SuuviSpace.s2)) {
                 EmojiImage(detail.folder.emoji, 72.dp)
@@ -79,14 +96,15 @@ fun CollectionProfileSheet(detail: CollectionDetail, onDismiss: () -> Unit) {
                     Text(" $date", fontSize = 13.sp, color = SuuviColor.textMuted)
                 }
             }
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Box(Modifier.weight(1f)) {
-                    SegmentedPill(
-                        options = listOf(stringResource(R.string.profile_pieces), stringResource(R.string.profile_details)),
-                        selected = segment, onSelect = { segment = it },
-                    )
+            val labels = listOf(stringResource(R.string.profile_pieces), stringResource(R.string.profile_details))
+            SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+                labels.forEachIndexed { i, label ->
+                    SegmentedButton(
+                        selected = segment == i,
+                        onClick = { segment = i },
+                        shape = SegmentedButtonDefaults.itemShape(index = i, count = labels.size),
+                    ) { Text(label) }
                 }
-                Box(Modifier.offset(x = SuuviSpace.s2)) { IconAction(R.drawable.ic_share, stringResource(R.string.a11y_share), {}) }
             }
             Column(Modifier.fillMaxWidth().heightIn(min = 220.dp).verticalScroll(rememberScrollState())) {
                 if (segment == 0) {
