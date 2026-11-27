@@ -14,12 +14,16 @@ struct SettingsView: View {
         )
     }
 
+    private func sectionTitle(_ key: LocalizedStringKey) -> some View {
+        Text(key).font(.system(size: 13)).foregroundStyle(SuuviColor.textMuted)
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             BackBar(title: "settings.title", onBack: { dismiss() })
                 .padding(.horizontal, SuuviSpace.s5)
             List {
-                Section("settings.profile") {
+                Section {
                     HStack {
                         Text("settings.name")
                         TextField("settings.name.placeholder", text: $name)
@@ -28,8 +32,8 @@ struct SettingsView: View {
                             .submitLabel(.done)
                             .onSubmit { name = SettingsRules.normalizeName(name) }
                     }
-                }
-                Section("settings.preferences") {
+                } header: { sectionTitle("settings.profile") }
+                Section {
                     VStack(alignment: .leading, spacing: SuuviSpace.s2) {
                         Text("settings.format")
                         SegmentedPill(options: ["tier.coin", "tier.pin", "tier.magnet"], selection: tierIndex)
@@ -41,7 +45,7 @@ struct SettingsView: View {
                         Spacer()
                         Text("settings.language.value").foregroundStyle(SuuviColor.textMuted)
                     }
-                }
+                } header: { sectionTitle("settings.preferences") }
                 Section {
                     HStack {
                         Text("settings.version")
@@ -51,9 +55,9 @@ struct SettingsView: View {
                     Text("settings.credits.icons").foregroundStyle(SuuviColor.textMuted)
                     Text("settings.credits.emoji").foregroundStyle(SuuviColor.textMuted)
                 } header: {
-                    Text("settings.about")
+                    sectionTitle("settings.about")
                 } footer: {
-                    Text("settings.privacy")
+                    Text("settings.privacy").font(.system(size: 13)).foregroundStyle(SuuviColor.textMuted)
                 }
             }
             .listStyle(.insetGrouped)

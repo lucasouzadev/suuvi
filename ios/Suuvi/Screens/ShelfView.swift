@@ -5,6 +5,7 @@ struct ShelfView: View {
     @State private var segment = 0
     var onFolders: () -> Void = {}
     var onSettings: () -> Void = {}
+    var onCreate: () -> Void = {}
     @AppStorage("showDaily") private var showDaily = true
     var onSearch: () -> Void = {}
     var onOpen: (String) -> Void = { _ in }
@@ -41,7 +42,7 @@ struct ShelfView: View {
                 .multilineTextAlignment(.center)
                 .padding(.top, SuuviSpace.s8)
             }
-            FooterBar(version: "0.1.0")
+            FooterBar(version: "0.1.0", onCreate: onCreate)
         }
         .padding(.horizontal, SuuviSpace.s5)
         .background(SuuviColor.bg)

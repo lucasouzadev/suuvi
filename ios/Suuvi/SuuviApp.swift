@@ -4,18 +4,21 @@ import SwiftData
 enum Route: Hashable {
     case folders
     case settings
+    case capture(String, sample: Bool)
     case collection(String)
     case edit(String, preset: Bool)
 }
 
 @main
 struct SuuviApp: App {
-    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders | collection | edit | editdone | profile | settings | search
+    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders | collection | edit | editdone | profile | settings | capture | capturelifted | search
     private static let start = UserDefaults.standard.string(forKey: "startRoute")
     @State private var path: [Route] = {
         switch SuuviApp.start {
         case "folders": return [.folders]
         case "settings": return [.settings]
+        case "capture": return [.capture("f1", sample: false)]
+        case "capturelifted": return [.capture("f1", sample: true)]
         case "collection", "profile": return [.folders, .collection("f1")]
         case "edit": return [.folders, .collection("f1"), .edit("f1", preset: false)]
         case "editdone": return [.folders, .collection("f1"), .edit("f1", preset: true)]
@@ -30,18 +33,22 @@ struct SuuviApp: App {
                 ShelfView(
                     onFolders: { path.append(.folders) },
                     onSettings: { path.append(.settings) },
+                    onCreate: { path.append(.capture("f1", sample: false)) },
                     onSearch: { showSearch = true },
                     onOpen: { name in if let id = SampleData.folderId(forName: name) { path.append(.collection(id)) } }
                 )
                     .toolbar(.hidden, for: .navigationBar)
                     .navigationDestination(for: Route.self) { route in
                         switch route {
+                        case .capture(let id, let sample):
+                            CaptureView(autoSample: sample, onCreate: { path.append(.edit(id, preset: false)) })
+                                .toolbar(.hidden, for: .navigationBar)
                         case .settings:
                             SettingsView().toolbar(.hidden, for: .navigationBar)
                         case .folders:
                             FoldersView(onOpen: { path.append(.collection($0)) }).toolbar(.hidden, for: .navigationBar)
                         case .collection(let id):
-                            CollectionView(id: id, startProfile: SuuviApp.start == "profile" && path.count == 2, onAdd: { path.append(.edit(id, preset: false)) })
+                            CollectionView(id: id, startProfile: SuuviApp.start == "profile" && path.count == 2, onAdd: { path.append(.capture(id, sample: false)) })
                                 .toolbar(.hidden, for: .navigationBar)
                         case .edit(let id, let preset):
                             EditView(folderId: id, preset: preset).toolbar(.hidden, for: .navigationBar)

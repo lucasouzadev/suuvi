@@ -56,3 +56,12 @@
 "settings.credits.icons" = "Icons: Lucide (ISC)";
 "settings.credits.emoji" = "Emoji: Fluent Emoji (MIT)";
 "settings.privacy" = "Everything stays on this device.";
+"capture.title" = "New piece";
+"capture.caption" = "(up to 4 photos: front, sides, back)";
+"capture.count" = "Photos: %d/%d";
+"capture.lift" = "Lift";
+"capture.lifting" = "Lifting…";
+"capture.create" = "Create piece";
+"capture.add" = "Add a photo";
+"capture.take" = "Take photo";
+"capture.library" = "Choose from library";

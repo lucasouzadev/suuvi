@@ -77,3 +77,9 @@ Values are visual estimates. Animations, transitions and keyboard states were no
 ## Settings (implemented)
 - Grouped list on canvas background: Profile (name, normalized on submit), Preferences (default format pill coin/pin/magnet, show today's piece toggle, language = system), About (version, credits Lucide/Fluent, privacy note). Preferences persist locally (AppStorage / SharedPreferences). Reached from the Shelf gear. CI route `settings`.
 - Parity: `fixtures/settings.json` (normalizeName, tiers).
+
+## Capture + Lift (implemented)
+- Capture: back, title "New piece", 2x2 tilted photo cards (up to 4, camera or library via native pickers), dashed "+" slots, caption in parentheses, footer: photo count + CTA (Lift -> Lifting... -> Create piece, amber when ready). Create piece opens Edit.
+- Lift: iOS Vision VNGenerateForegroundInstanceMaskRequest; Android ML Kit Subject Segmentation (beta, behind ObjectLifter). Output: transparent PNG cropped to the object box with padding. Files in the app folder only (Application Support/suuvi, filesDir/suuvi).
+- Parity: `fixtures/capture.json` (alphaBounds, paddedCrop, cta, max photos). Sample photo for CI/debug: design/samples/sample-object.jpg (Fluent Emoji MIT on a generated background). CI routes: `capture`, `capturelifted`.
+- Not covered by CI: real camera (no camera in simulator/emulator), state survives rotation (photos are in-memory).

@@ -96,6 +96,14 @@ jobs:
           sleep 5
           xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-settings.png
           xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
+          xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute capture
+          sleep 5
+          xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-capture.png
+          xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
+          xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute capturelifted
+          sleep 25
+          xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-capturelifted.png
+          xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
           xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute search
           sleep 5
           xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-search.png
@@ -171,10 +179,19 @@ jobs:
             adb shell am start -S -n app.suuvi/.MainActivity --es route settings
             sleep 5
             adb exec-out screencap -p > android-settings.png
+            adb shell am start -S -n app.suuvi/.MainActivity --es route capture
+            sleep 5
+            adb exec-out screencap -p > android-capture.png
+            adb shell am start -S -n app.suuvi/.MainActivity --es route capturelifted
+            sleep 45
+            adb exec-out screencap -p > android-capturelifted.png
+            adb logcat -d -s MLKit:* SubjectSegmentation:* vision:* > android-lift-log.txt || true
             adb shell am start -S -n app.suuvi/.MainActivity --es route search
             sleep 5
             adb exec-out screencap -p > android-search.png
       - uses: actions/upload-artifact@v4
         with:
           name: android-screens
-          path: android-*.png
+          path: |
+            android-*.png
+            android-*.txt

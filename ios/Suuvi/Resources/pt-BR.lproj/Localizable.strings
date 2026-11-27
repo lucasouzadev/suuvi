@@ -56,3 +56,12 @@
 "settings.credits.icons" = "Ícones: Lucide (ISC)";
 "settings.credits.emoji" = "Emoji: Fluent Emoji (MIT)";
 "settings.privacy" = "Tudo fica neste aparelho.";
+"capture.title" = "Nova peça";
+"capture.caption" = "(até 4 fotos: frente, lados, verso)";
+"capture.count" = "Fotos: %d/%d";
+"capture.lift" = "Lift";
+"capture.lifting" = "Recortando…";
+"capture.create" = "Criar peça";
+"capture.add" = "Adicionar foto";
+"capture.take" = "Tirar foto";
+"capture.library" = "Escolher da galeria";
