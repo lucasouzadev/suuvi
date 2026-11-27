@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.suuvi.R
@@ -44,8 +45,8 @@ fun CascadeStack(emojis: List<String>, modifier: Modifier = Modifier) {
             Box(
                 Modifier.offset(x = 4.dp, y = (i * step).dp).size(96.dp, 108.dp).rotate(CollectionRules.tilt(i))
                     .background(SuuviColor.canvas, shape).border(1.dp, SuuviColor.border, shape),
-                contentAlignment = Alignment.Center,
-            ) { EmojiImage(glyph, 40.dp) }
+                contentAlignment = Alignment.TopCenter,
+            ) { EmojiImage(glyph, 36.dp, Modifier.padding(top = SuuviSpace.s2)) }
         }
     }
 }
@@ -70,12 +71,18 @@ fun PillField(number: Int, hint: String, text: String, onChange: (String) -> Uni
         }
         Spacer(Modifier.width(SuuviSpace.s2))
         Box(Modifier.weight(1f)) {
-            if (text.isEmpty()) Text(hint, fontSize = 17.sp, color = SuuviColor.textMuted, maxLines = 1)
-            BasicTextField(
-                value = text, onValueChange = onChange, enabled = !done, singleLine = true,
-                textStyle = TextStyle(fontSize = 17.sp, color = SuuviColor.text),
-                cursorBrush = SolidColor(SuuviColor.text), modifier = Modifier.fillMaxWidth(),
-            )
+            if (done) {
+                Text(text, fontSize = 17.sp, color = SuuviColor.text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            } else {
+                if (text.isEmpty()) {
+                    Text(hint, fontSize = 17.sp, color = SuuviColor.textMuted, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
+                BasicTextField(
+                    value = text, onValueChange = onChange, singleLine = true,
+                    textStyle = TextStyle(fontSize = 17.sp, color = SuuviColor.text),
+                    cursorBrush = SolidColor(SuuviColor.text), modifier = Modifier.fillMaxWidth(),
+                )
+            }
         }
     }
 }

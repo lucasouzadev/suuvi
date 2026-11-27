@@ -8,8 +8,9 @@ struct CascadeStack: View {
     var body: some View {
         ZStack(alignment: .top) {
             ForEach(Array(emojis.enumerated()), id: \.offset) { i, glyph in
-                EmojiView(glyph: glyph, size: 40)
-                    .frame(width: 96, height: 108)
+                EmojiView(glyph: glyph, size: 36)
+                    .padding(.top, SuuviSpace.s2)
+                    .frame(width: 96, height: 108, alignment: .top)
                     .background(RoundedRectangle(cornerRadius: SuuviRadius.md).fill(SuuviColor.canvas))
                     .overlay(RoundedRectangle(cornerRadius: SuuviRadius.md).stroke(SuuviColor.border, lineWidth: 1))
                     .rotationEffect(.degrees(CollectionRules.tilt(i)))
