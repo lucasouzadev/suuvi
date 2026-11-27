@@ -83,3 +83,8 @@ Values are visual estimates. Animations, transitions and keyboard states were no
 - Lift: iOS Vision VNGenerateForegroundInstanceMaskRequest; Android ML Kit Subject Segmentation (beta, behind ObjectLifter). Output: transparent PNG cropped to the object box with padding. Files in the app folder only (Application Support/suuvi, filesDir/suuvi).
 - Parity: `fixtures/capture.json` (alphaBounds, paddedCrop, cta, max photos). Sample photo for CI/debug: design/samples/sample-object.jpg (Fluent Emoji MIT on a generated background). CI routes: `capture`, `capturelifted`.
 - Not covered by CI: real camera (no camera in simulator/emulator), state survives rotation (photos are in-memory).
+
+### Lift: what CI can and cannot prove
+- Proven (fixtures, both platforms): alphaBounds, paddedCrop, CTA states, max 4 photos.
+- NOT RUN in CI: real segmentation. iOS simulator (macOS VM, no GPU/ANE) makes Vision fail; Android emulator never gets the ML Kit subject-segmentation module from Play Services (retry 5x4s + ModuleInstall added, still "Waiting for ... optional module").
+- PHYSICAL: lift a real photo on iPhone (iOS 17+) and on an Android phone with Play services; first run on Android needs network to download the module.
