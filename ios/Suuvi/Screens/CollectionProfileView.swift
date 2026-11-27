@@ -19,7 +19,7 @@ struct CollectionProfileView: View {
                 Text(detail.folder.name)
                     .font(.system(size: 22, weight: .bold))
                     .foregroundStyle(SuuviColor.text)
-                Text("@\(detail.folder.place) · #\(detail.folder.number)")
+                Text("#\(detail.folder.number)")
                     .font(.system(size: 15))
                     .foregroundStyle(SuuviColor.textMuted)
                 HStack(spacing: SuuviSpace.s4) {

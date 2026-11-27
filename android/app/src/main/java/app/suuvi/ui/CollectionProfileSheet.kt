@@ -66,7 +66,7 @@ fun CollectionProfileSheet(detail: CollectionDetail, onDismiss: () -> Unit) {
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(SuuviSpace.s2)) {
                 EmojiImage(detail.folder.emoji, 72.dp)
                 Text(detail.folder.name, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = SuuviColor.text)
-                Text("@${detail.folder.place} · #${detail.folder.number}", fontSize = 15.sp, color = SuuviColor.textMuted)
+                Text("#${detail.folder.number}", fontSize = 15.sp, color = SuuviColor.textMuted)
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(painterResource(R.drawable.ic_map_pin), null, Modifier.size(14.dp), tint = SuuviColor.textMuted)
                     Text(" @${detail.folder.place}", fontSize = 13.sp, color = SuuviColor.textMuted)
