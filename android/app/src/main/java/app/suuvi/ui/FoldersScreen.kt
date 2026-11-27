@@ -1,6 +1,7 @@
 package app.suuvi.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -26,7 +27,7 @@ import app.suuvi.ui.components.FooterBar
 
 /** Tela de Pastas: grade de 2 colunas com as colecoes, da mais usada para a menos usada. */
 @Composable
-fun FoldersScreen(onBack: () -> Unit) {
+fun FoldersScreen(onBack: () -> Unit, onOpen: (String) -> Unit = {}) {
     val rows = FolderRules.ordered(SampleData.folders)
     Column(
         Modifier
@@ -43,7 +44,7 @@ fun FoldersScreen(onBack: () -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(SuuviSpace.s3),
             verticalArrangement = Arrangement.spacedBy(SuuviSpace.s3),
         ) {
-            items(rows, key = { it.id }) { FolderCard(it) }
+            items(rows, key = { it.id }) { FolderCard(it, Modifier.clickable { onOpen(it.id) }) }
         }
         FooterBar(version = "0.1.0", showChevron = false)
     }

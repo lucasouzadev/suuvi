@@ -61,3 +61,7 @@ Values are visual estimates. Animations, transitions and keyboard states were no
 - Fluent Emoji Flat (Microsoft, MIT; licenca em design/emojis/LICENSE-fluent-emoji.txt), mesmas imagens no iOS e no Android. Apple Color Emoji nao pode ser redistribuido.
 - Lista curada em design/emojis.json (166). `EmojiView` (iOS) / `EmojiImage` (Android); glifo fora da lista cai no emoji do sistema.
 - Decisao do dono (2026-11-27): Fluent Flat + lista curada na v1.
+
+## Collection (implemented)
+- Header: back + centered chip. Meta line: "from X" (bold) left; @place, #n, status right. 2x2 grid, fixed tilts [-2.5, 2, 1.5, -2] deg, dashed "+" slots. Caption centered. Footer: timer + piece count, "Add piece" pill, info icon. Reached from a Folders card. Profile sheet (info icon) still to do.
+- Parity: `fixtures/collection.json` (slots, tilts). CI route: `-startRoute collection` / `--es route collection`.

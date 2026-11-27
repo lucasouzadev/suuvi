@@ -21,4 +21,9 @@
     <string name="search_field">Buscar peças</string>
     <string name="search_empty">Nenhuma peça encontrada</string>
     <string name="a11y_close">Fechar</string>
+    <string name="collection_from">de %1$s</string>
+    <string name="collection_count">Peças: %1$d</string>
+    <string name="collection_add">Adicionar peça</string>
+    <string name="collection_caption">Toque em + para adicionar uma peça a esta coleção.</string>
+    <string name="a11y_info">Info da coleção</string>
 </resources>

@@ -18,3 +18,8 @@
 "search.field" = "Search pieces";
 "search.empty" = "No pieces found";
 "a11y.close" = "Close";
+"collection.from" = "from %@";
+"collection.count" = "Pieces: %d";
+"collection.add" = "Add piece";
+"collection.caption" = "Tap + to add a piece to this collection.";
+"a11y.info" = "Collection info";

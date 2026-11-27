@@ -21,4 +21,9 @@
     <string name="search_field">Search pieces</string>
     <string name="search_empty">No pieces found</string>
     <string name="a11y_close">Close</string>
+    <string name="collection_from">from %1$s</string>
+    <string name="collection_count">Pieces: %1$d</string>
+    <string name="collection_add">Add piece</string>
+    <string name="collection_caption">Tap + to add a piece to this collection.</string>
+    <string name="a11y_info">Collection info</string>
 </resources>

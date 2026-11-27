@@ -3,6 +3,7 @@ import SwiftUI
 /// Tela de Pastas: grade de 2 colunas com as colecoes, da mais usada para a menos usada.
 struct FoldersView: View {
     @Environment(\.dismiss) private var dismiss
+    var onOpen: (String) -> Void = { _ in }
     private let columns = [GridItem(.flexible(), spacing: SuuviSpace.s3),
                            GridItem(.flexible(), spacing: SuuviSpace.s3)]
     private var items: [FolderItem] { FolderRules.ordered(SampleData.folders) }
@@ -12,7 +13,9 @@ struct FoldersView: View {
             BackBar(title: "folders.title", onBack: { dismiss() })
             ScrollView {
                 LazyVGrid(columns: columns, spacing: SuuviSpace.s3) {
-                    ForEach(items) { FolderCard(item: $0) }
+                    ForEach(items) { item in
+                        Button { onOpen(item.id) } label: { FolderCard(item: item) }.buttonStyle(.plain)
+                    }
                 }
             }
             FooterBar(version: "0.1.0", showChevron: false)

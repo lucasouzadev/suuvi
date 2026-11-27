@@ -1,0 +1,11 @@
+{
+  "_about": "Casos compartilhados da tela Colecao. slots(count): 4 posicoes na grade 2x2; F = peca, E = vaga tracejada com +; com mais de 4 pecas todas as 4 posicoes sao pecas (as 4 mais recentes primeiro, ordem recebida). tilt(index): graus fixos por posicao, para o visual ser igual nas duas plataformas.",
+  "slots": [
+    {"count": 0, "expect": "EEEE"},
+    {"count": 1, "expect": "FEEE"},
+    {"count": 3, "expect": "FFFE"},
+    {"count": 4, "expect": "FFFF"},
+    {"count": 9, "expect": "FFFF"}
+  ],
+  "tilts": [-2.5, 2.0, 1.5, -2.0]
+}
