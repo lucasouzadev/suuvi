@@ -42,3 +42,17 @@
 "tier.pin" = "Pin";
 "tier.magnet" = "Ímã";
 "a11y.share" = "Compartilhar";
+"settings.title" = "Configurações";
+"settings.profile" = "Perfil";
+"settings.preferences" = "Preferências";
+"settings.about" = "Sobre";
+"settings.name" = "Nome";
+"settings.name.placeholder" = "Seu nome";
+"settings.format" = "Formato padrão";
+"settings.daily" = "Mostrar a peça do dia";
+"settings.language" = "Idioma";
+"settings.language.value" = "Sistema";
+"settings.version" = "Versão";
+"settings.credits.icons" = "Ícones: Lucide (ISC)";
+"settings.credits.emoji" = "Emoji: Fluent Emoji (MIT)";
+"settings.privacy" = "Tudo fica neste aparelho.";

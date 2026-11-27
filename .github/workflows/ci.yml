@@ -92,6 +92,10 @@ jobs:
           sleep 6
           xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-profile.png
           xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
+          xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute settings
+          sleep 5
+          xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-settings.png
+          xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
           xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute search
           sleep 5
           xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-search.png
@@ -164,6 +168,9 @@ jobs:
             adb shell am start -S -n app.suuvi/.MainActivity --es route profile
             sleep 6
             adb exec-out screencap -p > android-profile.png
+            adb shell am start -S -n app.suuvi/.MainActivity --es route settings
+            sleep 5
+            adb exec-out screencap -p > android-settings.png
             adb shell am start -S -n app.suuvi/.MainActivity --es route search
             sleep 5
             adb exec-out screencap -p > android-search.png

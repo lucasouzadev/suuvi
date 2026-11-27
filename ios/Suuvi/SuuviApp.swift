@@ -3,17 +3,19 @@ import SwiftData
 
 enum Route: Hashable {
     case folders
+    case settings
     case collection(String)
     case edit(String, preset: Bool)
 }
 
 @main
 struct SuuviApp: App {
-    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders | collection | edit | editdone | profile | search
+    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders | collection | edit | editdone | profile | settings | search
     private static let start = UserDefaults.standard.string(forKey: "startRoute")
     @State private var path: [Route] = {
         switch SuuviApp.start {
         case "folders": return [.folders]
+        case "settings": return [.settings]
         case "collection", "profile": return [.folders, .collection("f1")]
         case "edit": return [.folders, .collection("f1"), .edit("f1", preset: false)]
         case "editdone": return [.folders, .collection("f1"), .edit("f1", preset: true)]
@@ -27,12 +29,15 @@ struct SuuviApp: App {
             NavigationStack(path: $path) {
                 ShelfView(
                     onFolders: { path.append(.folders) },
+                    onSettings: { path.append(.settings) },
                     onSearch: { showSearch = true },
                     onOpen: { name in if let id = SampleData.folderId(forName: name) { path.append(.collection(id)) } }
                 )
                     .toolbar(.hidden, for: .navigationBar)
                     .navigationDestination(for: Route.self) { route in
                         switch route {
+                        case .settings:
+                            SettingsView().toolbar(.hidden, for: .navigationBar)
                         case .folders:
                             FoldersView(onOpen: { path.append(.collection($0)) }).toolbar(.hidden, for: .navigationBar)
                         case .collection(let id):

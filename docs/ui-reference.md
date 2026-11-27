@@ -73,3 +73,7 @@ Values are visual estimates. Animations, transitions and keyboard states were no
 ## Navigation + collection profile (implemented)
 - Shelf rows and Folders cards open the Collection; "+" slots and "Add piece" open Edit; info icon opens the profile sheet (close X, big emoji, name, @place · #n, meta row, Pieces/Details pill + share, rows with leading chevron). Back returns to where the Collection was opened from.
 - CI routes: `profile` (iOS `-startRoute profile`, Android `--es route profile`).
+
+## Settings (implemented)
+- Grouped list on canvas background: Profile (name, normalized on submit), Preferences (default format pill coin/pin/magnet, show today's piece toggle, language = system), About (version, credits Lucide/Fluent, privacy note). Preferences persist locally (AppStorage / SharedPreferences). Reached from the Shelf gear. CI route `settings`.
+- Parity: `fixtures/settings.json` (normalizeName, tiers).

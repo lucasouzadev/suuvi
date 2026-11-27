@@ -12,16 +12,18 @@ import app.suuvi.ui.CollectionScreen
 import app.suuvi.ui.EditScreen
 import app.suuvi.ui.FoldersScreen
 import app.suuvi.ui.SearchScreen
+import app.suuvi.ui.SettingsScreen
 import app.suuvi.ui.ShelfScreen
 
-private enum class Screen { SHELF, FOLDERS, SEARCH, COLLECTION, EDIT }
+private enum class Screen { SHELF, FOLDERS, SEARCH, COLLECTION, EDIT, SETTINGS }
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Rota inicial opcional (usada pelo CI para tirar print): --es route folders | collection | edit | editdone | profile | search
+        // Rota inicial opcional (usada pelo CI para tirar print): --es route folders | collection | edit | editdone | profile | settings | search
         val start = when (intent.getStringExtra("route")) {
             "folders" -> Screen.FOLDERS
+            "settings" -> Screen.SETTINGS
             "search" -> Screen.SEARCH
             "collection", "profile" -> Screen.COLLECTION
             "edit", "editdone" -> Screen.EDIT
@@ -43,6 +45,7 @@ class MainActivity : ComponentActivity() {
                 Screen.SHELF -> ShelfScreen(
                     onFolders = { screen = Screen.FOLDERS },
                     onSearch = { screen = Screen.SEARCH },
+                    onSettings = { screen = Screen.SETTINGS },
                     onOpen = { collectionId = it; backTo = Screen.SHELF; screen = Screen.COLLECTION },
                 )
                 Screen.FOLDERS -> FoldersScreen(
@@ -56,6 +59,7 @@ class MainActivity : ComponentActivity() {
                     startProfile = intent.getStringExtra("route") == "profile",
                 )
                 Screen.EDIT -> EditScreen(collectionId, preset, onBack = { screen = Screen.COLLECTION })
+                Screen.SETTINGS -> SettingsScreen(onBack = { screen = Screen.SHELF })
                 Screen.SEARCH -> SearchScreen(onClose = { screen = Screen.SHELF })
             }
         }

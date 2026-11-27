@@ -45,4 +45,18 @@
     <string name="tier_pin">Pin</string>
     <string name="tier_magnet">Magnet</string>
     <string name="a11y_share">Share</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_profile">Profile</string>
+    <string name="settings_preferences">Preferences</string>
+    <string name="settings_about">About</string>
+    <string name="settings_name">Name</string>
+    <string name="settings_name_placeholder">Your name</string>
+    <string name="settings_format">Default format</string>
+    <string name="settings_daily">Show today\'s piece</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_value">System</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_credits_icons">Icons: Lucide (ISC)</string>
+    <string name="settings_credits_emoji">Emoji: Fluent Emoji (MIT)</string>
+    <string name="settings_privacy">Everything stays on this device.</string>
 </resources>

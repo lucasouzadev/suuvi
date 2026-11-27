@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,7 +37,7 @@ import app.suuvi.ui.components.ShelfRow
 
 /** Tela inicial: cabecalho, card do dia, alternador Colecao/Recebidas, lista e rodape. */
 @Composable
-fun ShelfScreen(onFolders: () -> Unit = {}, onSearch: () -> Unit = {}, onOpen: (String) -> Unit = {}) {
+fun ShelfScreen(onFolders: () -> Unit = {}, onSearch: () -> Unit = {}, onOpen: (String) -> Unit = {}, onSettings: () -> Unit = {}) {
     var segment by remember { mutableIntStateOf(0) }
     val rows = if (segment == 0) SampleData.collection else SampleData.received
     val daily = ShelfRules.dailyIndex(ShelfRules.todayEpochDay(), SampleData.dailyPicks.size)
@@ -50,8 +51,8 @@ fun ShelfScreen(onFolders: () -> Unit = {}, onSearch: () -> Unit = {}, onOpen: (
             .padding(horizontal = SuuviSpace.s5),
         verticalArrangement = Arrangement.spacedBy(SuuviSpace.s4),
     ) {
-        HeaderBar(title = stringResource(R.string.shelf_title), onFolders = onFolders, onSearch = onSearch)
-        if (daily != null) DailyCard(daily)
+        HeaderBar(title = stringResource(R.string.shelf_title), onSettings = onSettings, onFolders = onFolders, onSearch = onSearch)
+        if (daily != null && Prefs.showDaily(LocalContext.current)) DailyCard(daily)
         SegmentedPill(
             options = listOf(
                 stringResource(R.string.shelf_segment_collection),

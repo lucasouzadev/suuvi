@@ -1,0 +1,40 @@
+{
+ "_about": "Casos compartilhados das Configuracoes. normalizeName: apara as pontas, colapsa espacos repetidos em um, corta em 24 caracteres e apara de novo. Somente ASCII aqui (contagem de caracteres com emoji difere entre plataformas e nao e coberta). tiers: formatos aceitos, o primeiro e o padrao.",
+ "normalizeName": [
+  {
+   "name": "vazio",
+   "input": "",
+   "expect": ""
+  },
+  {
+   "name": "so espacos",
+   "input": "   ",
+   "expect": ""
+  },
+  {
+   "name": "apara pontas",
+   "input": "  Ana ",
+   "expect": "Ana"
+  },
+  {
+   "name": "colapsa espacos",
+   "input": "Ana    Maria",
+   "expect": "Ana Maria"
+  },
+  {
+   "name": "corta em 24",
+   "input": "abcdefghijklmnopqrstuvwxyz",
+   "expect": "abcdefghijklmnopqrstuvwx"
+  },
+  {
+   "name": "apara depois de cortar",
+   "input": "abcdefghijklmnopqrstuvw yz",
+   "expect": "abcdefghijklmnopqrstuvw"
+  }
+ ],
+ "tiers": [
+  "coin",
+  "pin",
+  "magnet"
+ ]
+}

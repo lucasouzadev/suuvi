@@ -4,6 +4,8 @@ import SwiftUI
 struct ShelfView: View {
     @State private var segment = 0
     var onFolders: () -> Void = {}
+    var onSettings: () -> Void = {}
+    @AppStorage("showDaily") private var showDaily = true
     var onSearch: () -> Void = {}
     var onOpen: (String) -> Void = { _ in }
 
@@ -18,8 +20,8 @@ struct ShelfView: View {
 
     var body: some View {
         VStack(spacing: SuuviSpace.s4) {
-            HeaderBar(title: "shelf.title", onFolders: onFolders, onSearch: onSearch)
-            if let daily { DailyCard(pick: daily) }
+            HeaderBar(title: "shelf.title", onSettings: onSettings, onFolders: onFolders, onSearch: onSearch)
+            if showDaily, let daily { DailyCard(pick: daily) }
             SegmentedPill(options: ["shelf.segment.collection", "shelf.segment.received"],
                           selection: $segment)
             ScrollView {
