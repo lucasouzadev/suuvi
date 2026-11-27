@@ -65,3 +65,4 @@
 "capture.add" = "Adicionar foto";
 "capture.take" = "Tirar foto";
 "capture.library" = "Escolher da galeria";
+"capture.failed" = "Não foi possível recortar o objeto. Tente de novo ou use outra foto.";

@@ -65,3 +65,4 @@
 "capture.add" = "Add a photo";
 "capture.take" = "Take photo";
 "capture.library" = "Choose from library";
+"capture.failed" = "Couldn't cut out the object. Try again or use another photo.";

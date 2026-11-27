@@ -35,8 +35,10 @@ struct CaptureView: View {
                     }
                     .padding(.top, SuuviSpace.s2)
                     .padding(.horizontal, SuuviSpace.s2)
-                    Text("capture.caption")
-                        .font(.system(size: 15)).foregroundStyle(SuuviColor.textMuted).multilineTextAlignment(.center)
+                    Text(photos.contains(where: { $0.failed }) ? "capture.failed" : "capture.caption")
+                        .font(.system(size: 15))
+                        .foregroundStyle(photos.contains(where: { $0.failed }) ? SuuviColor.danger : SuuviColor.textMuted)
+                        .multilineTextAlignment(.center)
                 }
             }
             footer

@@ -67,5 +67,6 @@
     <string name="capture_create">Criar peça</string>
     <string name="capture_add">Adicionar foto</string>
     <string name="capture_take">Tirar foto</string>
+    <string name="capture_failed">Não foi possível recortar o objeto. Tente de novo ou use outra foto.</string>
     <string name="capture_library">Escolher da galeria</string>
 </resources>

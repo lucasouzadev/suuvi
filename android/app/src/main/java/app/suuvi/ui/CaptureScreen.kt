@@ -176,9 +176,10 @@ fun CaptureScreen(onBack: () -> Unit, onCreate: () -> Unit, autoSample: Boolean 
                     }
                 }
             }
+            val anyFailed = photos.any { it.failed }
             Text(
-                stringResource(R.string.capture_caption), Modifier.fillMaxWidth(),
-                fontSize = 15.sp, color = SuuviColor.textMuted, textAlign = TextAlign.Center,
+                stringResource(if (anyFailed) R.string.capture_failed else R.string.capture_caption), Modifier.fillMaxWidth(),
+                fontSize = 15.sp, color = if (anyFailed) SuuviColor.danger else SuuviColor.textMuted, textAlign = TextAlign.Center,
             )
         }
         Row(Modifier.fillMaxWidth().height(64.dp), verticalAlignment = Alignment.CenterVertically) {
