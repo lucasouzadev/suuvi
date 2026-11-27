@@ -1,0 +1,14 @@
+"shelf.title" = "Estante";
+"shelf.segment.collection" = "Coleção";
+"shelf.segment.received" = "Recebidas";
+"shelf.daily.heading" = "Hoje:";
+"shelf.helper.title" = "Suas coleções mais usadas ficam aqui";
+"shelf.helper.subtitle" = "Crie uma peça para começar sua estante";
+"action.create" = "Criar";
+"a11y.settings" = "Configurações";
+"a11y.folders" = "Pastas";
+"a11y.search" = "Busca";
+"a11y.inbox" = "Caixa de entrada";
+"a11y.status.ready" = "Pronto";
+"a11y.status.draft" = "Rascunho";
+"a11y.status.failed" = "Falhou";

@@ -1,0 +1,14 @@
+"shelf.title" = "Shelf";
+"shelf.segment.collection" = "Collection";
+"shelf.segment.received" = "Received";
+"shelf.daily.heading" = "Today:";
+"shelf.helper.title" = "Your most-used collections live here";
+"shelf.helper.subtitle" = "Create a piece to start your shelf";
+"action.create" = "Create";
+"a11y.settings" = "Settings";
+"a11y.folders" = "Folders";
+"a11y.search" = "Search";
+"a11y.inbox" = "Inbox";
+"a11y.status.ready" = "Ready";
+"a11y.status.draft" = "Draft";
+"a11y.status.failed" = "Failed";

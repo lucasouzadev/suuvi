@@ -5,7 +5,7 @@ import SwiftData
 struct SuuviApp: App {
     var body: some Scene {
         WindowGroup {
-            CatalogView()
+            ShelfView()
         }
         .modelContainer(for: [SouvenirCollection.self, Souvenir.self, Asset.self])
     }

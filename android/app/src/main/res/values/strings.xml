@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">suuvi</string>
+    <string name="shelf_title">Shelf</string>
+    <string name="shelf_segment_collection">Collection</string>
+    <string name="shelf_segment_received">Received</string>
+    <string name="shelf_daily_heading">Today:</string>
+    <string name="shelf_helper_title">Your most-used collections live here</string>
+    <string name="shelf_helper_subtitle">Create a piece to start your shelf</string>
+    <string name="action_create">Create</string>
+    <string name="a11y_settings">Settings</string>
+    <string name="a11y_folders">Folders</string>
+    <string name="a11y_search">Search</string>
+    <string name="a11y_inbox">Inbox</string>
+    <string name="a11y_status_ready">Ready</string>
+    <string name="a11y_status_draft">Draft</string>
+    <string name="a11y_status_failed">Failed</string>
+</resources>
