@@ -93,7 +93,9 @@ fun CaptureScreen(onBack: () -> Unit, onCreate: () -> Unit, autoSample: Boolean 
             val p = photos.getOrNull(i) ?: continue
             if (p.cutout != null) continue
             val out = ImageStore.cutoutFile(ctx, p.file)
-            val ok = runCatching { ObjectLifter.lift(p.file, out) }.isSuccess
+            val res = runCatching { ObjectLifter.lift(p.file, out) }
+            res.exceptionOrNull()?.let { android.util.Log.w("suuvi", "lift failed: $it", it) }
+            val ok = res.isSuccess
             val bmp = if (ok) withContext(Dispatchers.IO) { android.graphics.BitmapFactory.decodeFile(out.path)?.asImageBitmap() } else null
             val idx = photos.indexOfFirst { it.file == p.file }
             if (idx >= 0) photos[idx] = photos[idx].copy(cutout = bmp, failed = bmp == null)
