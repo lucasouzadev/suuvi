@@ -28,8 +28,8 @@ fun SegmentedPill(
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val track = RoundedCornerShape(SuuviRadius.sm)
-    val knob = RoundedCornerShape(SuuviRadius.sm - 2.dp)
+    val track = RoundedCornerShape(SuuviRadius.pill)
+    val knob = RoundedCornerShape(SuuviRadius.pill)
     Row(modifier.fillMaxWidth().background(SuuviColor.canvas, track).padding(2.dp)) {
         options.forEachIndexed { i, label ->
             val isSelected = i == selected

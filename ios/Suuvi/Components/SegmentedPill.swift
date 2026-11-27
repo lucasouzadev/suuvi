@@ -15,11 +15,11 @@ struct SegmentedPill: View {
                         .foregroundStyle(SuuviColor.text)
                         .frame(maxWidth: .infinity, minHeight: 40)
                         .background(
-                            RoundedRectangle(cornerRadius: SuuviRadius.sm - 2)
+                            RoundedRectangle(cornerRadius: SuuviRadius.pill)
                                 .fill(selected ? SuuviColor.bg : Color.clear)
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: SuuviRadius.sm - 2)
+                            RoundedRectangle(cornerRadius: SuuviRadius.pill)
                                 .stroke(selected ? SuuviColor.border : Color.clear, lineWidth: 1)
                         )
                 }
@@ -27,6 +27,6 @@ struct SegmentedPill: View {
             }
         }
         .padding(2)
-        .background(RoundedRectangle(cornerRadius: SuuviRadius.sm).fill(SuuviColor.canvas))
+        .background(Capsule().fill(SuuviColor.canvas))
     }
 }

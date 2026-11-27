@@ -50,6 +50,7 @@ struct SearchView: View {
         .padding(.top, SuuviSpace.s3)
         .background(SuuviColor.bg)
         .presentationDragIndicator(.visible)
+        .presentationCornerRadius(32)
     }
 
     private func column(_ parity: Int) -> some View {

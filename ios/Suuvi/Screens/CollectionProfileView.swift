@@ -75,6 +75,7 @@ struct CollectionProfileView: View {
         .padding(.top, SuuviSpace.s2)
         .background(SuuviColor.bg)
         .presentationDragIndicator(.visible)
+        .presentationCornerRadius(32)
     }
 
     private func row<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {

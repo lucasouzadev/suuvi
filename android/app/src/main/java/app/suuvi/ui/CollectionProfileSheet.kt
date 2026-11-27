@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -57,12 +58,15 @@ fun CollectionProfileSheet(detail: CollectionDetail, onDismiss: () -> Unit) {
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         containerColor = SuuviColor.bg,
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
     ) {
         Column(
             Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = SuuviSpace.s5),
             verticalArrangement = Arrangement.spacedBy(SuuviSpace.s4),
         ) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { CloseButton(onDismiss) }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                Box(Modifier.offset(x = SuuviSpace.s2)) { CloseButton(onDismiss) }
+            }
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(SuuviSpace.s2)) {
                 EmojiImage(detail.folder.emoji, 72.dp)
                 Text(detail.folder.name, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = SuuviColor.text)
@@ -82,7 +86,7 @@ fun CollectionProfileSheet(detail: CollectionDetail, onDismiss: () -> Unit) {
                         selected = segment, onSelect = { segment = it },
                     )
                 }
-                IconAction(R.drawable.ic_share, stringResource(R.string.a11y_share), {})
+                Box(Modifier.offset(x = SuuviSpace.s2)) { IconAction(R.drawable.ic_share, stringResource(R.string.a11y_share), {}) }
             }
             Column(Modifier.fillMaxWidth().heightIn(min = 220.dp).verticalScroll(rememberScrollState())) {
                 if (segment == 0) {
