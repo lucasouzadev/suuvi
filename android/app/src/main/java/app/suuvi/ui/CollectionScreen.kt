@@ -76,7 +76,7 @@ fun CollectionScreen(id: String, onBack: () -> Unit) {
             Modifier.weight(1f).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(SuuviSpace.s5),
         ) {
-            Column(Modifier.padding(top = SuuviSpace.s2), verticalArrangement = Arrangement.spacedBy(SuuviSpace.s4)) {
+            Column(Modifier.padding(top = SuuviSpace.s2, start = SuuviSpace.s2, end = SuuviSpace.s2), verticalArrangement = Arrangement.spacedBy(SuuviSpace.s4)) {
                 for (row in 0..1) {
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(SuuviSpace.s4)) {
                         for (col in 0..1) {
@@ -94,22 +94,23 @@ fun CollectionScreen(id: String, onBack: () -> Unit) {
                 fontSize = 15.sp, color = SuuviColor.textMuted, textAlign = TextAlign.Center,
             )
         }
-        Box(Modifier.fillMaxWidth().height(64.dp), contentAlignment = Alignment.Center) {
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.fillMaxWidth().height(64.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
                 Icon(painterResource(R.drawable.ic_timer), null, Modifier.size(16.dp), tint = SuuviColor.textMuted)
                 Text(
                     " " + stringResource(R.string.collection_count, d.pieces.size),
-                    fontSize = 15.sp, color = SuuviColor.textMuted,
+                    fontSize = 15.sp, color = SuuviColor.textMuted, maxLines = 1, overflow = TextOverflow.Ellipsis,
                 )
-                Spacer(Modifier.weight(1f))
-                IconAction(R.drawable.ic_info, stringResource(R.string.a11y_info), {})
             }
             OutlinedButton(
                 onClick = {},
                 shape = RoundedCornerShape(SuuviRadius.pill),
                 border = BorderStroke(1.dp, SuuviColor.border),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = SuuviColor.text),
-            ) { Text(stringResource(R.string.collection_add), fontSize = 17.sp, fontWeight = FontWeight.SemiBold) }
+            ) { Text(stringResource(R.string.collection_add), fontSize = 17.sp, fontWeight = FontWeight.SemiBold, maxLines = 1) }
+            Row(Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
+                IconAction(R.drawable.ic_info, stringResource(R.string.a11y_info), {})
+            }
         }
     }
 }

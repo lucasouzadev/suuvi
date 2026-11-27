@@ -24,7 +24,7 @@ struct CollectionView: View {
                 }
             }
             .frame(height: 52)
-            HStack(alignment: .firstTextBaseline) {
+            HStack(alignment: .center) {
                 Text(String(format: NSLocalizedString("collection.from", comment: ""), d.folder.name))
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(SuuviColor.text)
@@ -46,6 +46,7 @@ struct CollectionView: View {
                         }
                     }
                     .padding(.top, SuuviSpace.s2)
+                    .padding(.horizontal, SuuviSpace.s2)
                     Text("collection.caption")
                         .font(.system(size: 15))
                         .foregroundStyle(SuuviColor.textMuted)
