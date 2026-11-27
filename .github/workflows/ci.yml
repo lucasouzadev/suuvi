@@ -1,0 +1,116 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tokens:
+    name: tokens + fixtures
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Contraste WCAG AA
+        run: python3 scripts/contrast.py design/tokens.json
+      - name: Tokens gerados estao em dia
+        run: |
+          python3 scripts/gen_tokens.py
+          git diff --exit-code -- ios/Suuvi/Design/Tokens.swift android/app/src/main/java/app/suuvi/design/Tokens.kt
+      - name: Fixtures validos
+        run: |
+          python3 - <<'PY'
+          import json
+          f = json.load(open("fixtures/numbering.json"))
+          nxt = lambda e, l=0: max(max(e, default=0), l) + 1
+          bad = [c["name"] for c in f["cases"] if nxt(c["existing"], c.get("lastIssued", 0)) != c["expect"]]
+          assert not bad, bad
+          print("fixtures ok:", len(f["cases"]))
+          PY
+
+  ios:
+    name: ios (simulador)
+    runs-on: macos-15
+    needs: tokens
+    steps:
+      - uses: actions/checkout@v4
+      - name: XcodeGen
+        run: brew install xcodegen
+      - name: Gerar projeto
+        run: xcodegen generate --spec ios/project.yml --project ios
+      - name: Testes no simulador
+        run: |
+          xcodebuild test \
+            -project ios/Suuvi.xcodeproj -scheme Suuvi \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -derivedDataPath ios/build | tee ios/build/test.log | tail -40
+      - name: Abrir o app no simulador e tirar print
+        run: |
+          APP=$(find ios/build/Build/Products -name 'Suuvi.app' -maxdepth 3 | head -1)
+          xcrun simctl boot "iPhone 16" || true
+          xcrun simctl install booted "$APP"
+          xcrun simctl launch booted app.suuvi.Suuvi
+          sleep 5
+          xcrun simctl io booted screenshot ios-catalog.png
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-catalog
+          path: ios-catalog.png
+
+  android:
+    name: android (testes + apk)
+    runs-on: ubuntu-latest
+    needs: tokens
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.14.3"
+      - name: Testes unitarios e APK debug
+        run: gradle -p android :app:testDebugUnitTest :app:assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+  android-emulator:
+    name: android (emulador)
+    runs-on: ubuntu-latest
+    needs: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.14.3"
+      - name: Habilitar KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Emulador, instalar, abrir e tirar print
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          script: |
+            gradle -p android :app:installDebug
+            adb shell am start -n app.suuvi/.MainActivity
+            sleep 5
+            adb exec-out screencap -p > android-catalog.png
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-catalog
+          path: android-catalog.png

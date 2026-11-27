@@ -1,0 +1,36 @@
+{
+  "_about": "Casos compartilhados da numeracao #n. Regra: proximo = max(maior numero existente, lastIssued) + 1. lastIssued e o ultimo numero ja emitido pela colecao (omitido = 0). Lidos pelo XCTest e pelo JUnit: os dois precisam passar.",
+  "cases": [
+    {
+      "name": "primeiro suvenir recebe #1",
+      "existing": [],
+      "expect": 1
+    },
+    {
+      "name": "proximo depois de 3 e #4",
+      "existing": [
+        1,
+        2,
+        3
+      ],
+      "expect": 4
+    },
+    {
+      "name": "numero apagado nao e reaproveitado",
+      "existing": [
+        1,
+        3
+      ],
+      "expect": 4
+    },
+    {
+      "name": "apagar o ultimo nao reaproveita o numero",
+      "existing": [
+        1,
+        2
+      ],
+      "lastIssued": 3,
+      "expect": 4
+    }
+  ]
+}

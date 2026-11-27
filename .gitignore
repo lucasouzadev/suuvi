@@ -1,0 +1,17 @@
+# Xcode / XcodeGen
+ios/Suuvi.xcodeproj/
+ios/build/
+DerivedData/
+xcuserdata/
+# Android / Gradle
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+.idea/
+*.iml
+# Python
+__pycache__/
+# Secrets (nunca no repo)
+.env
+*.key

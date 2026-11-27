@@ -1,0 +1,32 @@
+name: Suuvi
+options:
+  bundleIdPrefix: app.suuvi
+  deploymentTarget:
+    iOS: "17.0"
+targets:
+  Suuvi:
+    type: application
+    platform: iOS
+    sources: [Suuvi]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.suuvi.Suuvi
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.10"
+  SuuviTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [SuuviTests]
+    dependencies:
+      - target: Suuvi
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.10"
+schemes:
+  Suuvi:
+    build:
+      targets:
+        Suuvi: all
+    test:
+      targets: [SuuviTests]
