@@ -1,0 +1,293 @@
+{
+ "_about": "Casos compartilhados do Contorno 3D. trace: mascara em linhas ('#' = preenchido), contorno externo do componente (8-conexo) que contem o pixel mais alto e mais a esquerda, seguindo as arestas dos pixels com o interior a direita (horario com y para baixo); so vertices de curva; comeca no canto superior esquerdo desse pixel; [] se vazio. area2: dobro da area com sinal (shoelace) do contorno. simplify: Douglas-Peucker em poligono fechado, eps inteiro; ponto so e mantido se distancia > eps.",
+ "trace": [
+  {
+   "name": "vazio",
+   "rows": [
+    "....",
+    "...."
+   ],
+   "expect": [],
+   "area2": 0
+  },
+  {
+   "name": "um pixel",
+   "rows": [
+    "...",
+    ".#.",
+    "..."
+   ],
+   "expect": [
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     1,
+     2
+    ]
+   ],
+   "area2": 2
+  },
+  {
+   "name": "retangulo 2x1",
+   "rows": [
+    "##"
+   ],
+   "expect": [
+    [
+     0,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     0,
+     1
+    ]
+   ],
+   "area2": 4
+  },
+  {
+   "name": "L",
+   "rows": [
+    "#.",
+    "##"
+   ],
+   "expect": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     0,
+     2
+    ]
+   ],
+   "area2": 6
+  },
+  {
+   "name": "diagonal e 8-conexo",
+   "rows": [
+    "#.",
+    ".#"
+   ],
+   "expect": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     0,
+     1
+    ]
+   ],
+   "area2": 4
+  },
+  {
+   "name": "outro bloco ignorado",
+   "rows": [
+    "#...#"
+   ],
+   "expect": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     0,
+     1
+    ]
+   ],
+   "area2": 2
+  }
+ ],
+ "simplify": [
+  {
+   "name": "eps 0 mantem tudo",
+   "points": [
+    [
+     0,
+     0
+    ],
+    [
+     10,
+     1
+    ],
+    [
+     20,
+     0
+    ],
+    [
+     20,
+     10
+    ],
+    [
+     0,
+     10
+    ]
+   ],
+   "eps": 0,
+   "expect": [
+    [
+     0,
+     0
+    ],
+    [
+     10,
+     1
+    ],
+    [
+     20,
+     0
+    ],
+    [
+     20,
+     10
+    ],
+    [
+     0,
+     10
+    ]
+   ]
+  },
+  {
+   "name": "eps 1 remove desvio de 1",
+   "points": [
+    [
+     0,
+     0
+    ],
+    [
+     10,
+     1
+    ],
+    [
+     20,
+     0
+    ],
+    [
+     20,
+     10
+    ],
+    [
+     0,
+     10
+    ]
+   ],
+   "eps": 1,
+   "expect": [
+    [
+     0,
+     0
+    ],
+    [
+     20,
+     0
+    ],
+    [
+     20,
+     10
+    ],
+    [
+     0,
+     10
+    ]
+   ]
+  },
+  {
+   "name": "3 pontos intactos",
+   "points": [
+    [
+     0,
+     0
+    ],
+    [
+     5,
+     0
+    ],
+    [
+     0,
+     5
+    ]
+   ],
+   "eps": 9,
+   "expect": [
+    [
+     0,
+     0
+    ],
+    [
+     5,
+     0
+    ],
+    [
+     0,
+     5
+    ]
+   ]
+  }
+ ]
+}
