@@ -17,4 +17,8 @@
     <string name="a11y_status_failed">Falhou</string>
     <string name="folders_title">Pastas</string>
     <string name="a11y_back">Voltar</string>
+    <string name="search_title">Busca</string>
+    <string name="search_field">Buscar peças</string>
+    <string name="search_empty">Nenhuma peça encontrada</string>
+    <string name="a11y_close">Fechar</string>
 </resources>

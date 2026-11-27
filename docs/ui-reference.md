@@ -51,3 +51,8 @@ Values are visual estimates. Animations, transitions and keyboard states were no
 
 ## Icons (decided 2026-11-27)
 - Set: Lucide (ISC), rounded 2px stroke on a 24 grid, same drawing on both platforms. Sources in `design/icons/*.svg`; `scripts/gen_icons.py` generates Android VectorDrawables and iOS asset-catalog SVGs. No SF Symbols and no Material icons in the UI.
+
+## Search + filter (implemented)
+- Sheet/screen: title "Search" centered, X in grey circle (32pt visual, 44/48 touch) top right, pill search field, 3-column outlined tag chips (selected = amber), 2-column masonry cards (emoji block with varying height + name and @place caption).
+- Rules (parity): `fixtures/search.json` — query matches name, place or tag; selected tags are AND; empty state "No pieces found".
+- Route for CI screenshots: iOS `-startRoute search`, Android `--es route search`.

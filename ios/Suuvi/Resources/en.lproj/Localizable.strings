@@ -14,3 +14,7 @@
 "a11y.status.failed" = "Failed";
 "folders.title" = "Folders";
 "a11y.back" = "Back";
+"search.title" = "Search";
+"search.field" = "Search pieces";
+"search.empty" = "No pieces found";
+"a11y.close" = "Close";

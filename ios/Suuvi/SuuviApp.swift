@@ -7,14 +7,15 @@ enum Route: Hashable {
 
 @main
 struct SuuviApp: App {
-    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders
-    @State private var path: [Route] =
-        UserDefaults.standard.string(forKey: "startRoute") == "folders" ? [.folders] : []
+    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders | search
+    private static let start = UserDefaults.standard.string(forKey: "startRoute")
+    @State private var path: [Route] = SuuviApp.start == "folders" ? [.folders] : []
+    @State private var showSearch = SuuviApp.start == "search"
 
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $path) {
-                ShelfView(onFolders: { path.append(.folders) })
+                ShelfView(onFolders: { path.append(.folders) }, onSearch: { showSearch = true })
                     .toolbar(.hidden, for: .navigationBar)
                     .navigationDestination(for: Route.self) { route in
                         switch route {
@@ -22,6 +23,7 @@ struct SuuviApp: App {
                         }
                     }
             }
+            .sheet(isPresented: $showSearch) { SearchView() }
         }
         .modelContainer(for: [SouvenirCollection.self, Souvenir.self, Asset.self])
     }

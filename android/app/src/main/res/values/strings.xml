@@ -17,4 +17,8 @@
     <string name="a11y_status_failed">Failed</string>
     <string name="folders_title">Folders</string>
     <string name="a11y_back">Back</string>
+    <string name="search_title">Search</string>
+    <string name="search_field">Search pieces</string>
+    <string name="search_empty">No pieces found</string>
+    <string name="a11y_close">Close</string>
 </resources>

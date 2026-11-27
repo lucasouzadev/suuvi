@@ -73,6 +73,10 @@ jobs:
           xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute folders
           sleep 5
           xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-folders.png
+          xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
+          xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute search
+          sleep 5
+          xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-search.png
       - uses: actions/upload-artifact@v4
         with:
           name: ios-screens
@@ -130,6 +134,9 @@ jobs:
             adb shell am start -S -n app.suuvi/.MainActivity --es route folders
             sleep 5
             adb exec-out screencap -p > android-folders.png
+            adb shell am start -S -n app.suuvi/.MainActivity --es route search
+            sleep 5
+            adb exec-out screencap -p > android-search.png
       - uses: actions/upload-artifact@v4
         with:
           name: android-screens

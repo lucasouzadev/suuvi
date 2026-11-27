@@ -1,0 +1,19 @@
+{
+  "_about": "Casos compartilhados da Busca. filter: a peca entra se (consulta vazia OU a consulta, sem espacos nas pontas e sem diferenciar maiusculas, esta contida no nome, no lugar ou em alguma tag) E (tem TODAS as tags selecionadas). Ordem original preservada. allTags: tags unicas em ordem alfabetica (minusculo). Lidos pelo XCTest e pelo JUnit.",
+  "items": [
+    {"id": "a", "name": "Lisboa", "place": "lisboa", "tags": ["viagem", "arte"]},
+    {"id": "b", "name": "Cafe", "place": "cafe", "tags": ["comida"]},
+    {"id": "c", "name": "Feira", "place": "feira", "tags": ["comida", "natureza"]}
+  ],
+  "filter": [
+    {"name": "sem filtro retorna tudo", "query": "", "selected": [], "expect": ["a", "b", "c"]},
+    {"name": "consulta no nome", "query": "lis", "selected": [], "expect": ["a"]},
+    {"name": "consulta no lugar ignora maiusculas", "query": "FEIRA", "selected": [], "expect": ["c"]},
+    {"name": "consulta na tag", "query": "nat", "selected": [], "expect": ["c"]},
+    {"name": "tag selecionada", "query": "", "selected": ["comida"], "expect": ["b", "c"]},
+    {"name": "duas tags exigem as duas", "query": "", "selected": ["comida", "natureza"], "expect": ["c"]},
+    {"name": "espacos nas pontas da consulta", "query": "  cafe ", "selected": [], "expect": ["b"]},
+    {"name": "nada encontrado", "query": "zzz", "selected": [], "expect": []}
+  ],
+  "allTags": ["arte", "comida", "natureza", "viagem"]
+}

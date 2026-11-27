@@ -14,3 +14,7 @@
 "a11y.status.failed" = "Falhou";
 "folders.title" = "Pastas";
 "a11y.back" = "Voltar";
+"search.title" = "Busca";
+"search.field" = "Buscar peças";
+"search.empty" = "Nenhuma peça encontrada";
+"a11y.close" = "Fechar";
