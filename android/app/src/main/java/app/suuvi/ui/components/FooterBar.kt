@@ -30,13 +30,14 @@ import app.suuvi.design.SuuviRadius
 @Composable
 fun FooterBar(
     version: String,
+    showChevron: Boolean = true,
     onCreate: () -> Unit = {},
     onTray: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Box(modifier.fillMaxWidth().height(64.dp), contentAlignment = Alignment.Center) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Outlined.ChevronRight, null, Modifier.size(16.dp), tint = SuuviColor.textMuted)
+            if (showChevron) Icon(Icons.Outlined.ChevronRight, null, Modifier.size(16.dp), tint = SuuviColor.textMuted)
             Text(version, fontSize = 15.sp, color = SuuviColor.textMuted)
             Spacer(Modifier.weight(1f))
             IconAction(Icons.Outlined.Inbox, stringResource(R.string.a11y_inbox), onTray)

@@ -67,11 +67,15 @@ jobs:
           xcrun simctl install "${{ steps.sim.outputs.udid }}" "$APP"
           xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
           sleep 5
-          xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-catalog.png
+          xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-shelf.png
+          xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
+          xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute folders
+          sleep 5
+          xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-folders.png
       - uses: actions/upload-artifact@v4
         with:
-          name: ios-catalog
-          path: ios-catalog.png
+          name: ios-screens
+          path: ios-*.png
 
   android:
     name: android (testes + apk)
@@ -119,10 +123,13 @@ jobs:
           target: google_apis
           script: |
             gradle -p android :app:installDebug
-            adb shell am start -n app.suuvi/.MainActivity
+            adb shell am start -S -n app.suuvi/.MainActivity
             sleep 5
-            adb exec-out screencap -p > android-catalog.png
+            adb exec-out screencap -p > android-shelf.png
+            adb shell am start -S -n app.suuvi/.MainActivity --es route folders
+            sleep 5
+            adb exec-out screencap -p > android-folders.png
       - uses: actions/upload-artifact@v4
         with:
-          name: android-catalog
-          path: android-catalog.png
+          name: android-screens
+          path: android-*.png

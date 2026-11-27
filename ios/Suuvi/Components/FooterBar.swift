@@ -3,6 +3,7 @@ import SwiftUI
 /// Rodape: versao, botao Create central e icone de acao.
 struct FooterBar: View {
     let version: String
+    var showChevron = true
     var onCreate: () -> Void = {}
     var onTray: () -> Void = {}
 
@@ -18,7 +19,7 @@ struct FooterBar: View {
             }
             HStack {
                 HStack(spacing: SuuviSpace.s1) {
-                    Image(systemName: "chevron.right").font(.system(size: 13))
+                    if showChevron { Image(systemName: "chevron.right").font(.system(size: 13)) }
                     Text(version).font(.system(size: 15))
                 }
                 .foregroundStyle(SuuviColor.textMuted)

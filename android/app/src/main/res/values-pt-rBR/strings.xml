@@ -15,4 +15,6 @@
     <string name="a11y_status_ready">Pronto</string>
     <string name="a11y_status_draft">Rascunho</string>
     <string name="a11y_status_failed">Falhou</string>
+    <string name="folders_title">Pastas</string>
+    <string name="a11y_back">Voltar</string>
 </resources>

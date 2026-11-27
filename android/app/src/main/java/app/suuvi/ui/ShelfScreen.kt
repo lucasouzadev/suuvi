@@ -35,7 +35,7 @@ import app.suuvi.ui.components.ShelfRow
 
 /** Tela inicial: cabecalho, card do dia, alternador Colecao/Recebidas, lista e rodape. */
 @Composable
-fun ShelfScreen() {
+fun ShelfScreen(onFolders: () -> Unit = {}) {
     var segment by remember { mutableIntStateOf(0) }
     val rows = if (segment == 0) SampleData.collection else SampleData.received
     val daily = ShelfRules.dailyIndex(ShelfRules.todayEpochDay(), SampleData.dailyPicks.size)
@@ -49,7 +49,7 @@ fun ShelfScreen() {
             .padding(horizontal = SuuviSpace.s5),
         verticalArrangement = Arrangement.spacedBy(SuuviSpace.s4),
     ) {
-        HeaderBar(title = stringResource(R.string.shelf_title))
+        HeaderBar(title = stringResource(R.string.shelf_title), onFolders = onFolders)
         if (daily != null) DailyCard(daily)
         SegmentedPill(
             options = listOf(

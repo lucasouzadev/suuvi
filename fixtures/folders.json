@@ -1,0 +1,14 @@
+{
+  "_about": "Casos compartilhados da tela Pastas. order: mais usada recentemente primeiro (lastUsed maior); empate por nome, minusculo, ordem alfabetica. Lidos pelo XCTest e pelo JUnit.",
+  "order": [
+    {"name": "mais recente primeiro",
+     "items": [{"name": "Cafe", "lastUsed": 10}, {"name": "Lisboa", "lastUsed": 30}, {"name": "Feira", "lastUsed": 20}],
+     "expect": ["Lisboa", "Feira", "Cafe"]},
+    {"name": "empate desempata por nome",
+     "items": [{"name": "feira", "lastUsed": 5}, {"name": "Cafe", "lastUsed": 5}, {"name": "Arte", "lastUsed": 5}],
+     "expect": ["Arte", "Cafe", "feira"]},
+    {"name": "lista vazia",
+     "items": [],
+     "expect": []}
+  ]
+}

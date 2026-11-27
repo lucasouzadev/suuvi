@@ -12,3 +12,5 @@
 "a11y.status.ready" = "Pronto";
 "a11y.status.draft" = "Rascunho";
 "a11y.status.failed" = "Falhou";
+"folders.title" = "Pastas";
+"a11y.back" = "Voltar";

@@ -3,6 +3,7 @@ import SwiftUI
 /// Tela inicial: cabecalho, card do dia, alternador Colecao/Recebidas, lista e rodape.
 struct ShelfView: View {
     @State private var segment = 0
+    var onFolders: () -> Void = {}
 
     private var items: [ShelfItem] {
         segment == 0 ? SampleData.collection : SampleData.received
@@ -15,7 +16,7 @@ struct ShelfView: View {
 
     var body: some View {
         VStack(spacing: SuuviSpace.s4) {
-            HeaderBar(title: "shelf.title")
+            HeaderBar(title: "shelf.title", onFolders: onFolders)
             if let daily { DailyCard(pick: daily) }
             SegmentedPill(options: ["shelf.segment.collection", "shelf.segment.received"],
                           selection: $segment)
