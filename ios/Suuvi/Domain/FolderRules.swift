@@ -30,6 +30,9 @@ enum FolderRules {
 }
 
 extension SampleData {
+    /// Id da pasta pelo nome (a Shelf de exemplo resume as mesmas colecoes).
+    static func folderId(forName name: String) -> String? { folders.first { $0.name == name }?.id }
+
     static let folders: [FolderItem] = [
         FolderItem(id: "f1", name: "Lisboa", emoji: "🏺", place: "lisboa", number: 12, lastUsedEpochDay: 20320),
         FolderItem(id: "f2", name: "Café", emoji: "☕️", place: "cafe", number: 5, lastUsedEpochDay: 20315),

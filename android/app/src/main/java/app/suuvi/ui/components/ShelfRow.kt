@@ -1,6 +1,7 @@
 package app.suuvi.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,8 +26,8 @@ import app.suuvi.ui.BadgeChip
 
 /** Linha da lista: barra, chip letra+emoji, @lugar, letra do formato, #n e status. */
 @Composable
-fun ShelfRow(item: ShelfItem, modifier: Modifier = Modifier) {
-    Column(modifier.fillMaxWidth()) {
+fun ShelfRow(item: ShelfItem, modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
+    Column(modifier.fillMaxWidth().clickable(onClick = onClick)) {
         Row(
             Modifier.fillMaxWidth().heightIn(min = 56.dp),
             verticalAlignment = Alignment.CenterVertically,

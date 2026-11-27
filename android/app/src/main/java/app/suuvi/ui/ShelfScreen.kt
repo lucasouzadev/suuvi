@@ -26,6 +26,7 @@ import app.suuvi.R
 import app.suuvi.design.SuuviColor
 import app.suuvi.design.SuuviSpace
 import app.suuvi.domain.SampleData
+import app.suuvi.domain.folderId
 import app.suuvi.domain.ShelfRules
 import app.suuvi.ui.components.DailyCard
 import app.suuvi.ui.components.FooterBar
@@ -35,7 +36,7 @@ import app.suuvi.ui.components.ShelfRow
 
 /** Tela inicial: cabecalho, card do dia, alternador Colecao/Recebidas, lista e rodape. */
 @Composable
-fun ShelfScreen(onFolders: () -> Unit = {}, onSearch: () -> Unit = {}) {
+fun ShelfScreen(onFolders: () -> Unit = {}, onSearch: () -> Unit = {}, onOpen: (String) -> Unit = {}) {
     var segment by remember { mutableIntStateOf(0) }
     val rows = if (segment == 0) SampleData.collection else SampleData.received
     val daily = ShelfRules.dailyIndex(ShelfRules.todayEpochDay(), SampleData.dailyPicks.size)
@@ -60,7 +61,7 @@ fun ShelfScreen(onFolders: () -> Unit = {}, onSearch: () -> Unit = {}) {
             onSelect = { segment = it },
         )
         LazyColumn(Modifier.weight(1f)) {
-            items(rows, key = { it.id }) { ShelfRow(it) }
+            items(rows, key = { it.id }) { row -> ShelfRow(row, onClick = { SampleData.folderId(row.name)?.let(onOpen) }) }
             item {
                 Column(
                     Modifier.fillMaxWidth().padding(top = SuuviSpace.s8),

@@ -19,6 +19,9 @@ object FolderRules {
         )
 }
 
+/** Id da pasta pelo nome (a Shelf de exemplo resume as mesmas colecoes). */
+fun SampleData.folderId(name: String): String? = folders.firstOrNull { it.name == name }?.id
+
 val SampleData.folders: List<FolderItem>
     get() = listOf(
         FolderItem("f1", "Lisboa", "🏺", "lisboa", 12, 20320),

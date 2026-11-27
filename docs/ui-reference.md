@@ -69,3 +69,7 @@ Values are visual estimates. Animations, transitions and keyboard states were no
 ## Edit + Edit done (implemented)
 - Left: cascade of 3 overlapping tilted cards (collection pieces + folder emoji). Right: 3 pill fields with numbered circles (title, place, optional tag). Action pill greyed until valid (`fixtures/edit.json`: title+place required, title <= 40, tag optional, normalized). After save: filled pills with check circles, amber check in header, block "Piece saved / Added to X / hint", pill becomes "Done".
 - Reached from Collection ("+" slot or "Add piece"). Not persisted yet (SwiftData/Room wiring pending). CI routes: edit | editdone.
+
+## Navigation + collection profile (implemented)
+- Shelf rows and Folders cards open the Collection; "+" slots and "Add piece" open Edit; info icon opens the profile sheet (close X, big emoji, name, @place · #n, meta row, Pieces/Details pill + share, rows with leading chevron). Back returns to where the Collection was opened from.
+- CI routes: `profile` (iOS `-startRoute profile`, Android `--es route profile`).

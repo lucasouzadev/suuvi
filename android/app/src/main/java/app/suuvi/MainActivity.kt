@@ -19,11 +19,11 @@ private enum class Screen { SHELF, FOLDERS, SEARCH, COLLECTION, EDIT }
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Rota inicial opcional (usada pelo CI para tirar print): --es route folders | collection | edit | editdone | search
+        // Rota inicial opcional (usada pelo CI para tirar print): --es route folders | collection | edit | editdone | profile | search
         val start = when (intent.getStringExtra("route")) {
             "folders" -> Screen.FOLDERS
             "search" -> Screen.SEARCH
-            "collection" -> Screen.COLLECTION
+            "collection", "profile" -> Screen.COLLECTION
             "edit", "editdone" -> Screen.EDIT
             else -> Screen.SHELF
         }
@@ -31,23 +31,29 @@ class MainActivity : ComponentActivity() {
             var screen by rememberSaveable { mutableStateOf(start) }
             val preset = intent.getStringExtra("route") == "editdone"
             var collectionId by rememberSaveable { mutableStateOf("f1") }
+            var backTo by rememberSaveable { mutableStateOf(Screen.FOLDERS) }
             BackHandler(enabled = screen != Screen.SHELF) {
                 screen = when (screen) {
                     Screen.EDIT -> Screen.COLLECTION
-                    Screen.COLLECTION -> Screen.FOLDERS
+                    Screen.COLLECTION -> backTo
                     else -> Screen.SHELF
                 }
             }
             when (screen) {
-                Screen.SHELF -> ShelfScreen(onFolders = { screen = Screen.FOLDERS }, onSearch = { screen = Screen.SEARCH })
+                Screen.SHELF -> ShelfScreen(
+                    onFolders = { screen = Screen.FOLDERS },
+                    onSearch = { screen = Screen.SEARCH },
+                    onOpen = { collectionId = it; backTo = Screen.SHELF; screen = Screen.COLLECTION },
+                )
                 Screen.FOLDERS -> FoldersScreen(
                     onBack = { screen = Screen.SHELF },
-                    onOpen = { collectionId = it; screen = Screen.COLLECTION },
+                    onOpen = { collectionId = it; backTo = Screen.FOLDERS; screen = Screen.COLLECTION },
                 )
                 Screen.COLLECTION -> CollectionScreen(
                     collectionId,
-                    onBack = { screen = Screen.FOLDERS },
+                    onBack = { screen = backTo },
                     onAdd = { screen = Screen.EDIT },
+                    startProfile = intent.getStringExtra("route") == "profile",
                 )
                 Screen.EDIT -> EditScreen(collectionId, preset, onBack = { screen = Screen.COLLECTION })
                 Screen.SEARCH -> SearchScreen(onClose = { screen = Screen.SHELF })

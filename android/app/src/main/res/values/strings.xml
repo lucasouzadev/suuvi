@@ -36,4 +36,13 @@
     <string name="edit_saved_body">Added to %1$s.</string>
     <string name="edit_saved_hint">You can edit it anytime.</string>
     <string name="a11y_saved">Saved</string>
+    <string name="profile_pieces">Pieces</string>
+    <string name="profile_details">Details</string>
+    <string name="profile_format">Format</string>
+    <string name="profile_status">Status</string>
+    <string name="profile_empty">No pieces yet</string>
+    <string name="tier_coin">Coin</string>
+    <string name="tier_pin">Pin</string>
+    <string name="tier_magnet">Magnet</string>
+    <string name="a11y_share">Share</string>
 </resources>

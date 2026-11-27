@@ -4,7 +4,14 @@ import SwiftUI
 struct CollectionView: View {
     @Environment(\.dismiss) private var dismiss
     let id: String
+
+    init(id: String, startProfile: Bool = false, onAdd: @escaping () -> Void = {}) {
+        self.id = id
+        self.onAdd = onAdd
+        _showProfile = State(initialValue: startProfile)
+    }
     var onAdd: () -> Void = {}
+    @State private var showProfile: Bool
     private let columns = [GridItem(.flexible(), spacing: SuuviSpace.s4),
                            GridItem(.flexible(), spacing: SuuviSpace.s4)]
 
@@ -71,7 +78,7 @@ struct CollectionView: View {
                     }
                     .foregroundStyle(SuuviColor.textMuted)
                     Spacer()
-                    IconButton(icon: "ic_info", label: "a11y.info")
+                    IconButton(icon: "ic_info", label: "a11y.info") { showProfile = true }
                 }
             }
             .frame(height: 56)
@@ -79,5 +86,6 @@ struct CollectionView: View {
         .padding(.horizontal, SuuviSpace.s5)
         .background(SuuviColor.bg)
         .navigationBarBackButtonHidden(true)
+        .sheet(isPresented: $showProfile) { CollectionProfileView(detail: d) }
     }
 }

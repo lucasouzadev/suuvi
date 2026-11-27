@@ -33,3 +33,12 @@
 "edit.saved.body" = "Adicionada a %@.";
 "edit.saved.hint" = "Você pode editar quando quiser.";
 "a11y.saved" = "Salvo";
+"profile.pieces" = "Peças";
+"profile.details" = "Detalhes";
+"profile.format" = "Formato";
+"profile.status" = "Status";
+"profile.empty" = "Nenhuma peça ainda";
+"tier.coin" = "Moeda";
+"tier.pin" = "Pin";
+"tier.magnet" = "Ímã";
+"a11y.share" = "Compartilhar";

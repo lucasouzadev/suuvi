@@ -22,6 +22,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -47,9 +51,11 @@ import app.suuvi.ui.components.StatusMark
 
 /** Colecao: voltar + chip, linha "de X" com @lugar/#n/status, grade 2x2 inclinada, legenda e rodape. */
 @Composable
-fun CollectionScreen(id: String, onBack: () -> Unit, onAdd: () -> Unit = {}) {
+fun CollectionScreen(id: String, onBack: () -> Unit, onAdd: () -> Unit = {}, startProfile: Boolean = false) {
     val d = SampleData.collectionDetail(id) ?: return
     val filled = CollectionRules.slots(d.pieces.size)
+    var showProfile by rememberSaveable { mutableStateOf(startProfile) }
+    if (showProfile) CollectionProfileSheet(d, onDismiss = { showProfile = false })
     Column(
         Modifier.fillMaxSize().background(SuuviColor.bg)
             .windowInsetsPadding(WindowInsets.systemBars)
@@ -109,7 +115,7 @@ fun CollectionScreen(id: String, onBack: () -> Unit, onAdd: () -> Unit = {}) {
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = SuuviColor.text),
             ) { Text(stringResource(R.string.collection_add), fontSize = 17.sp, fontWeight = FontWeight.SemiBold, maxLines = 1) }
             Row(Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
-                IconAction(R.drawable.ic_info, stringResource(R.string.a11y_info), {})
+                IconAction(R.drawable.ic_info, stringResource(R.string.a11y_info), { showProfile = true })
             }
         }
     }

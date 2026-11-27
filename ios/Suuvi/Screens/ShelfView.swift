@@ -5,6 +5,7 @@ struct ShelfView: View {
     @State private var segment = 0
     var onFolders: () -> Void = {}
     var onSearch: () -> Void = {}
+    var onOpen: (String) -> Void = { _ in }
 
     private var items: [ShelfItem] {
         segment == 0 ? SampleData.collection : SampleData.received
@@ -23,7 +24,9 @@ struct ShelfView: View {
                           selection: $segment)
             ScrollView {
                 LazyVStack(spacing: 0) {
-                    ForEach(items) { ShelfRow(item: $0) }
+                    ForEach(items) { item in
+                        Button { onOpen(item.name) } label: { ShelfRow(item: item) }.buttonStyle(.plain)
+                    }
                 }
                 VStack(spacing: SuuviSpace.s2) {
                     Text("shelf.helper.title")
