@@ -31,10 +31,12 @@ struct CollectionProfileView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("a11y.close", systemImage: "xmark") { dismiss() }
+                    Button { dismiss() } label: { SuuviIcon(name: "ic_x", size: 20) }
+                        .accessibilityLabel("a11y.close")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    ShareLink(item: "\(detail.folder.name) #\(detail.folder.number)")
+                    ShareLink(item: "\(detail.folder.name) #\(detail.folder.number)") { SuuviIcon(name: "ic_share", size: 20) }
+                        .accessibilityLabel("a11y.share")
                 }
             }
         }
@@ -51,8 +53,8 @@ struct CollectionProfileView: View {
                 .font(.subheadline)
                 .foregroundStyle(SuuviColor.textMuted)
             HStack(spacing: SuuviSpace.s4) {
-                Label("@\(detail.folder.place)", systemImage: "mappin")
-                Label(dateText, systemImage: "calendar")
+                HStack(spacing: SuuviSpace.s1) { SuuviIcon(name: "ic_map_pin", size: 14); Text("@\(detail.folder.place)") }
+                HStack(spacing: SuuviSpace.s1) { SuuviIcon(name: "ic_calendar", size: 14); Text(dateText) }
             }
             .font(.footnote)
             .foregroundStyle(SuuviColor.textMuted)
@@ -74,8 +76,7 @@ struct CollectionProfileView: View {
                     EmojiView(glyph: piece.emoji, size: 24)
                     Text(piece.title).font(.body).foregroundStyle(SuuviColor.text)
                     Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.footnote.weight(.semibold))
+                    SuuviIcon(name: "ic_chevron_right", size: 16)
                         .foregroundStyle(SuuviColor.textMuted)
                 }
             }
