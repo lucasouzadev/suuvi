@@ -1,0 +1,97 @@
+{
+ "_about": "Casos compartilhados da criacao de peca (salvar na Edicao). create: normaliza (titulo sem espacos das pontas; lugar sem espacos, sem '@' inicial, minusculo; tag sem '#', minuscula, vazia = null), valida (titulo e lugar nao vazios apos normalizar, titulo ate 40) e emite o proximo #n = max(existing, lastIssued)+1. expect = null quando invalido; lastIssued = numero emitido.",
+ "cases": [
+  {
+   "name": "primeira peca normaliza tudo",
+   "existing": [],
+   "lastIssued": 0,
+   "title": "  Moeda  ",
+   "place": " @Lisboa ",
+   "tag": "#Viagem",
+   "expect": {
+    "number": 1,
+    "title": "Moeda",
+    "place": "lisboa",
+    "tag": "viagem",
+    "lastIssued": 1
+   }
+  },
+  {
+   "name": "numero apagado nao volta",
+   "existing": [
+    1,
+    3
+   ],
+   "lastIssued": 4,
+   "title": "Pastel",
+   "place": "lisboa",
+   "tag": "",
+   "expect": {
+    "number": 5,
+    "title": "Pastel",
+    "place": "lisboa",
+    "tag": null,
+    "lastIssued": 5
+   }
+  },
+  {
+   "name": "sem tag",
+   "existing": [
+    1
+   ],
+   "lastIssued": 1,
+   "title": "Bonde",
+   "place": "lisboa",
+   "tag": "   ",
+   "expect": {
+    "number": 2,
+    "title": "Bonde",
+    "place": "lisboa",
+    "tag": null,
+    "lastIssued": 2
+   }
+  },
+  {
+   "name": "titulo vazio",
+   "existing": [],
+   "lastIssued": 0,
+   "title": "   ",
+   "place": "lisboa",
+   "tag": "",
+   "expect": null
+  },
+  {
+   "name": "lugar so com @",
+   "existing": [],
+   "lastIssued": 0,
+   "title": "Moeda",
+   "place": " @ ",
+   "tag": "",
+   "expect": null
+  },
+  {
+   "name": "titulo com 40 e valido",
+   "existing": [],
+   "lastIssued": 0,
+   "title": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "place": "x",
+   "tag": "",
+   "expect": {
+    "number": 1,
+    "title": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "place": "x",
+    "tag": null,
+    "lastIssued": 1
+   }
+  },
+  {
+   "name": "titulo com 41 e invalido",
+   "existing": [],
+   "lastIssued": 0,
+   "title": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "place": "x",
+   "tag": "",
+   "expect": null
+  }
+ ]
+}
