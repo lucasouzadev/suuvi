@@ -53,6 +53,7 @@ jobs:
       - name: Testes no simulador
         run: |
           set -o pipefail
+          mkdir -p ios/build
           xcodebuild test \
             -project ios/Suuvi.xcodeproj -scheme Suuvi \
             -destination "id=${{ steps.sim.outputs.udid }}" \
