@@ -37,7 +37,7 @@ jobs:
 
   ios:
     name: ios (simulador)
-    runs-on: macos-15
+    runs-on: macos-26
     needs: tokens
     steps:
       - uses: actions/checkout@v4
@@ -157,7 +157,7 @@ jobs:
       - name: Emulador, instalar, abrir e tirar print
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: 36
           arch: x86_64
           target: google_apis
           script: |

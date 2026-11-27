@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "app.suuvi"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "app.suuvi"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "0.1.0"
     }
@@ -26,7 +26,7 @@ android {
 }
 
 dependencies {
-    val composeBom = platform("androidx.compose:compose-bom:2025.08.00")
+    val composeBom = platform("androidx.compose:compose-bom:2025.12.00")
     implementation(composeBom)
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui")
