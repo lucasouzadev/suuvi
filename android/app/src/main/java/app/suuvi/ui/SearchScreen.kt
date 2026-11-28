@@ -30,6 +30,8 @@ import app.suuvi.R
 import app.suuvi.design.SuuviColor
 import app.suuvi.design.SuuviSpace
 import app.suuvi.domain.SampleData
+import app.suuvi.domain.SearchItem
+import androidx.compose.runtime.collectAsState
 import app.suuvi.domain.SearchRules
 import app.suuvi.domain.searchItems
 import app.suuvi.ui.components.CloseButton
@@ -44,7 +46,10 @@ private val heights = listOf(160.dp, 128.dp, 144.dp, 120.dp)
 fun SearchScreen(onClose: () -> Unit = {}) {
     var query by rememberSaveable { mutableStateOf("") }
     var selected by rememberSaveable { mutableStateOf(setOf<String>()) }
-    val items = SampleData.searchItems
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val saved by remember { app.suuvi.data.SuuviDb.get(context).dao().allSavedPieces() }.collectAsState(initial = emptyList())
+    // Pecas salvas (mais novas primeiro) e depois os exemplos.
+    val items = saved.map { SearchItem(it.id, it.title, it.emoji, it.place, it.number, listOfNotNull(it.tag)) } + SampleData.searchItems
     val tags = SearchRules.allTags(items)
     val results = SearchRules.filter(items, query, selected)
 

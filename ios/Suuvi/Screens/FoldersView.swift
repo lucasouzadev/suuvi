@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 /// Tela de Pastas: grade de 2 colunas com as colecoes, da mais usada para a menos usada.
 struct FoldersView: View {
@@ -6,7 +7,8 @@ struct FoldersView: View {
     var onOpen: (String) -> Void = { _ in }
     private let columns = [GridItem(.flexible(), spacing: SuuviSpace.s3),
                            GridItem(.flexible(), spacing: SuuviSpace.s3)]
-    private var items: [FolderItem] { FolderRules.ordered(SampleData.folders) }
+    @Query private var saved: [SavedPiece]
+    private var items: [FolderItem] { FolderRules.ordered(SampleData.folders(usedBy: saved)) }
 
     var body: some View {
         VStack(spacing: SuuviSpace.s4) {

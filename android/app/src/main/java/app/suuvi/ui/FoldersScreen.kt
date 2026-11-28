@@ -20,6 +20,10 @@ import app.suuvi.design.SuuviColor
 import app.suuvi.design.SuuviSpace
 import app.suuvi.domain.FolderRules
 import app.suuvi.domain.SampleData
+import app.suuvi.domain.foldersUsedBy
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import app.suuvi.domain.folders
 import app.suuvi.ui.components.BackBar
 import app.suuvi.ui.components.FolderCard
@@ -28,7 +32,9 @@ import app.suuvi.ui.components.FooterBar
 /** Tela de Pastas: grade de 2 colunas com as colecoes, da mais usada para a menos usada. */
 @Composable
 fun FoldersScreen(onBack: () -> Unit, onOpen: (String) -> Unit = {}) {
-    val rows = FolderRules.ordered(SampleData.folders)
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val saved by remember { app.suuvi.data.SuuviDb.get(context).dao().allSavedPieces() }.collectAsState(initial = emptyList())
+    val rows = FolderRules.ordered(SampleData.foldersUsedBy(saved))
     Column(
         Modifier
             .fillMaxSize()

@@ -1,14 +1,79 @@
 {
-  "_about": "Casos compartilhados da tela Pastas. order: mais usada recentemente primeiro (lastUsed maior); empate por nome, minusculo, ordem alfabetica. Lidos pelo XCTest e pelo JUnit.",
-  "order": [
-    {"name": "mais recente primeiro",
-     "items": [{"name": "Cafe", "lastUsed": 10}, {"name": "Lisboa", "lastUsed": 30}, {"name": "Feira", "lastUsed": 20}],
-     "expect": ["Lisboa", "Feira", "Cafe"]},
-    {"name": "empate desempata por nome",
-     "items": [{"name": "feira", "lastUsed": 5}, {"name": "Cafe", "lastUsed": 5}, {"name": "Arte", "lastUsed": 5}],
-     "expect": ["Arte", "Cafe", "feira"]},
-    {"name": "lista vazia",
-     "items": [],
-     "expect": []}
-  ]
+ "_about": "Casos compartilhados da tela Pastas. order: mais usada recentemente primeiro (lastUsed maior); empate por nome, minusculo, ordem alfabetica. Lidos pelo XCTest e pelo JUnit. lastUsed: dia de ultimo uso efetivo = max(dia base da pasta, dia da peca salva mais recente); sem pecas = base.",
+ "order": [
+  {
+   "name": "mais recente primeiro",
+   "items": [
+    {
+     "name": "Cafe",
+     "lastUsed": 10
+    },
+    {
+     "name": "Lisboa",
+     "lastUsed": 30
+    },
+    {
+     "name": "Feira",
+     "lastUsed": 20
+    }
+   ],
+   "expect": [
+    "Lisboa",
+    "Feira",
+    "Cafe"
+   ]
+  },
+  {
+   "name": "empate desempata por nome",
+   "items": [
+    {
+     "name": "feira",
+     "lastUsed": 5
+    },
+    {
+     "name": "Cafe",
+     "lastUsed": 5
+    },
+    {
+     "name": "Arte",
+     "lastUsed": 5
+    }
+   ],
+   "expect": [
+    "Arte",
+    "Cafe",
+    "feira"
+   ]
+  },
+  {
+   "name": "lista vazia",
+   "items": [],
+   "expect": []
+  }
+ ],
+ "lastUsed": [
+  {
+   "name": "sem pecas fica o base",
+   "base": 20315,
+   "days": [],
+   "expect": 20315
+  },
+  {
+   "name": "peca nova sobe",
+   "base": 20315,
+   "days": [
+    20400,
+    20419
+   ],
+   "expect": 20419
+  },
+  {
+   "name": "peca antiga nao desce",
+   "base": 20320,
+   "days": [
+    20100
+   ],
+   "expect": 20320
+  }
+ ]
 }

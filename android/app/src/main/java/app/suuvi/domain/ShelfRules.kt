@@ -17,4 +17,8 @@ object ShelfRules {
     }
 
     fun todayEpochDay(): Long = LocalDate.now().toEpochDay()
+
+    /** Dia local (desde 1970-01-01) de um instante em milissegundos. */
+    fun epochDay(millis: Long): Long =
+        java.time.Instant.ofEpochMilli(millis).atZone(java.time.ZoneId.systemDefault()).toLocalDate().toEpochDay()
 }

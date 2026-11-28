@@ -17,7 +17,17 @@ object FolderRules {
             compareByDescending<FolderItem> { it.lastUsedEpochDay }
                 .thenBy { it.name.lowercase() },
         )
+
+    /** Dia de ultimo uso efetivo: o maior entre o dia base da pasta e o dia da peca salva mais recente. */
+    fun lastUsed(base: Long, pieceDays: List<Long>): Long = maxOf(base, pieceDays.maxOrNull() ?: base)
 }
+
+/** Pastas de exemplo com o ultimo uso atualizado pelas pecas salvas no banco. */
+fun SampleData.foldersUsedBy(saved: List<app.suuvi.data.SavedPiece>): List<FolderItem> =
+    folders.map { f ->
+        val days = saved.filter { it.folderId == f.id }.map { ShelfRules.epochDay(it.createdAt) }
+        f.copy(lastUsedEpochDay = FolderRules.lastUsed(f.lastUsedEpochDay, days))
+    }
 
 /** Id da pasta pelo nome (a Shelf de exemplo resume as mesmas colecoes). */
 fun SampleData.folderId(name: String): String? = folders.firstOrNull { it.name == name }?.id

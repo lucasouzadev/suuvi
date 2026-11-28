@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 /// Tela inicial: cabecalho, card do dia, alternador Colecao/Recebidas, lista e rodape.
 struct ShelfView: View {
@@ -10,8 +11,12 @@ struct ShelfView: View {
     var onSearch: () -> Void = {}
     var onOpen: (String) -> Void = { _ in }
 
+    @Query private var saved: [SavedPiece]
+    /// Colecao: da mais usada para a menos usada (peca nova sobe a pasta). Recebidas: ordem original.
     private var items: [ShelfItem] {
-        segment == 0 ? SampleData.collection : SampleData.received
+        if segment != 0 { return SampleData.received }
+        return FolderRules.ordered(SampleData.folders(usedBy: saved))
+            .compactMap { f in SampleData.collection.first { $0.name == f.name } }
     }
     private var daily: DailyPick? {
         guard let i = ShelfRules.dailyIndex(epochDay: ShelfRules.todayEpochDay(),

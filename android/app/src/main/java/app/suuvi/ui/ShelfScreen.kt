@@ -26,7 +26,10 @@ import androidx.compose.ui.unit.sp
 import app.suuvi.R
 import app.suuvi.design.SuuviColor
 import app.suuvi.design.SuuviSpace
+import app.suuvi.domain.FolderRules
 import app.suuvi.domain.SampleData
+import app.suuvi.domain.foldersUsedBy
+import androidx.compose.runtime.collectAsState
 import app.suuvi.domain.folderId
 import app.suuvi.domain.ShelfRules
 import app.suuvi.ui.components.DailyCard
@@ -39,7 +42,12 @@ import app.suuvi.ui.components.ShelfRow
 @Composable
 fun ShelfScreen(onFolders: () -> Unit = {}, onSearch: () -> Unit = {}, onOpen: (String) -> Unit = {}, onSettings: () -> Unit = {}, onCreate: () -> Unit = {}) {
     var segment by remember { mutableIntStateOf(0) }
-    val rows = if (segment == 0) SampleData.collection else SampleData.received
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val saved by remember { app.suuvi.data.SuuviDb.get(context).dao().allSavedPieces() }.collectAsState(initial = emptyList())
+    // Colecao: da mais usada para a menos usada (peca nova sobe a pasta). Recebidas: ordem original.
+    val rows = if (segment == 0) {
+        FolderRules.ordered(SampleData.foldersUsedBy(saved)).mapNotNull { f -> SampleData.collection.firstOrNull { it.name == f.name } }
+    } else SampleData.received
     val daily = ShelfRules.dailyIndex(ShelfRules.todayEpochDay(), SampleData.dailyPicks.size)
         ?.let { SampleData.dailyPicks[it] }
 

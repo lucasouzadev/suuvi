@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 /// Busca + filtro (apresentada como sheet nativo): campo, chips de tags e resultados em mosaico.
 struct SearchView: View {
@@ -6,7 +7,12 @@ struct SearchView: View {
     @State private var query = ""
     @State private var selected: Set<String> = []
 
-    private let items = SampleData.searchItems
+    @Query(sort: \SavedPiece.createdAt, order: .reverse) private var saved: [SavedPiece]
+    /// Pecas salvas (mais novas primeiro) e depois os exemplos.
+    private var items: [SearchItem] {
+        saved.map { SearchItem(id: $0.id.uuidString, name: $0.title, emoji: $0.emoji, place: $0.place, number: $0.number, tags: $0.tag.map { [$0] } ?? []) }
+            + SampleData.searchItems
+    }
     private let heights: [CGFloat] = [160, 128, 144, 120]
     private var tags: [String] { SearchRules.allTags(items) }
     private var results: [SearchItem] { SearchRules.filter(items, query: query, selected: selected) }

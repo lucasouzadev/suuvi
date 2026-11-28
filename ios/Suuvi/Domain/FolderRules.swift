@@ -29,7 +29,21 @@ enum FolderRules {
     }
 }
 
+extension FolderRules {
+    /// Dia de ultimo uso efetivo: o maior entre o dia base da pasta e o dia da peca salva mais recente.
+    static func lastUsed(base: Int, pieceDays: [Int]) -> Int { max(base, pieceDays.max() ?? base) }
+}
+
 extension SampleData {
+    /// Pastas de exemplo com o ultimo uso atualizado pelas pecas salvas no banco.
+    static func folders(usedBy saved: [SavedPiece]) -> [FolderItem] {
+        folders.map { f in
+            let days = saved.filter { $0.folderId == f.id }.map { ShelfRules.todayEpochDay(now: $0.createdAt) }
+            return FolderItem(id: f.id, name: f.name, emoji: f.emoji, place: f.place, number: f.number,
+                              lastUsedEpochDay: FolderRules.lastUsed(base: f.lastUsedEpochDay, pieceDays: days))
+        }
+    }
+
     /// Id da pasta pelo nome (a Shelf de exemplo resume as mesmas colecoes).
     static func folderId(forName name: String) -> String? { folders.first { $0.name == name }?.id }
 
