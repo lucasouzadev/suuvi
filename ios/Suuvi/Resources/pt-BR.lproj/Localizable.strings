@@ -26,6 +26,7 @@
 "edit.title" = "Nova peça";
 "edit.field.title" = "Título";
 "edit.field.place" = "Lugar";
+"edit.field.note" = "Nota (opcional)";
 "edit.field.tag" = "Tag (opcional)";
 "edit.save" = "Salvar peça";
 "edit.done" = "Concluir";

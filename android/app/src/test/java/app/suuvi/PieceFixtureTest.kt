@@ -29,9 +29,9 @@ class PieceFixtureTest {
         for (i in 0 until upd.length()) {
             val c = upd.getJSONObject(i)
             val want = if (c.isNull("expect")) null else c.getJSONObject("expect").let {
-                EditedPiece(it.getString("title"), it.getString("place"), if (it.isNull("tag")) null else it.getString("tag"))
+                EditedPiece(it.getString("title"), it.getString("place"), if (it.isNull("tag")) null else it.getString("tag"), if (it.isNull("note")) null else it.getString("note"))
             }
-            assertEquals(c.getString("name"), want, PieceRules.update(c.getString("title"), c.getString("place"), c.getString("tag")))
+            assertEquals(c.getString("name"), want, PieceRules.update(c.getString("title"), c.getString("place"), c.getString("tag"), c.optString("note", "")))
         }
         val iss = root.getJSONArray("issued")
         for (i in 0 until iss.length()) {
@@ -47,10 +47,10 @@ class PieceFixtureTest {
         for (i in 0 until cases.length()) {
             val c = cases.getJSONObject(i)
             val ex = c.getJSONArray("existing").let { a -> List(a.length()) { a.getInt(it) } }
-            val got = PieceRules.create(c.getString("title"), c.getString("place"), c.getString("tag"), ex, c.getInt("lastIssued"))
+            val got = PieceRules.create(c.getString("title"), c.getString("place"), c.getString("tag"), ex, c.getInt("lastIssued"), c.optString("note", ""))
             val want = if (c.isNull("expect")) null else c.getJSONObject("expect").let {
                 NewPiece(it.getInt("number"), it.getString("title"), it.getString("place"),
-                    if (it.isNull("tag")) null else it.getString("tag"), it.getInt("lastIssued"))
+                    if (it.isNull("tag")) null else it.getString("tag"), if (it.isNull("note")) null else it.getString("note"), it.getInt("lastIssued"))
             }
             assertEquals(c.getString("name"), want, got)
         }

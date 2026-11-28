@@ -66,4 +66,6 @@ data class SavedPiece(
     /** Imagem da peca (recorte ou foto), relativa a filesDir/suuvi; null = so emoji. */
     val imagePath: String? = null,
     val createdAt: Long,
+    /** Nota opcional (ate 140 caracteres); aparece no card "suvenir do dia". */
+    val note: String? = null,
 )

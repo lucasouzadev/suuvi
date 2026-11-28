@@ -10,6 +10,10 @@ object ShelfRules {
         return (((epochDay % count) + count) % count).toInt()
     }
 
+    /** Ordem das pecas salvas no sorteio do dia: por colecao (id) e depois por numero. Devolve indices da entrada. */
+    fun dailyOrder(keys: List<Pair<String, Int>>): List<Int> =
+        keys.indices.sortedWith(compareBy({ keys[it].first }, { keys[it].second }))
+
     /** Primeira letra ou digito do titulo, em maiusculo; "?" se nao houver. */
     fun chipLetter(title: String): String {
         val ch = title.firstOrNull { it.isLetterOrDigit() } ?: return "?"

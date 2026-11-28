@@ -3,6 +3,13 @@ import Foundation
 /// Regras da Edicao de peca. Mesmas regras no Android (EditRules.kt); fixtures/edit.json valida as duas.
 enum EditRules {
     static let maxTitle = 40
+    static let maxNote = 140
+
+    /// Nota opcional: tira espacos das pontas; vazia = nil.
+    static func normalizeNote(_ raw: String) -> String? {
+        let n = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        return n.isEmpty ? nil : n
+    }
 
     /// Titulo e lugar obrigatorios (sem contar espacos das pontas); titulo ate 40 caracteres; tag opcional.
     static func isValid(title: String, place: String) -> Bool {

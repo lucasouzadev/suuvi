@@ -13,7 +13,7 @@ enum Route: Hashable {
 
 @main
 struct SuuviApp: App {
-    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders | collection | edit | editdone | created | createdphoto | collection2 | collection5 | editpiece | deleteask | deleted | viewercutout | profile | settings | capture | capturelifted | search | viewer
+    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders | collection | edit | editdone | created | createdphoto | collection2 | collection5 | editpiece | deleteask | deleted | shelfnote | viewercutout | profile | settings | capture | capturelifted | search | viewer
     private static let start = UserDefaults.standard.string(forKey: "startRoute")
     @State private var path: [Route] = {
         switch SuuviApp.start {

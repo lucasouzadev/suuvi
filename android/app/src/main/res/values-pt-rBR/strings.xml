@@ -29,6 +29,7 @@
     <string name="edit_title">Nova peça</string>
     <string name="edit_field_title">Título</string>
     <string name="edit_field_place">Lugar</string>
+    <string name="edit_field_note">Nota (opcional)</string>
     <string name="edit_field_tag">Tag (opcional)</string>
     <string name="edit_save">Salvar peça</string>
     <string name="edit_done">Concluir</string>

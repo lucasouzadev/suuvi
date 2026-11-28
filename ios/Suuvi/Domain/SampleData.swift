@@ -19,6 +19,13 @@ struct DailyPick {
     let place: String
 }
 
+extension DailyPick {
+    /// Peca salva como candidata do dia: a nota (se nao houver, vazia) e o dia em que foi criada.
+    init(piece p: SavedPiece) {
+        self.init(emoji: p.emoji, title: p.title, note: p.note ?? "", epochDay: ShelfRules.todayEpochDay(now: p.createdAt), place: p.place)
+    }
+}
+
 /// Dados de exemplo ate a Shelf ler do banco local.
 enum SampleData {
     static let collection: [ShelfItem] = [

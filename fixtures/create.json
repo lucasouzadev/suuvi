@@ -1,5 +1,5 @@
 {
- "_about": "Casos compartilhados da criacao de peca (salvar na Edicao). create: normaliza (titulo sem espacos das pontas; lugar sem espacos, sem '@' inicial, minusculo; tag sem '#', minuscula, vazia = null), valida (titulo e lugar nao vazios apos normalizar, titulo ate 40) e emite o proximo #n = max(existing, lastIssued)+1. expect = null quando invalido; lastIssued = numero emitido. image: imagePath(cutouts, photos) = primeiro recorte nao nulo, senao a primeira foto, senao null (caminhos relativos a pasta do app). update: editar peca existente = mesma normalizacao e validacao da criacao, sem mexer no #n (expect null quando invalido). issued: ultimo #n emitido = max(contador guardado, maior numero existente); apagar nao baixa o contador, entao o numero nunca volta.",
+ "_about": "Casos compartilhados da criacao de peca (salvar na Edicao). create: normaliza (titulo sem espacos das pontas; lugar sem espacos, sem '@' inicial, minusculo; tag sem '#', minuscula, vazia = null), valida (titulo e lugar nao vazios apos normalizar, titulo ate 40) e emite o proximo #n = max(existing, lastIssued)+1. expect = null quando invalido; lastIssued = numero emitido. image: imagePath(cutouts, photos) = primeiro recorte nao nulo, senao a primeira foto, senao null (caminhos relativos a pasta do app). update: editar peca existente = mesma normalizacao e validacao da criacao, sem mexer no #n (expect null quando invalido). issued: ultimo #n emitido = max(contador guardado, maior numero existente); apagar nao baixa o contador, entao o numero nunca volta. note: nota opcional (campo 4 da Edicao): tira espacos das pontas, vazia = null, ate 140 caracteres apos trim; maior que isso invalida a peca (expect null). Casos sem 'note' usam nota vazia.",
  "cases": [
   {
    "name": "primeira peca normaliza tudo",
@@ -92,6 +92,67 @@
    "place": "x",
    "tag": "",
    "expect": null
+  },
+  {
+   "name": "nota normaliza",
+   "existing": [],
+   "lastIssued": 0,
+   "title": "Fado",
+   "place": "lisboa",
+   "tag": "",
+   "note": "  Noite de fado na Alfama.  ",
+   "expect": {
+    "number": 1,
+    "title": "Fado",
+    "place": "lisboa",
+    "tag": null,
+    "note": "Noite de fado na Alfama.",
+    "lastIssued": 1
+   }
+  },
+  {
+   "name": "nota so espacos vira null",
+   "existing": [],
+   "lastIssued": 0,
+   "title": "Fado",
+   "place": "lisboa",
+   "tag": "",
+   "note": "   ",
+   "expect": {
+    "number": 1,
+    "title": "Fado",
+    "place": "lisboa",
+    "tag": null,
+    "note": null,
+    "lastIssued": 1
+   }
+  },
+  {
+   "name": "nota com 141 invalida",
+   "existing": [],
+   "lastIssued": 0,
+   "title": "Fado",
+   "place": "lisboa",
+   "tag": "",
+   "note": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+   "expect": null
+  },
+  {
+   "name": "nota com 140 vale",
+   "existing": [],
+   "lastIssued": 0,
+   "title": "Fado",
+   "place": "lisboa",
+   "tag": "",
+   "note": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+   "expect": {
+    "number": 1,
+    "title": "Fado",
+    "place": "lisboa",
+    "tag": null,
+    "note": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+    "lastIssued": 1
+   }
   }
  ],
  "image": [
@@ -168,6 +229,27 @@
    "title": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
    "place": "porto",
    "tag": "",
+   "expect": null
+  },
+  {
+   "name": "nota atualiza e normaliza",
+   "title": "Fado",
+   "place": "porto",
+   "tag": "",
+   "note": " Noite boa ",
+   "expect": {
+    "title": "Fado",
+    "place": "porto",
+    "tag": null,
+    "note": "Noite boa"
+   }
+  },
+  {
+   "name": "nota longa demais",
+   "title": "Fado",
+   "place": "porto",
+   "tag": "",
+   "note": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
    "expect": null
   }
  ],

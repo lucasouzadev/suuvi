@@ -24,7 +24,7 @@ private enum class Screen { SHELF, FOLDERS, SEARCH, COLLECTION, EDIT, SETTINGS, 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Rota inicial opcional (usada pelo CI para tirar print): --es route folders | collection | collection5 | editpiece | deleteask | deleted | viewercutout | edit | editdone | profile | settings | capture | capturelifted | search
+        // Rota inicial opcional (usada pelo CI para tirar print): --es route folders | collection | collection5 | editpiece | deleteask | deleted | shelfnote | viewercutout | edit | editdone | profile | settings | capture | capturelifted | search
         val start = when (intent.getStringExtra("route")) {
             "folders" -> Screen.FOLDERS
             "settings" -> Screen.SETTINGS
@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
         }
         val route = intent.getStringExtra("route")
         val cutout = if (route == "viewercutout") ImageStore.saveSampleCutout(this) else null
-        if (route in listOf("collection5", "editpiece", "deleteask", "deleted")) seedForCi(route == "deleted")   // so para o CI: 2 pecas salvas na f1
+        if (route in listOf("collection5", "editpiece", "deleteask", "deleted", "shelfnote")) seedForCi(route == "deleted", route == "shelfnote")   // so para o CI: 2 pecas salvas na f1
         setContent {
             var screen by rememberSaveable { mutableStateOf(start) }
             val preset = intent.getStringExtra("route") == "editdone"
@@ -65,6 +65,7 @@ class MainActivity : ComponentActivity() {
                     onSettings = { screen = Screen.SETTINGS },
                     onCreate = { captureFrom = Screen.SHELF; screen = Screen.CAPTURE },
                     onOpen = { collectionId = it; backTo = Screen.SHELF; screen = Screen.COLLECTION },
+                    forceNoted = route == "shelfnote",
                 )
                 Screen.FOLDERS -> FoldersScreen(
                     onBack = { screen = Screen.SHELF },
@@ -93,7 +94,7 @@ class MainActivity : ComponentActivity() {
     }
 
     /** So para o CI: garante 2 pecas salvas na colecao f1; com [deleteFirst] apaga a de menor numero (prova que apagar remove do banco e o numero nao volta). */
-    private fun seedForCi(deleteFirst: Boolean) {
+    private fun seedForCi(deleteFirst: Boolean, withNote: Boolean) {
         val dao = app.suuvi.data.SuuviDb.get(this).dao()
         kotlinx.coroutines.runBlocking(kotlinx.coroutines.Dispatchers.IO) {
             val numbers = dao.savedNumbers("f1")
@@ -101,6 +102,11 @@ class MainActivity : ComponentActivity() {
             for (title in listOf("Bonde 30", "Fado").take(maxOf(0, 2 - numbers.size))) {
                 next++
                 dao.insertSavedPiece(app.suuvi.data.SavedPiece(java.util.UUID.randomUUID().toString(), "f1", next, title, "lisboa", "viagem", "🪙", null, System.currentTimeMillis()))
+                app.suuvi.services.PieceStore.setIssued(this@MainActivity, "f1", next)
+            }
+            if (withNote && dao.savedPieces("f1").first().none { it.note != null }) {
+                next++
+                dao.insertSavedPiece(app.suuvi.data.SavedPiece(java.util.UUID.randomUUID().toString(), "f1", next, "Pastel de nata", "lisboa", "doce", "🪙", null, System.currentTimeMillis(), "Provado numa manhã de sol."))
                 app.suuvi.services.PieceStore.setIssued(this@MainActivity, "f1", next)
             }
             if (deleteFirst) {

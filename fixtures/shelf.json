@@ -1,17 +1,103 @@
 {
-  "_about": "Casos compartilhados da Shelf. dailyPick: indice do 'suvenir do dia' = ((epochDay % count) + count) % count; count 0 -> null. chipLetter: primeira letra ou digito do titulo, em maiusculo; sem nenhum -> '?'. Lidos pelo XCTest e pelo JUnit.",
-  "dailyPick": [
-    {"name": "dia 0 com 3 itens", "count": 3, "epochDay": 0, "expect": 0},
-    {"name": "dia 20419 com 3 itens", "count": 3, "epochDay": 20419, "expect": 1},
-    {"name": "lista vazia nao escolhe", "count": 0, "epochDay": 20419, "expect": null},
-    {"name": "dia negativo continua valido", "count": 3, "epochDay": -1, "expect": 2},
-    {"name": "um item sempre o mesmo", "count": 1, "epochDay": 12345, "expect": 0}
-  ],
-  "chipLetter": [
-    {"title": "plant", "expect": "P"},
-    {"title": "  éclair", "expect": "É"},
-    {"title": "3d print", "expect": "3"},
-    {"title": "", "expect": "?"},
-    {"title": "  - ", "expect": "?"}
-  ]
+ "_about": "Casos compartilhados da Shelf. dailyPick: indice do 'suvenir do dia' = ((epochDay % count) + count) % count; count 0 -> null. chipLetter: primeira letra ou digito do titulo, em maiusculo; sem nenhum -> '?'. Lidos pelo XCTest e pelo JUnit. dailyOrder: ordem das pecas salvas no sorteio do dia = por colecao (id, ordem de texto) e depois por numero; devolve os indices da lista de entrada na ordem final.",
+ "dailyPick": [
+  {
+   "name": "dia 0 com 3 itens",
+   "count": 3,
+   "epochDay": 0,
+   "expect": 0
+  },
+  {
+   "name": "dia 20419 com 3 itens",
+   "count": 3,
+   "epochDay": 20419,
+   "expect": 1
+  },
+  {
+   "name": "lista vazia nao escolhe",
+   "count": 0,
+   "epochDay": 20419,
+   "expect": null
+  },
+  {
+   "name": "dia negativo continua valido",
+   "count": 3,
+   "epochDay": -1,
+   "expect": 2
+  },
+  {
+   "name": "um item sempre o mesmo",
+   "count": 1,
+   "epochDay": 12345,
+   "expect": 0
+  }
+ ],
+ "chipLetter": [
+  {
+   "title": "plant",
+   "expect": "P"
+  },
+  {
+   "title": "  éclair",
+   "expect": "É"
+  },
+  {
+   "title": "3d print",
+   "expect": "3"
+  },
+  {
+   "title": "",
+   "expect": "?"
+  },
+  {
+   "title": "  - ",
+   "expect": "?"
+  }
+ ],
+ "dailyOrder": [
+  {
+   "name": "vazio",
+   "keys": [],
+   "expect": []
+  },
+  {
+   "name": "ordena por colecao e numero",
+   "keys": [
+    {
+     "folder": "f2",
+     "number": 1
+    },
+    {
+     "folder": "f1",
+     "number": 5
+    },
+    {
+     "folder": "f1",
+     "number": 2
+    }
+   ],
+   "expect": [
+    2,
+    1,
+    0
+   ]
+  },
+  {
+   "name": "ja ordenado",
+   "keys": [
+    {
+     "folder": "f1",
+     "number": 1
+    },
+    {
+     "folder": "f1",
+     "number": 2
+    }
+   ],
+   "expect": [
+    0,
+    1
+   ]
+  }
+ ]
 }

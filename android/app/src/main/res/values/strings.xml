@@ -29,6 +29,7 @@
     <string name="edit_title">New piece</string>
     <string name="edit_field_title">Title</string>
     <string name="edit_field_place">Place</string>
+    <string name="edit_field_note">Note (optional)</string>
     <string name="edit_field_tag">Tag (optional)</string>
     <string name="edit_save">Save piece</string>
     <string name="edit_done">Done</string>

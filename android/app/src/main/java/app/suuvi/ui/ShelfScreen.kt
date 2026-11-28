@@ -40,7 +40,7 @@ import app.suuvi.ui.components.ShelfRow
 
 /** Tela inicial: cabecalho, card do dia, alternador Colecao/Recebidas, lista e rodape. */
 @Composable
-fun ShelfScreen(onFolders: () -> Unit = {}, onSearch: () -> Unit = {}, onOpen: (String) -> Unit = {}, onSettings: () -> Unit = {}, onCreate: () -> Unit = {}) {
+fun ShelfScreen(onFolders: () -> Unit = {}, onSearch: () -> Unit = {}, onOpen: (String) -> Unit = {}, onSettings: () -> Unit = {}, onCreate: () -> Unit = {}, forceNoted: Boolean = false) {
     var segment by remember { mutableIntStateOf(0) }
     val context = androidx.compose.ui.platform.LocalContext.current
     val saved by remember { app.suuvi.data.SuuviDb.get(context).dao().allSavedPieces() }.collectAsState(initial = emptyList())
@@ -51,8 +51,13 @@ fun ShelfScreen(onFolders: () -> Unit = {}, onSearch: () -> Unit = {}, onOpen: (
     // A lista mantem a posicao da primeira linha pela chave; ao reordenar, volta ao topo para nao esconder a linha que subiu.
     val listState = androidx.compose.foundation.lazy.rememberLazyListState()
     androidx.compose.runtime.LaunchedEffect(rows.map { it.id }) { listState.scrollToItem(0) }
-    val daily = ShelfRules.dailyIndex(ShelfRules.todayEpochDay(), SampleData.dailyPicks.size)
-        ?.let { SampleData.dailyPicks[it] }
+    // Sorteio do dia entre os exemplos e as pecas salvas (qualquer uma; a nota, se houver, vira o texto do card).
+    val mine = ShelfRules.dailyOrder(saved.map { it.folderId to it.number }).map { saved[it] }
+    fun pick(p: app.suuvi.data.SavedPiece) = app.suuvi.domain.DailyPick(p.emoji, p.title, p.note ?: "", ShelfRules.epochDay(p.createdAt), p.place)
+    val picks = SampleData.dailyPicks + mine.map { pick(it) }
+    // So para o CI (--es route shelfnote): mostra uma peca salva com nota.
+    val daily = (if (forceNoted) mine.firstOrNull { it.note != null }?.let { pick(it) } else null)
+        ?: ShelfRules.dailyIndex(ShelfRules.todayEpochDay(), picks.size)?.let { picks[it] }
 
     Column(
         Modifier

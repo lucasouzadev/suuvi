@@ -156,6 +156,10 @@ jobs:
           sleep 6
           xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-folders-after.png
           xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
+          xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute shelfnote
+          sleep 6
+          xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-shelf-note.png
+          xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
           xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
           sleep 6
           xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-shelf-after.png
@@ -280,6 +284,9 @@ jobs:
             adb shell am start -S -n app.suuvi/.MainActivity --es route folders
             sleep 6
             adb exec-out screencap -p > android-folders-after.png
+            adb shell am start -S -n app.suuvi/.MainActivity --es route shelfnote
+            sleep 6
+            adb exec-out screencap -p > android-shelf-note.png
             adb shell am start -S -n app.suuvi/.MainActivity
             sleep 6
             adb exec-out screencap -p > android-shelf-after.png

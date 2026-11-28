@@ -18,10 +18,16 @@ struct ShelfView: View {
         return FolderRules.ordered(SampleData.folders(usedBy: saved))
             .compactMap { f in SampleData.collection.first { $0.name == f.name } }
     }
+    /// Sorteio do dia entre os exemplos e as pecas salvas (qualquer uma; a nota, se houver, vira o texto do card).
     private var daily: DailyPick? {
-        guard let i = ShelfRules.dailyIndex(epochDay: ShelfRules.todayEpochDay(),
-                                            count: SampleData.dailyPicks.count) else { return nil }
-        return SampleData.dailyPicks[i]
+        let mine = ShelfRules.dailyOrder(saved.map { ($0.folderId, $0.number) }).map { saved[$0] }
+        // So para o CI (-startRoute shelfnote): mostra uma peca salva com nota.
+        if UserDefaults.standard.string(forKey: "startRoute") == "shelfnote", let p = mine.first(where: { $0.note != nil }) {
+            return DailyPick(piece: p)
+        }
+        let picks = SampleData.dailyPicks + mine.map { DailyPick(piece: $0) }
+        guard let i = ShelfRules.dailyIndex(epochDay: ShelfRules.todayEpochDay(), count: picks.count) else { return nil }
+        return picks[i]
     }
 
     var body: some View {

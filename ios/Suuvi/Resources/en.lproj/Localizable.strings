@@ -26,6 +26,7 @@
 "edit.title" = "New piece";
 "edit.field.title" = "Title";
 "edit.field.place" = "Place";
+"edit.field.note" = "Note (optional)";
 "edit.field.tag" = "Tag (optional)";
 "edit.save" = "Save piece";
 "edit.done" = "Done";

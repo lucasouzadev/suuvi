@@ -15,6 +15,7 @@ struct EditView: View {
     @State private var title: String
     @State private var place: String
     @State private var tag: String
+    @State private var note = ""
     @State private var saved: Bool
     /// Imagem guardada da peca (aparece no topo da cascata); com "@sample" (so CI) so existe depois de salvar.
     @State private var shownImage: String?
@@ -40,7 +41,7 @@ struct EditView: View {
     /// Edicao: preenche os campos com a peca salva (uma vez; a lista pode chegar depois da tela).
     private func load() {
         guard pieceId != nil, !loaded, let p = editing else { return }
-        title = p.title; place = p.place; tag = p.tag ?? ""; shownImage = p.imagePath
+        title = p.title; place = p.place; tag = p.tag ?? ""; note = p.note ?? ""; shownImage = p.imagePath
         loaded = true
     }
 
@@ -56,6 +57,7 @@ struct EditView: View {
             PillField(number: 1, placeholder: "edit.field.title", text: $title, done: saved)
             PillField(number: 2, placeholder: "edit.field.place", text: $place, done: saved)
             PillField(number: 3, placeholder: "edit.field.tag", text: $tag, done: saved)
+            PillField(number: 4, placeholder: "edit.field.note", text: $note, done: saved)
         }
     }
 
@@ -117,31 +119,33 @@ struct EditView: View {
         .background(SuuviColor.bg)
         .navigationBarBackButtonHidden(true)
         .onChange(of: allSaved.count) { load() }
+        .onChange(of: note) { if note.count > EditRules.maxNote { note = String(note.prefix(EditRules.maxNote)) } }
         .onAppear {
             load()
             // So para o CI: cria uma peca sozinha, para provar que salvar grava no banco.
-            if autoCreate && !saved { title = image == "@sample" ? "Cha" : "Bonde 29"; place = "lisboa"; tag = "viagem"; save() }
+            if autoCreate && !saved { title = image == "@sample" ? "Cha" : "Bonde 29"; place = "lisboa"; tag = "viagem"; note = image == "@sample" ? "Chá numa tarde de chuva." : "Bonde amarelo da linha 28."; save() }
         }
     }
 
     /// Valida, normaliza, emite o #n e grava. Nada acontece se a peca for invalida.
     private func save() {
         if pieceId != nil {
-            guard let p = editing, let e = PieceRules.update(title: title, place: place, tag: tag) else { return }
-            p.title = e.title; p.place = e.place; p.tag = e.tag
+            guard let p = editing, let e = PieceRules.update(title: title, place: place, tag: tag, note: note) else { return }
+            p.title = e.title; p.place = e.place; p.tag = e.tag; p.note = e.note
             try? context.save()
             dismiss()
             return
         }
         let existing = allSaved.filter { $0.folderId == folderId }.map(\.number)
-        guard let p = PieceRules.create(title: title, place: place, tag: tag, existing: existing, lastIssued: PieceRules.issued(existing: existing, stored: PieceStore.stored(folderId)))
+        guard let p = PieceRules.create(title: title, place: place, tag: tag, note: note, existing: existing, lastIssued: PieceRules.issued(existing: existing, stored: PieceStore.stored(folderId)))
         else { return }
         let img = image == "@sample" ? ImageStore.saveSample() : image   // "@sample": so o CI
-        context.insert(SavedPiece(folderId: folderId, number: p.number, title: p.title, place: p.place, tag: p.tag, imagePath: img))
+        context.insert(SavedPiece(folderId: folderId, number: p.number, title: p.title, place: p.place, tag: p.tag, note: p.note, imagePath: img))
         shownImage = img
         PieceStore.setIssued(p.number, folder: folderId)
         try? context.save()
         tag = p.tag ?? ""
+        note = p.note ?? ""
         saved = true
     }
 }

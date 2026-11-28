@@ -55,6 +55,7 @@ fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = 
     var title by rememberSaveable { mutableStateOf(if (preset) "Moeda de Lisboa" else "") }
     var place by rememberSaveable { mutableStateOf(if (preset) "lisboa" else "") }
     var tag by rememberSaveable { mutableStateOf(if (preset) "viagem" else "") }
+    var note by rememberSaveable { mutableStateOf("") }
     var saved by rememberSaveable { mutableStateOf(preset) }
     // Imagem guardada da peca (topo da cascata); com "@sample" (so CI) so existe depois de salvar.
     var shownImage by rememberSaveable { mutableStateOf(if (image == "@sample") null else image) }
@@ -69,7 +70,7 @@ fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = 
     androidx.compose.runtime.LaunchedEffect(pieceId) {
         if (pieceId == null) return@LaunchedEffect
         val found = if (pieceId == "first") firstSaved(dao, folderId) else dao.savedPiece(pieceId)
-        found?.let { title = it.title; place = it.place; tag = it.tag ?: ""; shownImage = it.imagePath; editing = it }
+        found?.let { title = it.title; place = it.place; tag = it.tag ?: ""; note = it.note ?: ""; shownImage = it.imagePath; editing = it }
     }
 
     /** Valida, normaliza, emite o #n e grava. Nada acontece se a peca for invalida. */
@@ -77,29 +78,30 @@ fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = 
         scope.launch {
             if (pieceId != null) {
                 val cur = editing ?: return@launch
-                val e = PieceRules.update(title, place, tag) ?: return@launch
-                dao.updateSavedPiece(cur.id, e.title, e.place, e.tag)
+                val e = PieceRules.update(title, place, tag, note) ?: return@launch
+                dao.updateSavedPiece(cur.id, e.title, e.place, e.tag, e.note)
                 onBack()
                 return@launch
             }
             val existing = dao.savedNumbers(folderId)
-            val p = PieceRules.create(title, place, tag, existing, PieceRules.issued(existing, app.suuvi.services.PieceStore.stored(context, folderId))) ?: return@launch
+            val p = PieceRules.create(title, place, tag, existing, PieceRules.issued(existing, app.suuvi.services.PieceStore.stored(context, folderId)), note) ?: return@launch
             val img = if (image == "@sample") app.suuvi.services.ImageStore.saveSample(context) else image   // "@sample": so o CI
             dao.insertSavedPiece(
                 app.suuvi.data.SavedPiece(
                     java.util.UUID.randomUUID().toString(), folderId, p.number, p.title, p.place, p.tag, "🪙", img,
-                    System.currentTimeMillis(),
+                    System.currentTimeMillis(), p.note,
                 ),
             )
             shownImage = img
             app.suuvi.services.PieceStore.setIssued(context, folderId, p.number)
             tag = p.tag ?: ""
+            note = p.note ?: ""
             saved = true
         }
     }
     // So para o CI: cria uma peca sozinha, para provar que salvar grava no banco.
     androidx.compose.runtime.LaunchedEffect(autoCreate) {
-        if (autoCreate && !saved) { title = if (image == "@sample") "Cha" else "Bonde 29"; place = "lisboa"; tag = "viagem"; save() }
+        if (autoCreate && !saved) { title = if (image == "@sample") "Cha" else "Bonde 29"; place = "lisboa"; tag = "viagem"; note = if (image == "@sample") "Chá numa tarde de chuva." else "Bonde amarelo da linha 28."; save() }
     }
     val enabled = saved || valid
 
@@ -130,6 +132,7 @@ fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = 
                     PillField(1, stringResource(R.string.edit_field_title), title, { title = it }, saved)
                     PillField(2, stringResource(R.string.edit_field_place), place, { place = it }, saved)
                     PillField(3, stringResource(R.string.edit_field_tag), tag, { tag = it }, saved)
+                    PillField(4, stringResource(R.string.edit_field_note), note, { note = it.take(EditRules.MAX_NOTE) }, saved)
                 }
             }
             val img = shownImage

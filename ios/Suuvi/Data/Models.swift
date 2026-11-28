@@ -82,18 +82,21 @@ final class SavedPiece {
     var title: String
     var place: String
     var tag: String?
+    /// Nota opcional (ate 140 caracteres); aparece no card "suvenir do dia".
+    var note: String?
     var emoji: String
     /// Imagem da peca (recorte ou foto), relativa a pasta do app; nil = so emoji.
     var imagePath: String?
     var createdAt: Date
 
-    init(folderId: String, number: Int, title: String, place: String, tag: String?, emoji: String = "🪙", imagePath: String? = nil) {
+    init(folderId: String, number: Int, title: String, place: String, tag: String?, note: String? = nil, emoji: String = "🪙", imagePath: String? = nil) {
         self.id = UUID()
         self.folderId = folderId
         self.number = number
         self.title = title
         self.place = place
         self.tag = tag
+        self.note = note
         self.emoji = emoji
         self.imagePath = imagePath
         self.createdAt = Date()

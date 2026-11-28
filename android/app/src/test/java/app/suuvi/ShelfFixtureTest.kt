@@ -20,6 +20,17 @@ class ShelfFixtureTest {
     }
 
     @Test
+    fun dailyOrder() {
+        val cases = load().getJSONArray("dailyOrder")
+        for (i in 0 until cases.length()) {
+            val c = cases.getJSONObject(i)
+            val keys = c.getJSONArray("keys").let { a -> List(a.length()) { a.getJSONObject(it).let { o -> o.getString("folder") to o.getInt("number") } } }
+            val want = c.getJSONArray("expect").let { a -> List(a.length()) { a.getInt(it) } }
+            assertEquals(c.getString("name"), want, ShelfRules.dailyOrder(keys))
+        }
+    }
+
+    @Test
     fun chipLetter() {
         val cases = load().getJSONArray("chipLetter")
         for (i in 0 until cases.length()) {

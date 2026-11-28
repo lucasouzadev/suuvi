@@ -8,6 +8,13 @@ enum ShelfRules {
         return ((epochDay % count) + count) % count
     }
 
+    /// Ordem das pecas salvas no sorteio do dia: por colecao (id) e depois por numero. Devolve indices da entrada.
+    static func dailyOrder(_ keys: [(folder: String, number: Int)]) -> [Int] {
+        keys.indices.sorted { a, b in
+            keys[a].folder != keys[b].folder ? keys[a].folder < keys[b].folder : keys[a].number < keys[b].number
+        }
+    }
+
     /// Primeira letra ou digito do titulo, em maiusculo; "?" se nao houver.
     static func chipLetter(_ title: String) -> String {
         for ch in title where ch.isLetter || ch.isNumber {

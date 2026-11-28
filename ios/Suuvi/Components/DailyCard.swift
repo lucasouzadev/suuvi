@@ -18,10 +18,12 @@ struct DailyCard: View {
             }
             .font(.system(size: 17, weight: .semibold))
             .foregroundStyle(SuuviColor.text)
-            Text(pick.note)
-                .font(.system(size: 15))
-                .foregroundStyle(SuuviColor.text)
-                .lineLimit(3)
+            if !pick.note.isEmpty {
+                Text(pick.note)
+                    .font(.system(size: 15))
+                    .foregroundStyle(SuuviColor.text)
+                    .lineLimit(3)
+            }
             HStack {
                 HStack(spacing: SuuviSpace.s1) {
                     SuuviIcon(name: "ic_calendar", size: 14)
