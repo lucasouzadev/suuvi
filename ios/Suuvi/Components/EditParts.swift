@@ -1,35 +1,15 @@
 import SwiftUI
 
-/// Conteudo de um card da cascata: emoji ou a imagem guardada da peca (caminho relativo).
-enum CascadeItem: Hashable {
-    case emoji(String)
-    case image(String)
-}
-
 /// Cascata de cards sobrepostos e inclinados (lado esquerdo da Edicao).
 struct CascadeStack: View {
-    let items: [CascadeItem]
+    let emojis: [String]
     private let step: CGFloat = 52
-
-    @ViewBuilder private func content(_ item: CascadeItem) -> some View {
-        switch item {
-        case .emoji(let glyph):
-            EmojiView(glyph: glyph, size: 36).padding(.top, SuuviSpace.s2)
-        case .image(let path):
-            if let ui = Thumbs.image(relative: path) {
-                Image(uiImage: ui).resizable().scaledToFit()
-                    .clipShape(RoundedRectangle(cornerRadius: SuuviRadius.sm))
-                    .padding(SuuviSpace.s2)
-            } else {
-                EmojiView(glyph: "🪙", size: 36).padding(.top, SuuviSpace.s2)
-            }
-        }
-    }
 
     var body: some View {
         ZStack(alignment: .top) {
-            ForEach(Array(items.enumerated()), id: \.offset) { i, item in
-                content(item)
+            ForEach(Array(emojis.enumerated()), id: \.offset) { i, glyph in
+                EmojiView(glyph: glyph, size: 36)
+                    .padding(.top, SuuviSpace.s2)
                     .frame(width: 96, height: 108, alignment: .top)
                     .background(RoundedRectangle(cornerRadius: SuuviRadius.md).fill(SuuviColor.canvas))
                     .overlay(RoundedRectangle(cornerRadius: SuuviRadius.md).stroke(SuuviColor.border, lineWidth: 1))
@@ -37,7 +17,43 @@ struct CascadeStack: View {
                     .offset(y: CGFloat(i) * step)
             }
         }
-        .frame(width: 104, height: 108 + step * CGFloat(max(items.count - 1, 0)), alignment: .top)
+        .frame(width: 104, height: 108 + step * CGFloat(max(emojis.count - 1, 0)), alignment: .top)
+        .accessibilityHidden(true)
+    }
+}
+
+/// Foto da peca em destaque (card da frente, inteira) com cards de emoji atras, so as bordas.
+struct HeroStack: View {
+    let image: String
+    let behind: [String]
+    private let cardW: CGFloat = 176
+    private let cardH: CGFloat = 224
+
+    var body: some View {
+        ZStack {
+            ForEach(Array(behind.enumerated().reversed()), id: \.offset) { i, glyph in
+                EmojiView(glyph: glyph, size: 36)
+                    .padding(.top, SuuviSpace.s2)
+                    .frame(width: cardW, height: cardH, alignment: .top)
+                    .background(RoundedRectangle(cornerRadius: SuuviRadius.md).fill(SuuviColor.canvas))
+                    .overlay(RoundedRectangle(cornerRadius: SuuviRadius.md).stroke(SuuviColor.border, lineWidth: 1))
+                    .rotationEffect(.degrees(CollectionRules.tilt(i + 1) * 2))
+                    .offset(x: CGFloat(i + 1) * (i % 2 == 0 ? 10 : -10), y: CGFloat(i + 1) * SuuviSpace.s1)
+            }
+            Group {
+                if let ui = Thumbs.image(relative: image) {
+                    Image(uiImage: ui).resizable().scaledToFit()
+                        .clipShape(RoundedRectangle(cornerRadius: SuuviRadius.sm))
+                        .padding(SuuviSpace.s3)
+                } else {
+                    EmojiView(glyph: "🪙", size: 48)
+                }
+            }
+            .frame(width: cardW, height: cardH)
+            .background(RoundedRectangle(cornerRadius: SuuviRadius.md).fill(SuuviColor.canvas))
+            .overlay(RoundedRectangle(cornerRadius: SuuviRadius.md).stroke(SuuviColor.border, lineWidth: 1))
+        }
+        .frame(width: cardW + 40, height: cardH + 16)
         .accessibilityHidden(true)
     }
 }

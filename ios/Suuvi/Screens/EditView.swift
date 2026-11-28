@@ -29,10 +29,17 @@ struct EditView: View {
 
     private var valid: Bool { EditRules.isValid(title: title, place: place) }
     private var detail: CollectionDetail? { SampleData.collectionDetail(id: folderId) }
-    private var cascade: [CascadeItem] {
-        let base = (detail?.pieces.map { CascadeItem.emoji($0.emoji) } ?? []) + [CascadeItem.emoji(detail?.folder.emoji ?? "🏺")]
-        let all = shownImage.map { [CascadeItem.image($0)] + base } ?? base
-        return Array(all.prefix(3))
+    private var cascade: [String] {
+        let e = (detail?.pieces.map(\.emoji) ?? []) + [detail?.folder.emoji ?? "🏺"]
+        return Array(e.prefix(3))
+    }
+
+    private var fields: some View {
+        VStack(spacing: SuuviSpace.s3) {
+            PillField(number: 1, placeholder: "edit.field.title", text: $title, done: saved)
+            PillField(number: 2, placeholder: "edit.field.place", text: $place, done: saved)
+            PillField(number: 3, placeholder: "edit.field.tag", text: $tag, done: saved)
+        }
     }
 
     var body: some View {
@@ -51,12 +58,16 @@ struct EditView: View {
             .frame(height: 52)
             ScrollView {
                 VStack(spacing: SuuviSpace.s7) {
-                    HStack(alignment: .top, spacing: SuuviSpace.s4) {
-                        CascadeStack(items: cascade)
-                        VStack(spacing: SuuviSpace.s3) {
-                            PillField(number: 1, placeholder: "edit.field.title", text: $title, done: saved)
-                            PillField(number: 2, placeholder: "edit.field.place", text: $place, done: saved)
-                            PillField(number: 3, placeholder: "edit.field.tag", text: $tag, done: saved)
+                    if let img = shownImage {
+                        // Com foto: ela vem inteira na frente, campos embaixo ocupando a tela.
+                        VStack(spacing: SuuviSpace.s7) {
+                            HeroStack(image: img, behind: Array(cascade.prefix(2)))
+                            fields
+                        }
+                    } else {
+                        HStack(alignment: .top, spacing: SuuviSpace.s4) {
+                            CascadeStack(emojis: cascade)
+                            fields
                         }
                     }
                     if saved {
@@ -69,7 +80,7 @@ struct EditView: View {
                         .multilineTextAlignment(.center)
                     }
                 }
-                .padding(.top, SuuviSpace.s3)
+                .padding(.top, shownImage == nil ? SuuviSpace.s3 : SuuviSpace.s7)
             }
             Button {
                 if saved { dismiss() } else { save() }

@@ -38,39 +38,48 @@ import app.suuvi.design.SuuviRadius
 import app.suuvi.design.SuuviSpace
 import app.suuvi.domain.CollectionRules
 
-/** Conteudo de um card da cascata: emoji ou a imagem guardada da peca (caminho relativo). */
-sealed class CascadeItem {
-    data class Emoji(val glyph: String) : CascadeItem()
-    data class Image(val path: String) : CascadeItem()
-}
-
 /** Cascata de cards sobrepostos e inclinados (lado esquerdo da Edicao). */
 @Composable
-fun CascadeStack(items: List<CascadeItem>, modifier: Modifier = Modifier) {
+fun CascadeStack(emojis: List<String>, modifier: Modifier = Modifier) {
     val step = 52
     val shape = RoundedCornerShape(SuuviRadius.md)
-    val ctx = androidx.compose.ui.platform.LocalContext.current
-    Box(modifier.width(104.dp).height((108 + step * maxOf(items.size - 1, 0)).dp)) {
-        items.forEachIndexed { i, item ->
+    Box(modifier.width(104.dp).height((108 + step * maxOf(emojis.size - 1, 0)).dp)) {
+        emojis.forEachIndexed { i, glyph ->
             Box(
                 Modifier.offset(x = 4.dp, y = (i * step).dp).size(96.dp, 108.dp).rotate(CollectionRules.tilt(i))
                     .background(SuuviColor.canvas, shape).border(1.dp, SuuviColor.border, shape),
                 contentAlignment = Alignment.TopCenter,
-            ) {
-                when (item) {
-                    is CascadeItem.Emoji -> EmojiImage(item.glyph, 36.dp, Modifier.padding(top = SuuviSpace.s2))
-                    is CascadeItem.Image -> {
-                        val bmp = androidx.compose.runtime.remember(item.path) { app.suuvi.services.Thumbs.get(ctx, item.path) }
-                        if (bmp != null) {
-                            androidx.compose.foundation.Image(
-                                bmp.asImageBitmap(), null,
-                                Modifier.fillMaxSize().padding(SuuviSpace.s2).clip(RoundedCornerShape(SuuviRadius.sm)),
-                                contentScale = androidx.compose.ui.layout.ContentScale.Fit,
-                            )
-                        } else EmojiImage("🪙", 36.dp, Modifier.padding(top = SuuviSpace.s2))
-                    }
-                }
-            }
+            ) { EmojiImage(glyph, 36.dp, Modifier.padding(top = SuuviSpace.s2)) }
+        }
+    }
+}
+
+/** Foto da peca em destaque (card da frente, inteira) com cards de emoji atras, so as bordas. */
+@Composable
+fun HeroStack(image: String, behind: List<String>, modifier: Modifier = Modifier) {
+    val shape = RoundedCornerShape(SuuviRadius.md)
+    val ctx = androidx.compose.ui.platform.LocalContext.current
+    Box(modifier.width(216.dp).height(240.dp), contentAlignment = Alignment.Center) {
+        behind.forEachIndexed { i, glyph ->
+            Box(
+                Modifier.offset(x = ((i + 1) * (if (i % 2 == 0) 10 else -10)).dp, y = ((i + 1) * 4).dp)
+                    .size(176.dp, 224.dp).rotate(CollectionRules.tilt(i + 1) * 2)
+                    .background(SuuviColor.canvas, shape).border(1.dp, SuuviColor.border, shape),
+                contentAlignment = Alignment.TopCenter,
+            ) { EmojiImage(glyph, 36.dp, Modifier.padding(top = SuuviSpace.s2)) }
+        }
+        Box(
+            Modifier.size(176.dp, 224.dp).background(SuuviColor.canvas, shape).border(1.dp, SuuviColor.border, shape),
+            contentAlignment = Alignment.Center,
+        ) {
+            val bmp = androidx.compose.runtime.remember(image) { app.suuvi.services.Thumbs.get(ctx, image) }
+            if (bmp != null) {
+                androidx.compose.foundation.Image(
+                    bmp.asImageBitmap(), null,
+                    Modifier.fillMaxSize().padding(SuuviSpace.s3).clip(RoundedCornerShape(SuuviRadius.sm)),
+                    contentScale = androidx.compose.ui.layout.ContentScale.Fit,
+                )
+            } else EmojiImage("🪙", 48.dp)
         }
     }
 }

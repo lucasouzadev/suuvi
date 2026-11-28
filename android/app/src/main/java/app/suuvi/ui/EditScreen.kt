@@ -43,7 +43,7 @@ import app.suuvi.domain.PieceRules
 import kotlinx.coroutines.launch
 import app.suuvi.domain.SampleData
 import app.suuvi.domain.collectionDetail
-import app.suuvi.ui.components.CascadeItem
+import app.suuvi.ui.components.HeroStack
 import app.suuvi.ui.components.CascadeStack
 import app.suuvi.ui.components.IconAction
 import app.suuvi.ui.components.PillField
@@ -58,8 +58,7 @@ fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = 
     // Imagem guardada da peca (topo da cascata); com "@sample" (so CI) so existe depois de salvar.
     var shownImage by rememberSaveable { mutableStateOf(if (image == "@sample") null else image) }
     val detail = SampleData.collectionDetail(folderId)
-    val baseCascade: List<CascadeItem> = (detail?.pieces?.map { CascadeItem.Emoji(it.emoji) } ?: emptyList()) + CascadeItem.Emoji(detail?.folder?.emoji ?: "🏺")
-    val cascade: List<CascadeItem> = ((shownImage?.let { listOf(CascadeItem.Image(it)) } ?: emptyList()) + baseCascade).take(3)
+    val cascade = ((detail?.pieces?.map { it.emoji } ?: emptyList()) + (detail?.folder?.emoji ?: "🏺")).take(3)
     val valid = EditRules.isValid(title, place)
     val context = androidx.compose.ui.platform.LocalContext.current
     val scope = androidx.compose.runtime.rememberCoroutineScope()
@@ -107,15 +106,27 @@ fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = 
             }
         }
         Column(
-            Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(top = SuuviSpace.s3),
+            Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(top = if (shownImage == null) SuuviSpace.s3 else SuuviSpace.s7),
             verticalArrangement = Arrangement.spacedBy(SuuviSpace.s7),
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(SuuviSpace.s4)) {
-                CascadeStack(cascade)
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(SuuviSpace.s3)) {
+            val fields: @Composable (Modifier) -> Unit = { m ->
+                Column(m, verticalArrangement = Arrangement.spacedBy(SuuviSpace.s3)) {
                     PillField(1, stringResource(R.string.edit_field_title), title, { title = it }, saved)
                     PillField(2, stringResource(R.string.edit_field_place), place, { place = it }, saved)
                     PillField(3, stringResource(R.string.edit_field_tag), tag, { tag = it }, saved)
+                }
+            }
+            val img = shownImage
+            if (img != null) {
+                // Com foto: ela vem inteira na frente, campos embaixo ocupando a tela.
+                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(SuuviSpace.s7)) {
+                    HeroStack(img, cascade.take(2))
+                    fields(Modifier.fillMaxWidth())
+                }
+            } else {
+                Row(horizontalArrangement = Arrangement.spacedBy(SuuviSpace.s4)) {
+                    CascadeStack(cascade)
+                    fields(Modifier.weight(1f))
                 }
             }
             if (saved) {
