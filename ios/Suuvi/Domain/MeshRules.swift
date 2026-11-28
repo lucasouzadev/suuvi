@@ -5,6 +5,15 @@ struct PrismMesh: Equatable { let vertices: [Vertex3]; let triangles: [[Int]] }
 
 /// Malha do suvenir (prisma extrudado do contorno). Mesmas regras no Android (MeshRules.kt); fixtures/mesh.json valida as duas.
 enum MeshRules {
+    /// Triangulos da face frontal (tampa em z = 0) de um prisma com bevel (4 aneis de n vertices; a tampa so usa o 1o anel).
+    /// Vazio se a malha nao tem esse formato (ex.: prisma simples).
+    static func frontCap(_ m: PrismMesh) -> [[Int]] {
+        guard m.vertices.count >= 12, m.vertices.count % 4 == 0 else { return [] }
+        let n = m.vertices.count / 4
+        let cap = m.triangles.filter { $0.allSatisfy { $0 < n } }
+        return cap.count == n - 2 ? cap : []
+    }
+
     private static func triArea2(_ a: IPoint, _ b: IPoint, _ c: IPoint) -> Int {
         (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
     }

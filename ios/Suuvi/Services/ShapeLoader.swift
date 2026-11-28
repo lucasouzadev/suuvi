@@ -3,9 +3,20 @@ import ImageIO
 
 /// Le a imagem guardada da peca e monta a malha 3D com ShapeRules. nil = sem recorte (foto opaca, arquivo ausente).
 enum ShapeLoader {
-    static let maxSide = 256
+    static let maxSide = 512
 
-    static func mesh(relative: String?) -> PrismMesh? {
+    /// Malha + a propria imagem (textura da face frontal) e o mapeamento imagem -> malha (ShapeRules.Shape).
+    struct Textured {
+        let mesh: PrismMesh
+        let image: CGImage
+        let step: Int
+        let ox: Int
+        let oy: Int
+    }
+
+    static func mesh(relative: String?) -> PrismMesh? { solid(relative: relative)?.mesh }
+
+    static func solid(relative: String?) -> Textured? {
         guard let rel = relative,
               let src = CGImageSourceCreateWithURL(ImageStore.url(relative: rel) as CFURL, nil),
               let cg = CGImageSourceCreateThumbnailAtIndex(src, 0, [
@@ -25,6 +36,8 @@ enum ShapeLoader {
         }
         guard drawn else { return nil }
         let alpha = (0..<(w * h)).map { rgba[$0 * 4 + 3] }
-        return ShapeRules.mesh(alpha: alpha, width: w, height: h)
+        guard let s = ShapeRules.shape(alpha: alpha, width: w, height: h),
+              let mesh = ShapeRules.solid(s.points, depth: s.depth) else { return nil }
+        return Textured(mesh: mesh, image: cg, step: s.step, ox: s.ox, oy: s.oy)
     }
 }

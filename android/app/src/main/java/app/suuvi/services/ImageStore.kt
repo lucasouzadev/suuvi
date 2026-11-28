@@ -48,9 +48,9 @@ object ImageStore {
     }
 
     /** So para o CI: copia o recorte de exemplo (PNG com alfa) para a pasta de recortes e devolve o caminho relativo. */
-    fun saveSampleCutout(ctx: Context): String {
+    fun saveSampleCutout(ctx: Context, asset: String = "sample-cutout"): String {
         val name = UUID.randomUUID().toString() + ".png"
-        ctx.assets.open("sample-cutout.png").use { i -> File(dir(ctx, "cutouts"), name).outputStream().use { i.copyTo(it) } }
+        ctx.assets.open("$asset.png").use { i -> File(dir(ctx, "cutouts"), name).outputStream().use { i.copyTo(it) } }
         return "cutouts/$name"
     }
 

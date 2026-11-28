@@ -48,6 +48,8 @@ class ShapeFixtureTest {
                 assertEquals("$name #$k y", expect.getJSONArray(k).getInt(1), s.points[k].y)
             }
             assertEquals(name, c.getInt("depth"), s.depth)
+            val tex = c.getJSONObject("texture")
+            assertEquals(name, listOf(tex.getInt("step"), tex.getInt("ox"), tex.getInt("oy")), listOf(s.step, s.ox, s.oy))
             val m = ShapeRules.mesh(a, w, h)
             assertNotNull(name, m)
             val sol = c.getJSONObject("solid")
@@ -58,6 +60,8 @@ class ShapeFixtureTest {
                 m.vertices.maxOf { it.x }, m.vertices.maxOf { it.y }, m.vertices.maxOf { it.z })
             assertEquals(name, List(6) { bb.getInt(it) }, got)
             assertTrue(name, MeshRules.isClosed(m))
+            assertEquals(name, m.vertices.size / 4 - 2, MeshRules.frontCap(m).size)
+            assertTrue(name, MeshRules.frontCap(m).all { t -> t.all { m.vertices[it].z == 0 } })
             assertTrue(name, MeshRules.volume6Long(m) > 0)
         }
     }

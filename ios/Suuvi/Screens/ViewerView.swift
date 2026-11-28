@@ -16,6 +16,8 @@ struct ViewerView: View {
     private struct Model {
         let mesh: PrismMesh
         let frame: (cx: Double, cy: Double, cz: Double, r: Double)
+        /// Foto do recorte aplicada na face frontal (nil = cor lisa, ex.: a moeda de reserva).
+        let texture: ShapeLoader.Textured?
     }
 
     init(title: String, image: String? = nil) {
@@ -56,8 +58,10 @@ struct ViewerView: View {
         .navigationBarBackButtonHidden(true)
         .task {
             // Recorte salvo da peca; sem recorte (foto opaca ou so emoji) cai na moeda de reserva.
-            let mesh = ShapeLoader.mesh(relative: image) ?? SampleShape.coinMesh()
-            model = Model(mesh: mesh, frame: ViewerRules.framing(mesh))
+            let solid = ShapeLoader.solid(relative: image)
+            let mesh = solid?.mesh ?? SampleShape.coinMesh()
+            let textured = solid.flatMap { MeshRules.frontCap($0.mesh).isEmpty ? nil : $0 }
+            model = Model(mesh: mesh, frame: ViewerRules.framing(mesh), texture: textured)
         }
     }
 
@@ -74,7 +78,7 @@ struct ViewerView: View {
 
     private func draw(_ ctx: inout GraphicsContext, _ size: CGSize) {
         guard let model else { return }
-        let mesh = model.mesh, f = model.frame
+        let mesh = model.mesh, f = model.frame, f0 = model.frame
         let ry = yaw * .pi / 180, rp = pitch * .pi / 180
         let cy = cos(ry), sy = sin(ry), cp = cos(rp), sp = sin(rp)
         let pts: [(x: Double, y: Double, z: Double)] = mesh.vertices.map { v in
@@ -84,8 +88,11 @@ struct ViewerView: View {
         }
         let s = Double(min(size.width, size.height)) / (2 * f.r) * scale
         let mid = CGPoint(x: size.width / 2, y: size.height / 2)
-        struct Face { let tri: [Int]; let depth: Double; let light: Double }
+        struct Face { let tri: [Int]; let depth: Double; let light: Double; var cap: Path? = nil }
         var faces: [Face] = []
+        // Face frontal com foto: os triangulos da tampa viram um unico desenho (so o 1o anel de vertices).
+        let ring = mesh.vertices.count / 4
+        var capPath = Path(), capCount = 0, capDepth = 0.0, capLight = 0.0
         for t in mesh.triangles {
             let a = pts[t[0]], b = pts[t[1]], c = pts[t[2]]
             var nx = (b.y - a.y) * (c.z - a.z) - (b.z - a.z) * (c.y - a.y)
@@ -97,9 +104,32 @@ struct ViewerView: View {
             let gx = (a.x + b.x + c.x) / 3, gy = (a.y + b.y + c.y) / 3, gz = (a.z + b.z + c.z) / 3
             if nx * gx + ny * gy + nz * gz < 0 { nx = -nx; ny = -ny; nz = -nz }  // normal para fora
             if nz >= 0 { continue }                                              // camera em -z: so faces voltadas para ela
-            faces.append(Face(tri: t, depth: (a.z + b.z + c.z) / 3, light: 0.55 + 0.45 * max(0, -nz)))
+            let light = 0.55 + 0.45 * max(0, -nz)
+            if model.texture != nil, t.allSatisfy({ $0 < ring }) {
+                for (i, idx) in t.enumerated() {
+                    let p = CGPoint(x: mid.x + pts[idx].x * s, y: mid.y + pts[idx].y * s)
+                    if i == 0 { capPath.move(to: p) } else { capPath.addLine(to: p) }
+                }
+                capPath.closeSubpath()
+                capCount += 1; capDepth += (a.z + b.z + c.z) / 3; capLight = light
+                continue
+            }
+            faces.append(Face(tri: t, depth: (a.z + b.z + c.z) / 3, light: light))
         }
+        if capCount > 0 { faces.append(Face(tri: [], depth: capDepth / Double(capCount), light: capLight, cap: capPath)) }
         for f in faces.sorted(by: { $0.depth > $1.depth }) {
+            if let cap = f.cap, let tex = model.texture {
+                ctx.fill(cap, with: .color(shade(f.light)))
+                let m = ViewerRules.frontAffine(yaw: yaw, pitch: pitch, scale: scale, width: Double(size.width), height: Double(size.height),
+                                                frame: f0, step: tex.step, ox: tex.ox, oy: tex.oy)
+                ctx.drawLayer { layer in
+                    layer.clip(to: cap)
+                    layer.concatenate(CGAffineTransform(a: m[0], b: m[1], c: m[2], d: m[3], tx: m[4], ty: m[5]))
+                    layer.draw(Image(decorative: tex.image, scale: 1), in: CGRect(x: 0, y: 0, width: tex.image.width, height: tex.image.height))
+                }
+                ctx.fill(cap, with: .color(.black.opacity((1 - f.light) * 0.6)))   // sombra suave quando inclinada
+                continue
+            }
             var path = Path()
             for (i, idx) in f.tri.enumerated() {
                 let p = CGPoint(x: mid.x + pts[idx].x * s, y: mid.y + pts[idx].y * s)

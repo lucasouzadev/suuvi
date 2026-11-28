@@ -1,5 +1,5 @@
 {
- "_about": "Casos compartilhados da forma 3D a partir do alpha do recorte. Entrada: 'rows' (# = alpha 255, o = alpha 10, . = 0) ou 'size' [w,h] + 'rect' [x0,y0,x1,y1) preenchido. Regra: passo = ceil(max(w,h)/64); celula = alpha do pixel central do bloco >= 16; sem celulas ou todas preenchidas (imagem opaca) = null; so o maior componente 8-conexo (empate: o primeiro na leitura); contorno com trace + simplify(eps 1); pontos centrados pelo meio da caixa (divisao inteira); depth = max(2, (maior lado + 3) / 6). points e depth null quando nao ha forma. chaikin: corte de quinas (3/4,1/4 e 1/4,3/4 de cada aresta, em inteiros exatos; entrada multipla de 4^rounds). solid: pontos x16 -> chaikin 2 rodadas -> beveled(depth*16, bevel=depth*16/4); confere contagem de vertices/triangulos e a caixa (min/max) da malha.",
+ "_about": "Casos compartilhados da forma 3D a partir do alpha do recorte. Entrada: 'rows' (# = alpha 255, o = alpha 10, . = 0) ou 'size' [w,h] + 'rect' [x0,y0,x1,y1) preenchido. Regra: passo = ceil(max(w,h)/64); celula = alpha do pixel central do bloco >= 16; sem celulas ou todas preenchidas (imagem opaca) = null; so o maior componente 8-conexo (empate: o primeiro na leitura); contorno com trace + simplify(eps 1); pontos centrados pelo meio da caixa (divisao inteira); depth = max(2, (maior lado + 3) / 6). points e depth null quando nao ha forma. chaikin: corte de quinas (3/4,1/4 e 1/4,3/4 de cada aresta, em inteiros exatos; entrada multipla de 4^rounds). solid: pontos x16 -> chaikin 2 rodadas -> beveled(depth*16, bevel=depth*16/4); confere contagem de vertices/triangulos e a caixa (min/max) da malha. texture: mapeamento imagem->malha da face frontal; pixel da imagem = (x/16 + ox) * step e (y/16 + oy) * step, onde x,y sao as coordenadas da malha (ponto x16), step = passo da grade e ox,oy = centro (inteiro) tirado dos pontos; null quando nao ha forma.",
  "cases": [
   {
    "name": "vazio",
@@ -8,7 +8,8 @@
     "...."
    ],
    "points": null,
-   "depth": null
+   "depth": null,
+   "texture": null
   },
   {
    "name": "opaco",
@@ -18,7 +19,8 @@
     "####"
    ],
    "points": null,
-   "depth": null
+   "depth": null,
+   "texture": null
   },
   {
    "name": "limiar: alpha 10 conta como transparente",
@@ -58,6 +60,11 @@
      16,
      32
     ]
+   },
+   "texture": {
+    "step": 1,
+    "ox": 3,
+    "oy": 2
    }
   },
   {
@@ -99,6 +106,11 @@
      16,
      32
     ]
+   },
+   "texture": {
+    "step": 1,
+    "ox": 2,
+    "oy": 2
    }
   },
   {
@@ -141,6 +153,11 @@
      32,
      32
     ]
+   },
+   "texture": {
+    "step": 1,
+    "ox": 4,
+    "oy": 3
    }
   },
   {
@@ -182,6 +199,11 @@
      16,
      32
     ]
+   },
+   "texture": {
+    "step": 1,
+    "ox": 1,
+    "oy": 1
    }
   },
   {
@@ -227,6 +249,11 @@
      32,
      32
     ]
+   },
+   "texture": {
+    "step": 1,
+    "ox": 2,
+    "oy": 2
    }
   },
   {
@@ -268,6 +295,11 @@
      26,
      32
     ]
+   },
+   "texture": {
+    "step": 1,
+    "ox": 1,
+    "oy": 2
    }
   },
   {
@@ -320,6 +352,11 @@
      48,
      32
     ]
+   },
+   "texture": {
+    "step": 1,
+    "ox": 5,
+    "oy": 4
    }
   },
   {
@@ -364,6 +401,11 @@
      192,
      128
     ]
+   },
+   "texture": {
+    "step": 2,
+    "ox": 32,
+    "oy": 16
    }
   },
   {
@@ -408,6 +450,11 @@
      160,
      80
     ]
+   },
+   "texture": {
+    "step": 3,
+    "ox": 25,
+    "oy": 20
    }
   }
  ],

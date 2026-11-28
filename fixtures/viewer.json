@@ -1,5 +1,5 @@
 {
- "_about": "Casos compartilhados do Visualizador 3D. drag: yaw += dx*0.5; pitch = clamp(pitch - dy*0.5, -85, 85) (graus). zoom: clamp(scale*pinch, 0.5, 4). framing: centro (meio da caixa) e raio (meia diagonal) dos vertices, para enquadrar qualquer malha.",
+ "_about": "Casos compartilhados do Visualizador 3D. drag: yaw += dx*0.5; pitch = clamp(pitch - dy*0.5, -85, 85) (graus). zoom: clamp(scale*pinch, 0.5, 4). framing: centro (meio da caixa) e raio (meia diagonal) dos vertices, para enquadrar qualquer malha. frontAffine: matriz (a,b,c,d,tx,ty) que leva pixel da imagem (u,v) a tela: x' = a*u + c*v + tx; y' = b*u + d*v + ty, para a face frontal (z = 0 da malha) com a mesma projecao do desenho (yaw, pitch, escala, enquadramento). Tolerancia 1e-6.",
  "drag": [
   {
    "name": "direita",
@@ -154,6 +154,95 @@
     0,
     2,
     18.49324200890693
+   ]
+  }
+ ],
+ "frontAffine": [
+  {
+   "name": "de frente, sem giro",
+   "yaw": 0,
+   "pitch": 0,
+   "scale": 1,
+   "size": [
+    300,
+    300
+   ],
+   "frame": [
+    0,
+    0,
+    2,
+    18.49
+   ],
+   "tex": {
+    "step": 2,
+    "ox": 10,
+    "oy": 10
+   },
+   "expect": [
+    64.89994591671174,
+    0.0,
+    0.0,
+    64.89994591671174,
+    -1147.998918334235,
+    -1147.998918334235
+   ]
+  },
+  {
+   "name": "giro padrao -30/20",
+   "yaw": -30,
+   "pitch": 20,
+   "scale": 1,
+   "size": [
+    300,
+    400
+   ],
+   "frame": [
+    0,
+    0,
+    64,
+    200.0
+   ],
+   "tex": {
+    "step": 4,
+    "ox": 32,
+    "oy": 32
+   },
+   "expect": [
+    2.598076211353316,
+    -0.513030214988503,
+    0.0,
+    2.8190778623577253,
+    -158.55375505322445,
+    -80.95658849241136
+   ]
+  },
+  {
+   "name": "zoom 2x girado",
+   "yaw": 45,
+   "pitch": -35,
+   "scale": 2,
+   "size": [
+    320,
+    320
+   ],
+   "frame": [
+    8,
+    -8,
+    32,
+    150.5
+   ],
+   "tex": {
+    "step": 3,
+    "ox": 20,
+    "oy": 21
+   },
+   "expect": [
+    8.01857523737569,
+    -4.59926580926669,
+    0.0,
+    9.289166039334747,
+    -381.25382852285907,
+    -156.02445900478557
    ]
   }
  ]

@@ -13,7 +13,7 @@ enum Route: Hashable {
 
 @main
 struct SuuviApp: App {
-    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders | collection | edit | editdone | created | createdphoto | collection2 | collection5 | editpiece | deleteask | deleted | shelfnote | viewercutout | profile | settings | capture | capturelifted | search | viewer
+    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders | collection | edit | editdone | created | createdphoto | collection2 | viewerphoto | collection5 | editpiece | deleteask | deleted | shelfnote | viewercutout | profile | settings | capture | capturelifted | search | viewer
     private static let start = UserDefaults.standard.string(forKey: "startRoute")
     @State private var path: [Route] = {
         switch SuuviApp.start {
@@ -23,6 +23,7 @@ struct SuuviApp: App {
         case "capturelifted": return [.capture("f1", sample: true)]
         case "collection", "profile": return [.folders, .collection("f1")]
         case "viewer": return [.folders, .collection("f1"), .viewer("Moeda de Lisboa")]
+        case "viewerphoto": return [.folders, .collection("f1"), .viewer("Xícara", image: ImageStore.saveSampleCutout("sample-cutout-cup"))]
         case "viewercutout": return [.folders, .collection("f1"), .viewer("Coração", image: ImageStore.saveSampleCutout())]
         case "createdphoto": return [.folders, .collection("f2"), .edit("f2", preset: false, auto: true, image: "@sample")]
         case "collection2": return [.folders, .collection("f2")]

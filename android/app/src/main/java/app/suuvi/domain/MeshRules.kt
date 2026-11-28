@@ -5,6 +5,15 @@ data class PrismMesh(val vertices: List<Vertex3>, val triangles: List<List<Int>>
 
 /** Malha do suvenir (prisma extrudado do contorno). Mesmas regras no iOS (MeshRules.swift); fixtures/mesh.json valida as duas. */
 object MeshRules {
+    /** Triangulos da face frontal (tampa em z = 0) de um prisma com bevel (4 aneis de n vertices; a tampa so usa o 1o anel).
+     *  Vazio se a malha nao tem esse formato (ex.: prisma simples). */
+    fun frontCap(m: PrismMesh): List<List<Int>> {
+        if (m.vertices.size < 12 || m.vertices.size % 4 != 0) return emptyList()
+        val n = m.vertices.size / 4
+        val cap = m.triangles.filter { t -> t.all { it < n } }
+        return if (cap.size == n - 2) cap else emptyList()
+    }
+
     private fun triArea2(a: IPoint, b: IPoint, c: IPoint) = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
 
     private fun inside(a: IPoint, b: IPoint, c: IPoint, p: IPoint): Boolean {

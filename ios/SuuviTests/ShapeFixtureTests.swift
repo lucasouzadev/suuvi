@@ -10,6 +10,7 @@ final class ShapeFixtureTests: XCTestCase {
         let points: [[Int]]?
         let depth: Int?
         let solid: Solid?
+        let texture: Tex?
 
         func alpha() -> (a: [UInt8], w: Int, h: Int) {
             if let rows = rows {
@@ -23,6 +24,7 @@ final class ShapeFixtureTests: XCTestCase {
             return (a, w, h)
         }
     }
+    private struct Tex: Decodable { let step: Int; let ox: Int; let oy: Int }
     private struct Solid: Decodable { let vertices: Int; let triangles: Int; let bbox: [Int] }
     private struct Chaikin: Decodable { let name: String; let points: [[Int]]; let rounds: Int; let expect: [[Int]] }
     private struct Fixture: Decodable { let cases: [Case]; let chaikin: [Chaikin] }
@@ -41,6 +43,8 @@ final class ShapeFixtureTests: XCTestCase {
             guard let expect = c.points else { XCTAssertNil(s, c.name); continue }
             XCTAssertEqual(s?.points.map { [$0.x, $0.y] }, expect, c.name)
             XCTAssertEqual(s?.depth, c.depth, c.name)
+            let tex = try XCTUnwrap(c.texture, c.name)
+            XCTAssertEqual([s?.step, s?.ox, s?.oy], [tex.step, tex.ox, tex.oy], c.name)
             guard let m = ShapeRules.mesh(alpha: a, width: w, height: h) else { XCTFail("sem malha: \(c.name)"); continue }
             let sol = try XCTUnwrap(c.solid, c.name)
             XCTAssertEqual(m.vertices.count, sol.vertices, c.name)
@@ -48,6 +52,8 @@ final class ShapeFixtureTests: XCTestCase {
             let xs = m.vertices.map(\.x), ys = m.vertices.map(\.y), zs = m.vertices.map(\.z)
             XCTAssertEqual([xs.min()!, ys.min()!, zs.min()!, xs.max()!, ys.max()!, zs.max()!], sol.bbox, c.name)
             XCTAssertTrue(MeshRules.isClosed(m), c.name)
+            XCTAssertEqual(MeshRules.frontCap(m).count, m.vertices.count / 4 - 2, c.name)
+            XCTAssertTrue(MeshRules.frontCap(m).allSatisfy { $0.allSatisfy { m.vertices[$0].z == 0 } }, c.name)
             XCTAssertGreaterThan(MeshRules.volume6(m), 0, c.name)
         }
     }

@@ -1,16 +1,21 @@
 package app.suuvi.domain
 
-data class Shape(val points: List<IPoint>, val depth: Int)
+/** points/depth: contorno centrado e profundidade. step/ox/oy: mapeamento imagem -> malha da textura
+ *  (pixel = (x/16 + ox) * step e (y/16 + oy) * step, com x,y em coordenadas da malha). */
+data class Shape(val points: List<IPoint>, val depth: Int, val step: Int, val ox: Int, val oy: Int)
 
 /** Forma 3D da peca a partir do alpha do recorte. Mesmas regras no iOS (ShapeRules.swift); fixtures/shape.json valida as duas. */
 object ShapeRules {
     const val MAX_GRID = 64
 
+    /** Passo da grade: lado da imagem dividido para caber em 64 celulas. */
+    fun step(width: Int, height: Int): Int = maxOf(1, (maxOf(width, height) + MAX_GRID - 1) / MAX_GRID)
+
     class Grid(val w: Int, val h: Int, val cells: BooleanArray)
 
     /** Celulas (alpha do pixel central do bloco >= limiar) numa grade de no maximo 64 de lado. */
     fun grid(alpha: IntArray, width: Int, height: Int): Grid {
-        val step = maxOf(1, (maxOf(width, height) + MAX_GRID - 1) / MAX_GRID)
+        val step = step(width, height)
         val gw = (width + step - 1) / step
         val gh = (height + step - 1) / step
         val cells = BooleanArray(gw * gh)
@@ -65,7 +70,7 @@ object ShapeRules {
         val minY = pts.minOf { it.y }; val maxY = pts.maxOf { it.y }
         val extent = maxOf(maxX - minX, maxY - minY)
         val cx = (minX + maxX) / 2; val cy = (minY + maxY) / 2
-        return Shape(pts.map { IPoint(it.x - cx, it.y - cy) }, maxOf(2, (extent + 3) / 6))
+        return Shape(pts.map { IPoint(it.x - cx, it.y - cy) }, maxOf(2, (extent + 3) / 6), step(width, height), cx, cy)
     }
 
     const val SCALE = 16

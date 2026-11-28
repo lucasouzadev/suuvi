@@ -44,8 +44,8 @@ enum ImageStore {
     }
 
     /// So para o CI: copia o recorte de exemplo (PNG com alfa) para a pasta de recortes e devolve o caminho relativo.
-    static func saveSampleCutout() -> String? {
-        guard let src = Bundle.main.url(forResource: "sample-cutout", withExtension: "png") else { return nil }
+    static func saveSampleCutout(_ resource: String = "sample-cutout") -> String? {
+        guard let src = Bundle.main.url(forResource: resource, withExtension: "png") else { return nil }
         let name = UUID().uuidString + ".png"
         guard (try? FileManager.default.copyItem(at: src, to: dir("cutouts").appendingPathComponent(name))) != nil else { return nil }
         return "cutouts/" + name

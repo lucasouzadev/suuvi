@@ -12,6 +12,21 @@ object ViewerRules {
 
     fun zoom(scale: Double, pinch: Double): Double = minOf(MAX_SCALE, maxOf(MIN_SCALE, scale * pinch))
 
+    /** Matriz [a, b, c, d, tx, ty] que leva um pixel (u, v) da imagem a tela na face frontal (z = 0 da malha), com a mesma
+     *  projecao do desenho: x' = a*u + c*v + tx; y' = b*u + d*v + ty. step/ox/oy: Shape. */
+    fun frontAffine(yaw: Double, pitch: Double, scale: Double, width: Double, height: Double, frame: DoubleArray, step: Int, ox: Int, oy: Int): DoubleArray {
+        val ry = Math.toRadians(yaw); val rp = Math.toRadians(pitch)
+        val cy = Math.cos(ry); val sy = Math.sin(ry); val cp = Math.cos(rp); val sp = Math.sin(rp)
+        val s = minOf(width, height) / (2 * frame[3]) * scale
+        val k = ShapeRules.SCALE.toDouble() / step
+        val ax = (ShapeRules.SCALE * ox).toDouble(); val ay = (ShapeRules.SCALE * oy).toDouble()
+        return doubleArrayOf(
+            s * k * cy, s * sp * sy * k, 0.0, s * k * cp,
+            width / 2 + s * ((-ax - frame[0]) * cy - frame[2] * sy),
+            height / 2 + s * ((-ay - frame[1]) * cp + sp * sy * (-ax - frame[0]) + sp * cy * frame[2]),
+        )
+    }
+
     /** Enquadramento: centro (meio da caixa) e raio (meia diagonal) dos vertices; serve para qualquer malha. Retorna (cx, cy, cz, r). */
     fun framing(m: PrismMesh): DoubleArray {
         if (m.vertices.isEmpty()) return doubleArrayOf(0.0, 0.0, 0.0, 1.0)

@@ -13,6 +13,20 @@ enum ViewerRules {
 
     static func zoom(scale: Double, pinch: Double) -> Double { min(maxScale, max(minScale, scale * pinch)) }
 
+    /// Matriz (a, b, c, d, tx, ty) que leva um pixel (u, v) da imagem a tela na face frontal (z = 0 da malha), com a mesma
+    /// projecao do desenho: x' = a*u + c*v + tx; y' = b*u + d*v + ty. step/ox/oy: ShapeRules.Shape.
+    static func frontAffine(yaw: Double, pitch: Double, scale: Double, width: Double, height: Double,
+                            frame f: (cx: Double, cy: Double, cz: Double, r: Double), step: Int, ox: Int, oy: Int) -> [Double] {
+        let ry = yaw * .pi / 180, rp = pitch * .pi / 180
+        let cy = cos(ry), sy = sin(ry), cp = cos(rp), sp = sin(rp)
+        let s = min(width, height) / (2 * f.r) * scale
+        let k = Double(ShapeRules.scale) / Double(step)
+        let ax = Double(ShapeRules.scale * ox), ay = Double(ShapeRules.scale * oy)
+        return [s * k * cy, s * sp * sy * k, 0, s * k * cp,
+                width / 2 + s * ((-ax - f.cx) * cy - f.cz * sy),
+                height / 2 + s * ((-ay - f.cy) * cp + sp * sy * (-ax - f.cx) + sp * cy * f.cz)]
+    }
+
     /// Enquadramento: centro (meio da caixa) e raio (meia diagonal) dos vertices; serve para qualquer malha.
     static func framing(_ m: PrismMesh) -> (cx: Double, cy: Double, cz: Double, r: Double) {
         guard let f = m.vertices.first else { return (0, 0, 0, 1) }
