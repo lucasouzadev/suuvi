@@ -60,7 +60,7 @@ fun CollectionScreen(id: String, onBack: () -> Unit, onAdd: () -> Unit = {}, sta
     val context = androidx.compose.ui.platform.LocalContext.current
     val dao = remember { app.suuvi.data.SuuviDb.get(context).dao() }
     val saved by dao.savedPieces(id).collectAsState(initial = emptyList())
-    val d = base.copy(pieces = base.pieces + saved.map { PieceItem(it.id, it.title, it.emoji) })
+    val d = base.copy(pieces = base.pieces + saved.map { PieceItem(it.id, it.title, it.emoji, it.imagePath) })
     val filled = CollectionRules.slots(d.pieces.size)
     var showProfile by rememberSaveable { mutableStateOf(startProfile) }
     if (showProfile) CollectionProfileSheet(d, onDismiss = { showProfile = false })
@@ -122,7 +122,7 @@ fun CollectionScreen(id: String, onBack: () -> Unit, onAdd: () -> Unit = {}, sta
                 border = BorderStroke(1.dp, SuuviColor.border),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = SuuviColor.text),
             ) { Text(stringResource(R.string.collection_add), fontSize = 17.sp, fontWeight = FontWeight.SemiBold, maxLines = 1) }
-            Row(Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
+            Box(Modifier.size(48.dp)) {
                 IconAction(R.drawable.ic_info, stringResource(R.string.a11y_info), { showProfile = true })
             }
         }

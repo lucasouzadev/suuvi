@@ -9,6 +9,18 @@ final class PieceFixtureTests: XCTestCase {
     }
     private struct Fixture: Decodable { let cases: [Case] }
 
+    private struct Img: Decodable { let name: String; let cutouts: [String?]; let photos: [String]; let expect: String? }
+    private struct ImgFixture: Decodable { let image: [Img] }
+
+    func testImagePath() throws {
+        let url = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("fixtures/create.json")
+        for c in try JSONDecoder().decode(ImgFixture.self, from: Data(contentsOf: url)).image {
+            XCTAssertEqual(PieceRules.imagePath(cutouts: c.cutouts, photos: c.photos), c.expect, c.name)
+        }
+    }
+
     func testCreate() throws {
         let url = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()

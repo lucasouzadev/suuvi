@@ -30,16 +30,18 @@ class MainActivity : ComponentActivity() {
             "search" -> Screen.SEARCH
             "collection", "profile" -> Screen.COLLECTION
             "viewer" -> Screen.VIEWER
-            "edit", "editdone", "created" -> Screen.EDIT
+            "collection2" -> Screen.COLLECTION
+            "edit", "editdone", "created", "createdphoto" -> Screen.EDIT
             else -> Screen.SHELF
         }
         setContent {
             var screen by rememberSaveable { mutableStateOf(start) }
             val preset = intent.getStringExtra("route") == "editdone"
-            var collectionId by rememberSaveable { mutableStateOf("f1") }
+            var collectionId by rememberSaveable { mutableStateOf(if (intent.getStringExtra("route") in listOf("createdphoto", "collection2")) "f2" else "f1") }
             var backTo by rememberSaveable { mutableStateOf(Screen.FOLDERS) }
             var captureFrom by rememberSaveable { mutableStateOf(Screen.SHELF) }
             var pieceTitle by rememberSaveable { mutableStateOf("Moeda de Lisboa") }
+            var pieceImage by rememberSaveable { mutableStateOf<String?>(null) }
             BackHandler(enabled = screen != Screen.SHELF) {
                 screen = when (screen) {
                     Screen.EDIT -> Screen.COLLECTION
@@ -69,10 +71,10 @@ class MainActivity : ComponentActivity() {
                     onPiece = { pieceTitle = it; screen = Screen.VIEWER },
                 )
                 Screen.VIEWER -> ViewerScreen(pieceTitle, onBack = { screen = Screen.COLLECTION })
-                Screen.EDIT -> EditScreen(collectionId, preset, autoCreate = intent.getStringExtra("route") == "created", onBack = { screen = Screen.COLLECTION })
+                Screen.EDIT -> EditScreen(collectionId, preset, autoCreate = intent.getStringExtra("route") in listOf("created", "createdphoto"), image = if (intent.getStringExtra("route") == "createdphoto") "@sample" else pieceImage, onBack = { screen = Screen.COLLECTION })
                 Screen.CAPTURE -> CaptureScreen(
                     onBack = { screen = captureFrom },
-                    onCreate = { screen = Screen.EDIT },
+                    onCreate = { pieceImage = it; screen = Screen.EDIT },
                     autoSample = intent.getStringExtra("route") == "capturelifted",
                 )
                 Screen.SETTINGS -> SettingsScreen(onBack = { screen = Screen.SHELF })

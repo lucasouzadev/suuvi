@@ -28,6 +28,21 @@ enum ImageStore {
         return url
     }
 
+    /// Caminho absoluto de um arquivo guardado como caminho relativo (ex.: "cutouts/abc.png").
+    static func url(relative: String) -> URL {
+        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("suuvi", isDirectory: true)
+        return base.appendingPathComponent(relative)
+    }
+
+    /// So para o CI: copia a foto de exemplo para a pasta de fotos e devolve o caminho relativo.
+    static func saveSample() -> String? {
+        guard let src = Bundle.main.url(forResource: "sample-object", withExtension: "jpg") else { return nil }
+        let name = UUID().uuidString + ".jpg"
+        guard (try? FileManager.default.copyItem(at: src, to: dir("photos").appendingPathComponent(name))) != nil else { return nil }
+        return "photos/" + name
+    }
+
     static func cutoutURL(for photo: URL) -> URL {
         dir("cutouts").appendingPathComponent(photo.deletingPathExtension().lastPathComponent + ".png")
     }

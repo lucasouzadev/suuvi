@@ -49,7 +49,7 @@ import app.suuvi.ui.components.PillField
 
 /** Edicao de peca: cascata a esquerda, tres campos em pilula a direita, botao que muda de rotulo ao salvar. */
 @Composable
-fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = false, onBack: () -> Unit) {
+fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = false, image: String? = null, onBack: () -> Unit) {
     var title by rememberSaveable { mutableStateOf(if (preset) "Moeda de Lisboa" else "") }
     var place by rememberSaveable { mutableStateOf(if (preset) "lisboa" else "") }
     var tag by rememberSaveable { mutableStateOf(if (preset) "viagem" else "") }
@@ -67,7 +67,11 @@ fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = 
             val existing = dao.savedNumbers(folderId)
             val p = PieceRules.create(title, place, tag, existing, existing.maxOrNull() ?: 0) ?: return@launch
             dao.insertSavedPiece(
-                app.suuvi.data.SavedPiece(java.util.UUID.randomUUID().toString(), folderId, p.number, p.title, p.place, p.tag, "🪙", System.currentTimeMillis()),
+                app.suuvi.data.SavedPiece(
+                    java.util.UUID.randomUUID().toString(), folderId, p.number, p.title, p.place, p.tag, "🪙",
+                    if (image == "@sample") app.suuvi.services.ImageStore.saveSample(context) else image,   // "@sample": so o CI
+                    System.currentTimeMillis(),
+                ),
             )
             tag = p.tag ?: ""
             saved = true
@@ -75,7 +79,7 @@ fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = 
     }
     // So para o CI: cria uma peca sozinha, para provar que salvar grava no banco.
     androidx.compose.runtime.LaunchedEffect(autoCreate) {
-        if (autoCreate && !saved) { title = "Bonde 29"; place = "lisboa"; tag = "viagem"; save() }
+        if (autoCreate && !saved) { title = if (image == "@sample") "Cha" else "Bonde 29"; place = "lisboa"; tag = "viagem"; save() }
     }
     val enabled = saved || valid
 

@@ -1,5 +1,5 @@
 {
- "_about": "Casos compartilhados da criacao de peca (salvar na Edicao). create: normaliza (titulo sem espacos das pontas; lugar sem espacos, sem '@' inicial, minusculo; tag sem '#', minuscula, vazia = null), valida (titulo e lugar nao vazios apos normalizar, titulo ate 40) e emite o proximo #n = max(existing, lastIssued)+1. expect = null quando invalido; lastIssued = numero emitido.",
+ "_about": "Casos compartilhados da criacao de peca (salvar na Edicao). create: normaliza (titulo sem espacos das pontas; lugar sem espacos, sem '@' inicial, minusculo; tag sem '#', minuscula, vazia = null), valida (titulo e lugar nao vazios apos normalizar, titulo ate 40) e emite o proximo #n = max(existing, lastIssued)+1. expect = null quando invalido; lastIssued = numero emitido. image: imagePath(cutouts, photos) = primeiro recorte nao nulo, senao a primeira foto, senao null (caminhos relativos a pasta do app).",
  "cases": [
   {
    "name": "primeira peca normaliza tudo",
@@ -91,6 +91,38 @@
    "title": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
    "place": "x",
    "tag": "",
+   "expect": null
+  }
+ ],
+ "image": [
+  {
+   "name": "prefere recorte",
+   "cutouts": [
+    null,
+    "cutouts/b.png"
+   ],
+   "photos": [
+    "photos/a.jpg",
+    "photos/b.jpg"
+   ],
+   "expect": "cutouts/b.png"
+  },
+  {
+   "name": "sem recorte usa a primeira foto",
+   "cutouts": [
+    null,
+    null
+   ],
+   "photos": [
+    "photos/a.jpg",
+    "photos/b.jpg"
+   ],
+   "expect": "photos/a.jpg"
+  },
+  {
+   "name": "sem nada",
+   "cutouts": [],
+   "photos": [],
    "expect": null
   }
  ]

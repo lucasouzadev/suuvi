@@ -37,5 +37,15 @@ object ImageStore {
         return file
     }
 
+    /** Arquivo guardado como caminho relativo (ex.: "cutouts/abc.png"). */
+    fun file(ctx: Context, relative: String) = File(ctx.filesDir, "suuvi/$relative")
+
+    /** So para o CI: copia a foto de exemplo para a pasta de fotos e devolve o caminho relativo. */
+    fun saveSample(ctx: Context): String {
+        val name = UUID.randomUUID().toString() + ".jpg"
+        ctx.assets.open("sample-object.jpg").use { i -> File(dir(ctx, "photos"), name).outputStream().use { i.copyTo(it) } }
+        return "photos/$name"
+    }
+
     fun cutoutFile(ctx: Context, photo: File) = File(dir(ctx, "cutouts"), photo.nameWithoutExtension + ".png")
 }

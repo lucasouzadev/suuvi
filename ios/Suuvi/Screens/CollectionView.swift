@@ -21,7 +21,7 @@ struct CollectionView: View {
 
     var body: some View {
         if let base = SampleData.collectionDetail(id: id) {
-            let extra = saved.filter { $0.folderId == id }.map { PieceItem(id: $0.id.uuidString, title: $0.title, emoji: $0.emoji) }
+            let extra = saved.filter { $0.folderId == id }.map { PieceItem(id: $0.id.uuidString, title: $0.title, emoji: $0.emoji, imagePath: $0.imagePath) }
             content(CollectionDetail(folder: base.folder, status: base.status, pieces: base.pieces + extra))
         }
     }

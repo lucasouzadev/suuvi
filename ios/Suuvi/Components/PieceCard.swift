@@ -7,8 +7,14 @@ struct PieceCard: View {
 
     var body: some View {
         VStack(spacing: SuuviSpace.s2) {
-            EmojiView(glyph: piece.emoji, size: 56)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            Group {
+                if let path = piece.imagePath, let ui = UIImage(contentsOfFile: ImageStore.url(relative: path).path) {
+                    Image(uiImage: ui).resizable().scaledToFit().clipShape(RoundedRectangle(cornerRadius: SuuviRadius.sm))
+                } else {
+                    EmojiView(glyph: piece.emoji, size: 56)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             Text(piece.title)
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(SuuviColor.text)

@@ -11,6 +11,18 @@ class PieceFixtureTest {
     private val root = JSONObject(File("../../fixtures/create.json").readText())
 
     @Test
+    fun imagePath() {
+        val cases = root.getJSONArray("image")
+        for (i in 0 until cases.length()) {
+            val c = cases.getJSONObject(i)
+            val cut = c.getJSONArray("cutouts").let { a -> List(a.length()) { if (a.isNull(it)) null else a.getString(it) } }
+            val photos = c.getJSONArray("photos").let { a -> List(a.length()) { a.getString(it) } }
+            val want = if (c.isNull("expect")) null else c.getString("expect")
+            assertEquals(c.getString("name"), want, PieceRules.imagePath(cut, photos))
+        }
+    }
+
+    @Test
     fun create() {
         val cases = root.getJSONArray("cases")
         for (i in 0 until cases.length()) {

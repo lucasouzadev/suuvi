@@ -1,6 +1,6 @@
 package app.suuvi.domain
 
-data class PieceItem(val id: String, val title: String, val emoji: String)
+data class PieceItem(val id: String, val title: String, val emoji: String, val imagePath: String? = null)
 
 data class CollectionDetail(val folder: FolderItem, val status: SouvenirStatus, val pieces: List<PieceItem>)
 

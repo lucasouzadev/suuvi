@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [SouvenirCollection::class, Souvenir::class, Asset::class, SavedPiece::class],
-    version = 2,
+    version = 3,
     exportSchema = false,
 )
 abstract class SuuviDatabase : RoomDatabase() {

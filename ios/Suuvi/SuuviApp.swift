@@ -6,13 +6,13 @@ enum Route: Hashable {
     case settings
     case capture(String, sample: Bool)
     case collection(String)
-    case edit(String, preset: Bool, auto: Bool = false)
+    case edit(String, preset: Bool, auto: Bool = false, image: String? = nil)
     case viewer(String)
 }
 
 @main
 struct SuuviApp: App {
-    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders | collection | edit | editdone | created | profile | settings | capture | capturelifted | search | viewer
+    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders | collection | edit | editdone | created | createdphoto | collection2 | profile | settings | capture | capturelifted | search | viewer
     private static let start = UserDefaults.standard.string(forKey: "startRoute")
     @State private var path: [Route] = {
         switch SuuviApp.start {
@@ -22,6 +22,8 @@ struct SuuviApp: App {
         case "capturelifted": return [.capture("f1", sample: true)]
         case "collection", "profile": return [.folders, .collection("f1")]
         case "viewer": return [.folders, .collection("f1"), .viewer("Moeda de Lisboa")]
+        case "createdphoto": return [.folders, .collection("f2"), .edit("f2", preset: false, auto: true, image: "@sample")]
+        case "collection2": return [.folders, .collection("f2")]
         case "created": return [.folders, .collection("f1"), .edit("f1", preset: false, auto: true)]
         case "edit": return [.folders, .collection("f1"), .edit("f1", preset: false)]
         case "editdone": return [.folders, .collection("f1"), .edit("f1", preset: true)]
@@ -44,7 +46,7 @@ struct SuuviApp: App {
                     .navigationDestination(for: Route.self) { route in
                         switch route {
                         case .capture(let id, let sample):
-                            CaptureView(autoSample: sample, onCreate: { path.append(.edit(id, preset: false)) })
+                            CaptureView(autoSample: sample, onCreate: { path.append(.edit(id, preset: false, image: $0)) })
                                 .toolbar(.hidden, for: .navigationBar)
                         case .settings:
                             SettingsView().toolbar(.hidden, for: .navigationBar)
@@ -55,8 +57,8 @@ struct SuuviApp: App {
                                 .toolbar(.hidden, for: .navigationBar)
                         case .viewer(let title):
                             ViewerView(title: title).toolbar(.hidden, for: .navigationBar)
-                        case .edit(let id, let preset, let auto):
-                            EditView(folderId: id, preset: preset, autoCreate: auto).toolbar(.hidden, for: .navigationBar)
+                        case .edit(let id, let preset, let auto, let image):
+                            EditView(folderId: id, preset: preset, autoCreate: auto, image: image).toolbar(.hidden, for: .navigationBar)
                         }
                     }
             }

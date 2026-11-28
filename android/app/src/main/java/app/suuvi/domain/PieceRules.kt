@@ -7,6 +7,9 @@ object PieceRules {
     /** Sem espacos das pontas, sem '@' inicial, minusculo. */
     fun normalizePlace(raw: String): String = raw.trim().removePrefix("@").trim().lowercase()
 
+    /** Imagem da peca: primeiro recorte, senao a primeira foto (caminhos relativos a pasta do app). */
+    fun imagePath(cutouts: List<String?>, photos: List<String>): String? = cutouts.filterNotNull().firstOrNull() ?: photos.firstOrNull()
+
     /** null se invalido. Caso contrario, a peca normalizada com o proximo #n. */
     fun create(title: String, place: String, tag: String, existing: List<Int>, lastIssued: Int): NewPiece? {
         val t = title.trim()

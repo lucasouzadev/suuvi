@@ -119,6 +119,13 @@ jobs:
           xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute collection
           sleep 6
           xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-collection-after.png
+          xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
+          xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute createdphoto
+          sleep 6
+          xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
+          xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute collection2
+          sleep 6
+          xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-photo-piece.png
       - uses: actions/upload-artifact@v4
         with:
           name: ios-screens
@@ -210,6 +217,11 @@ jobs:
             adb shell am start -S -n app.suuvi/.MainActivity --es route collection
             sleep 6
             adb exec-out screencap -p > android-collection-after.png
+            adb shell am start -S -n app.suuvi/.MainActivity --es route createdphoto
+            sleep 6
+            adb shell am start -S -n app.suuvi/.MainActivity --es route collection2
+            sleep 6
+            adb exec-out screencap -p > android-photo-piece.png
       - uses: actions/upload-artifact@v4
         with:
           name: android-screens

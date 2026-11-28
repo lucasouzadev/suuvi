@@ -18,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -46,7 +48,18 @@ fun PieceCard(piece: PieceItem, tilt: Float, modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(SuuviSpace.s2),
     ) {
-        Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) { EmojiImage(piece.emoji, 56.dp) }
+        Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+            val ctx = androidx.compose.ui.platform.LocalContext.current
+            val bmp = androidx.compose.runtime.remember(piece.imagePath) {
+                piece.imagePath?.let { android.graphics.BitmapFactory.decodeFile(app.suuvi.services.ImageStore.file(ctx, it).path) }
+            }
+            if (bmp != null) {
+                androidx.compose.foundation.Image(
+                    bmp.asImageBitmap(), piece.title, Modifier.fillMaxSize().clip(RoundedCornerShape(SuuviRadius.sm)),
+                    contentScale = androidx.compose.ui.layout.ContentScale.Fit,
+                )
+            } else EmojiImage(piece.emoji, 56.dp)
+        }
         Text(
             piece.title, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = SuuviColor.text,
             maxLines = 1, overflow = TextOverflow.Ellipsis,

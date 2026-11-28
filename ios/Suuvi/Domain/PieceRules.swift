@@ -17,6 +17,9 @@ enum PieceRules {
         return s.trimmingCharacters(in: .whitespaces).lowercased()
     }
 
+    /// Imagem da peca: primeiro recorte, senao a primeira foto (caminhos relativos a pasta do app).
+    static func imagePath(cutouts: [String?], photos: [String]) -> String? { cutouts.compactMap { $0 }.first ?? photos.first }
+
     /// nil se invalido. Caso contrario, a peca normalizada com o proximo #n.
     static func create(title: String, place: String, tag: String, existing: [Int], lastIssued: Int) -> NewPiece? {
         let t = title.trimmingCharacters(in: .whitespaces)

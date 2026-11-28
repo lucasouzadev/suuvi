@@ -68,7 +68,7 @@ import kotlinx.coroutines.withContext
 
 /** Captura: ate 4 fotos (camera ou galeria) em grade inclinada; Lift recorta o objeto; depois "Criar peca". */
 @Composable
-fun CaptureScreen(onBack: () -> Unit, onCreate: () -> Unit, autoSample: Boolean = false) {
+fun CaptureScreen(onBack: () -> Unit, onCreate: (String?) -> Unit, autoSample: Boolean = false) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
     val photos = remember { mutableStateListOf<CapturedPhoto>() }
@@ -192,7 +192,14 @@ fun CaptureScreen(onBack: () -> Unit, onCreate: () -> Unit, autoSample: Boolean 
             }
             val create = cta == CtaState.CREATE
             OutlinedButton(
-                onClick = { if (create) onCreate() else scope.launch { liftAll() } },
+                onClick = {
+                    if (create) onCreate(
+                        app.suuvi.domain.PieceRules.imagePath(
+                            photos.map { if (it.cutout == null) null else "cutouts/" + it.file.nameWithoutExtension + ".png" },
+                            photos.map { "photos/" + it.file.name },
+                        ),
+                    ) else scope.launch { liftAll() }
+                },
                 enabled = cta != CtaState.DISABLED && cta != CtaState.LIFTING,
                 modifier = Modifier.alpha(if (cta == CtaState.DISABLED) 0.4f else 1f),
                 shape = RoundedCornerShape(SuuviRadius.pill),

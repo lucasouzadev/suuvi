@@ -8,13 +8,15 @@ struct EditView: View {
     @Query private var allSaved: [SavedPiece]
     let folderId: String
     private let autoCreate: Bool
+    private let image: String?
     @State private var title: String
     @State private var place: String
     @State private var tag: String
     @State private var saved: Bool
 
-    init(folderId: String, preset: Bool = false, autoCreate: Bool = false) {
+    init(folderId: String, preset: Bool = false, autoCreate: Bool = false, image: String? = nil) {
         self.folderId = folderId
+        self.image = image
         self.autoCreate = autoCreate
         _title = State(initialValue: preset ? "Moeda de Lisboa" : "")
         _place = State(initialValue: preset ? "lisboa" : "")
@@ -84,7 +86,7 @@ struct EditView: View {
         .navigationBarBackButtonHidden(true)
         .onAppear {
             // So para o CI: cria uma peca sozinha, para provar que salvar grava no banco.
-            if autoCreate && !saved { title = "Bonde 29"; place = "lisboa"; tag = "viagem"; save() }
+            if autoCreate && !saved { title = image == "@sample" ? "Cha" : "Bonde 29"; place = "lisboa"; tag = "viagem"; save() }
         }
     }
 
@@ -93,7 +95,8 @@ struct EditView: View {
         let existing = allSaved.filter { $0.folderId == folderId }.map(\.number)
         guard let p = PieceRules.create(title: title, place: place, tag: tag, existing: existing, lastIssued: existing.max() ?? 0)
         else { return }
-        context.insert(SavedPiece(folderId: folderId, number: p.number, title: p.title, place: p.place, tag: p.tag))
+        let img = image == "@sample" ? ImageStore.saveSample() : image   // "@sample": so o CI
+        context.insert(SavedPiece(folderId: folderId, number: p.number, title: p.title, place: p.place, tag: p.tag, imagePath: img))
         try? context.save()
         tag = p.tag ?? ""
         saved = true

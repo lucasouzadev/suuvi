@@ -83,9 +83,11 @@ final class SavedPiece {
     var place: String
     var tag: String?
     var emoji: String
+    /// Imagem da peca (recorte ou foto), relativa a pasta do app; nil = so emoji.
+    var imagePath: String?
     var createdAt: Date
 
-    init(folderId: String, number: Int, title: String, place: String, tag: String?, emoji: String = "🪙") {
+    init(folderId: String, number: Int, title: String, place: String, tag: String?, emoji: String = "🪙", imagePath: String? = nil) {
         self.id = UUID()
         self.folderId = folderId
         self.number = number
@@ -93,6 +95,7 @@ final class SavedPiece {
         self.place = place
         self.tag = tag
         self.emoji = emoji
+        self.imagePath = imagePath
         self.createdAt = Date()
     }
 }

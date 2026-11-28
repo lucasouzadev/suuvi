@@ -4,6 +4,7 @@ struct PieceItem: Identifiable {
     let id: String
     let title: String
     let emoji: String
+    var imagePath: String? = nil
 }
 
 struct CollectionDetail {

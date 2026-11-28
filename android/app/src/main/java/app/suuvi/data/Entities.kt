@@ -63,5 +63,7 @@ data class SavedPiece(
     val place: String,
     val tag: String?,
     val emoji: String,
+    /** Imagem da peca (recorte ou foto), relativa a filesDir/suuvi; null = so emoji. */
+    val imagePath: String? = null,
     val createdAt: Long,
 )

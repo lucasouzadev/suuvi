@@ -5,7 +5,7 @@ import PhotosUI
 struct CaptureView: View {
     @Environment(\.dismiss) private var dismiss
     var autoSample = false
-    var onCreate: () -> Void = {}
+    var onCreate: (String?) -> Void = { _ in }
 
     @State private var photos: [CapturedPhoto] = []
     @State private var lifting = false
@@ -101,7 +101,14 @@ struct CaptureView: View {
     }
 
     private func ctaTapped() {
-        if cta == .create { onCreate() } else { Task { await liftAll() } }
+        if cta == .create { onCreate(imagePath()) } else { Task { await liftAll() } }
+    }
+
+    /// Imagem da peca: primeiro recorte pronto; senao a primeira foto.
+    private func imagePath() -> String? {
+        PieceRules.imagePath(
+            cutouts: photos.map { $0.cutout == nil ? nil : "cutouts/" + $0.photoURL.deletingPathExtension().lastPathComponent + ".png" },
+            photos: photos.map { "photos/" + $0.photoURL.lastPathComponent })
     }
 
     private func add(_ data: Data) {
