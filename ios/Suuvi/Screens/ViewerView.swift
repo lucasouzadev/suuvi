@@ -5,6 +5,8 @@ struct ViewerView: View {
     @Environment(\.dismiss) private var dismiss
     let title: String
     let image: String?
+    /// Suave (Chaikin + bevel) ou low-poly (facetado); a escolha fica guardada.
+    @State private var smooth: Bool
     @State private var model: Model?
     @State private var yaw = -30.0
     @State private var pitch = 20.0
@@ -18,18 +20,29 @@ struct ViewerView: View {
         let frame: (cx: Double, cy: Double, cz: Double, r: Double)
         /// Foto do recorte aplicada na face frontal (nil = cor lisa, ex.: a moeda de reserva).
         let texture: ShapeLoader.Textured?
+        /// Aneis de vertices da malha: 4 suave (bevel), 2 low-poly.
+        let rings: Int
     }
 
-    init(title: String, image: String? = nil) {
+    init(title: String, image: String? = nil, startLow: Bool = false) {
         self.title = title
         self.image = image
+        let saved = UserDefaults.standard.object(forKey: "viewerSmooth") as? Bool ?? true
+        _smooth = State(initialValue: startLow ? false : saved)   // startLow: so o CI
     }
 
     var body: some View {
         VStack(spacing: SuuviSpace.s4) {
             ZStack {
                 Text(title).font(.system(size: 17, weight: .semibold)).foregroundStyle(SuuviColor.text)
-                HStack { IconButton(icon: "ic_chevron_left", label: "a11y.back") { dismiss() }; Spacer() }
+                HStack {
+                    IconButton(icon: "ic_chevron_left", label: "a11y.back") { dismiss() }
+                    Spacer()
+                    IconButton(icon: smooth ? "ic_box" : "ic_circle", label: smooth ? "viewer.lowpoly" : "viewer.smooth") {
+                        smooth.toggle()
+                        UserDefaults.standard.set(smooth, forKey: "viewerSmooth")
+                    }
+                }
             }
             .frame(height: 52)
             Canvas { ctx, size in draw(&ctx, size) }
@@ -56,12 +69,13 @@ struct ViewerView: View {
         .padding(.bottom, SuuviSpace.s4)
         .background(SuuviColor.bg)
         .navigationBarBackButtonHidden(true)
-        .task {
+        .task(id: smooth) {
             // Recorte salvo da peca; sem recorte (foto opaca ou so emoji) cai na moeda de reserva.
-            let solid = ShapeLoader.solid(relative: image)
-            let mesh = solid?.mesh ?? SampleShape.coinMesh()
-            let textured = solid.flatMap { MeshRules.frontCap($0.mesh).isEmpty ? nil : $0 }
-            model = Model(mesh: mesh, frame: ViewerRules.framing(mesh), texture: textured)
+            let rings = smooth ? 4 : 2
+            let solid = ShapeLoader.solid(relative: image, smooth: smooth)
+            let mesh = solid?.mesh ?? SampleShape.coinMesh(smooth: smooth)
+            let textured = solid.flatMap { MeshRules.frontCap($0.mesh, rings: rings).isEmpty ? nil : $0 }
+            model = Model(mesh: mesh, frame: ViewerRules.framing(mesh), texture: textured, rings: rings)
         }
     }
 
@@ -91,7 +105,7 @@ struct ViewerView: View {
         struct Face { let tri: [Int]; let depth: Double; let light: Double; var cap: Path? = nil }
         var faces: [Face] = []
         // Face frontal com foto: os triangulos da tampa viram um unico desenho (so o 1o anel de vertices).
-        let ring = mesh.vertices.count / 4
+        let ring = mesh.vertices.count / model.rings
         var capPath = Path(), capCount = 0, capDepth = 0.0, capLight = 0.0
         for t in mesh.triangles {
             let a = pts[t[0]], b = pts[t[1]], c = pts[t[2]]
@@ -121,7 +135,7 @@ struct ViewerView: View {
             if let cap = f.cap, let tex = model.texture {
                 ctx.fill(cap, with: .color(shade(f.light)))
                 let m = ViewerRules.frontAffine(yaw: yaw, pitch: pitch, scale: scale, width: Double(size.width), height: Double(size.height),
-                                                frame: f0, step: tex.step, ox: tex.ox, oy: tex.oy)
+                                                frame: f0, step: tex.step, ox: tex.ox, oy: tex.oy, unit: tex.unit)
                 ctx.drawLayer { layer in
                     layer.clip(to: cap)
                     layer.concatenate(CGAffineTransform(a: m[0], b: m[1], c: m[2], d: m[3], tx: m[4], ty: m[5]))

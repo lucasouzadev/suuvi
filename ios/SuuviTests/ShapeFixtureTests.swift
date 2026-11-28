@@ -53,6 +53,9 @@ final class ShapeFixtureTests: XCTestCase {
             XCTAssertEqual([xs.min()!, ys.min()!, zs.min()!, xs.max()!, ys.max()!, zs.max()!], sol.bbox, c.name)
             XCTAssertTrue(MeshRules.isClosed(m), c.name)
             XCTAssertEqual(MeshRules.frontCap(m).count, m.vertices.count / 4 - 2, c.name)
+            // low-poly: prisma simples do mesmo contorno; a tampa tem n - 2 triangulos no 1o anel
+            let low = try XCTUnwrap(ShapeRules.lowPoly(try XCTUnwrap(s).points, depth: try XCTUnwrap(s).depth), c.name)
+            XCTAssertEqual(MeshRules.frontCap(low, rings: 2).count, low.vertices.count / 2 - 2, c.name)
             XCTAssertTrue(MeshRules.frontCap(m).allSatisfy { $0.allSatisfy { m.vertices[$0].z == 0 } }, c.name)
             XCTAssertGreaterThan(MeshRules.volume6(m), 0, c.name)
         }

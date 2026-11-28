@@ -14,14 +14,15 @@ enum ViewerRules {
     static func zoom(scale: Double, pinch: Double) -> Double { min(maxScale, max(minScale, scale * pinch)) }
 
     /// Matriz (a, b, c, d, tx, ty) que leva um pixel (u, v) da imagem a tela na face frontal (z = 0 da malha), com a mesma
-    /// projecao do desenho: x' = a*u + c*v + tx; y' = b*u + d*v + ty. step/ox/oy: ShapeRules.Shape.
+    /// projecao do desenho: x' = a*u + c*v + tx; y' = b*u + d*v + ty. step/ox/oy: ShapeRules.Shape; unit: ShapeRules.unit(smooth:).
     static func frontAffine(yaw: Double, pitch: Double, scale: Double, width: Double, height: Double,
-                            frame f: (cx: Double, cy: Double, cz: Double, r: Double), step: Int, ox: Int, oy: Int) -> [Double] {
+                            frame f: (cx: Double, cy: Double, cz: Double, r: Double), step: Int, ox: Int, oy: Int,
+                            unit: Int = ShapeRules.scale) -> [Double] {
         let ry = yaw * .pi / 180, rp = pitch * .pi / 180
         let cy = cos(ry), sy = sin(ry), cp = cos(rp), sp = sin(rp)
         let s = min(width, height) / (2 * f.r) * scale
-        let k = Double(ShapeRules.scale) / Double(step)
-        let ax = Double(ShapeRules.scale * ox), ay = Double(ShapeRules.scale * oy)
+        let k = Double(unit) / Double(step)
+        let ax = Double(unit * ox), ay = Double(unit * oy)
         return [s * k * cy, s * sp * sy * k, 0, s * k * cp,
                 width / 2 + s * ((-ax - f.cx) * cy - f.cz * sy),
                 height / 2 + s * ((-ay - f.cy) * cp + sp * sy * (-ax - f.cx) + sp * cy * f.cz)]
@@ -43,13 +44,14 @@ enum ViewerRules {
 
 /// Forma de reserva (moeda) para pecas sem recorte: disco 64x64 -> contorno -> prisma.
 enum SampleShape {
-    static func coinMesh() -> PrismMesh {
+    static func coinMesh(smooth: Bool = true) -> PrismMesh {
         let n = 64, r = 26.0
         let contour = ContourRules.trace(width: n, height: n) { x, y in
             let dx = Double(x) + 0.5 - 32, dy = Double(y) + 0.5 - 32
             return dx * dx + dy * dy <= r * r
         }
         let pts = ContourRules.simplify(contour, eps: 1).map { IPoint(x: $0.x - 32, y: $0.y - 32) }
-        return ShapeRules.solid(pts, depth: 8) ?? PrismMesh(vertices: [], triangles: [])
+        let mesh = smooth ? ShapeRules.solid(pts, depth: 8) : ShapeRules.lowPoly(pts, depth: 8)
+        return mesh ?? PrismMesh(vertices: [], triangles: [])
     }
 }

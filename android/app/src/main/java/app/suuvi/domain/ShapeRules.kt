@@ -75,6 +75,12 @@ object ShapeRules {
 
     const val SCALE = 16
 
+    /** Unidades da malha por celula da grade: 16 no solido suave (pontos x16), 1 no low-poly. */
+    fun unit(smooth: Boolean): Int = if (smooth) SCALE else 1
+
+    /** Low-poly: prisma simples do contorno simplificado (sem suavizar, sem bevel). */
+    fun lowPoly(points: List<IPoint>, depth: Int): PrismMesh? = MeshRules.extrude(points, depth)
+
     /** Solido suave: pontos x16 -> Chaikin (2 rodadas) -> prisma com bevel de 1/4 da profundidade. */
     fun solid(points: List<IPoint>, depth: Int): PrismMesh? {
         val p = MeshRules.chaikin(points.map { IPoint(it.x * SCALE, it.y * SCALE) }, 2)

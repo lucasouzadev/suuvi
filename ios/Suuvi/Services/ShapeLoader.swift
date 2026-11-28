@@ -12,11 +12,13 @@ enum ShapeLoader {
         let step: Int
         let ox: Int
         let oy: Int
+        /// Unidades da malha por celula (ShapeRules.unit): 16 suave, 1 low-poly.
+        let unit: Int
     }
 
     static func mesh(relative: String?) -> PrismMesh? { solid(relative: relative)?.mesh }
 
-    static func solid(relative: String?) -> Textured? {
+    static func solid(relative: String?, smooth: Bool = true) -> Textured? {
         guard let rel = relative,
               let src = CGImageSourceCreateWithURL(ImageStore.url(relative: rel) as CFURL, nil),
               let cg = CGImageSourceCreateThumbnailAtIndex(src, 0, [
@@ -37,7 +39,8 @@ enum ShapeLoader {
         guard drawn else { return nil }
         let alpha = (0..<(w * h)).map { rgba[$0 * 4 + 3] }
         guard let s = ShapeRules.shape(alpha: alpha, width: w, height: h),
-              let mesh = ShapeRules.solid(s.points, depth: s.depth) else { return nil }
-        return Textured(mesh: mesh, image: cg, step: s.step, ox: s.ox, oy: s.oy)
+              let mesh = smooth ? ShapeRules.solid(s.points, depth: s.depth) : ShapeRules.lowPoly(s.points, depth: s.depth)
+        else { return nil }
+        return Textured(mesh: mesh, image: cg, step: s.step, ox: s.ox, oy: s.oy, unit: ShapeRules.unit(smooth: smooth))
     }
 }

@@ -24,14 +24,14 @@ private enum class Screen { SHELF, FOLDERS, SEARCH, COLLECTION, EDIT, SETTINGS, 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Rota inicial opcional (usada pelo CI para tirar print): --es route folders | collection | viewerphoto | collection5 | editpiece | deleteask | deleted | shelfnote | viewercutout | edit | editdone | profile | settings | capture | capturelifted | search
+        // Rota inicial opcional (usada pelo CI para tirar print): --es route folders | collection | viewerphoto | viewerlow | collection5 | editpiece | deleteask | deleted | shelfnote | viewercutout | edit | editdone | profile | settings | capture | capturelifted | search
         val start = when (intent.getStringExtra("route")) {
             "folders" -> Screen.FOLDERS
             "settings" -> Screen.SETTINGS
             "capture", "capturelifted" -> Screen.CAPTURE
             "search" -> Screen.SEARCH
             "collection", "profile" -> Screen.COLLECTION
-            "viewer", "viewercutout", "viewerphoto" -> Screen.VIEWER
+            "viewer", "viewercutout", "viewerphoto", "viewerlow" -> Screen.VIEWER
             "collection2", "collection5", "deleteask", "deleted" -> Screen.COLLECTION
             "edit", "editdone", "created", "createdphoto", "editpiece" -> Screen.EDIT
             else -> Screen.SHELF
@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
         val route = intent.getStringExtra("route")
         val cutout = when (route) {
             "viewercutout" -> ImageStore.saveSampleCutout(this)
-            "viewerphoto" -> ImageStore.saveSampleCutout(this, "sample-cutout-cup")   // so CI: recorte com foto, para provar a textura
+            "viewerphoto", "viewerlow" -> ImageStore.saveSampleCutout(this, "sample-cutout-cup")   // so CI: recorte com foto, para provar a textura
             else -> null
         }
         if (route in listOf("collection5", "editpiece", "deleteask", "deleted", "shelfnote")) seedForCi(route == "deleted", route == "shelfnote")   // so para o CI: 2 pecas salvas na f1
@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
             var collectionId by rememberSaveable { mutableStateOf(if (intent.getStringExtra("route") in listOf("createdphoto", "collection2")) "f2" else "f1") }
             var backTo by rememberSaveable { mutableStateOf(Screen.FOLDERS) }
             var captureFrom by rememberSaveable { mutableStateOf(Screen.SHELF) }
-            var pieceTitle by rememberSaveable { mutableStateOf(if (route == "viewercutout") "Coração" else if (route == "viewerphoto") "Xícara" else "Moeda de Lisboa") }
+            var pieceTitle by rememberSaveable { mutableStateOf(if (route == "viewercutout") "Coração" else if (route == "viewerphoto" || route == "viewerlow") "Xícara" else "Moeda de Lisboa") }
             var viewerImage by rememberSaveable { mutableStateOf(cutout) }
             var pieceImage by rememberSaveable { mutableStateOf<String?>(null) }
             var editingId by rememberSaveable { mutableStateOf<String?>(if (route == "editpiece") "first" else null) }
@@ -84,7 +84,7 @@ class MainActivity : ComponentActivity() {
                     startProfile = intent.getStringExtra("route") == "profile",
                     onPiece = { pieceTitle = it.title; viewerImage = it.imagePath; screen = Screen.VIEWER },
                 )
-                Screen.VIEWER -> ViewerScreen(pieceTitle, viewerImage, onBack = { screen = Screen.COLLECTION })
+                Screen.VIEWER -> ViewerScreen(pieceTitle, viewerImage, onBack = { screen = Screen.COLLECTION }, startLow = route == "viewerlow")
                 Screen.EDIT -> EditScreen(collectionId, preset, autoCreate = intent.getStringExtra("route") in listOf("created", "createdphoto"), image = if (intent.getStringExtra("route") == "createdphoto") "@sample" else pieceImage, pieceId = editingId, onBack = { screen = Screen.COLLECTION })
                 Screen.CAPTURE -> CaptureScreen(
                     onBack = { screen = captureFrom },

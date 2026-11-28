@@ -74,3 +74,5 @@
 "delete.title" = "Delete this piece?";
 "delete.message" = "The photo and the 3D are removed from this device. The number is not reused.";
 "delete.confirm" = "Delete";
+"viewer.lowpoly" = "Low-poly";
+"viewer.smooth" = "Smooth";

@@ -61,6 +61,9 @@ class ShapeFixtureTest {
             assertEquals(name, List(6) { bb.getInt(it) }, got)
             assertTrue(name, MeshRules.isClosed(m))
             assertEquals(name, m.vertices.size / 4 - 2, MeshRules.frontCap(m).size)
+            // low-poly: prisma simples do mesmo contorno; a tampa tem n - 2 triangulos no 1o anel
+            val low = ShapeRules.lowPoly(s.points, s.depth)!!
+            assertEquals(name, low.vertices.size / 2 - 2, MeshRules.frontCap(low, 2).size)
             assertTrue(name, MeshRules.frontCap(m).all { t -> t.all { m.vertices[it].z == 0 } })
             assertTrue(name, MeshRules.volume6Long(m) > 0)
         }

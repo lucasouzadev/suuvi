@@ -78,4 +78,6 @@
     <string name="delete_message">A foto e o 3D saem deste aparelho. O número não é reutilizado.</string>
     <string name="delete_confirm">Apagar</string>
     <string name="delete_cancel">Cancelar</string>
+    <string name="viewer_lowpoly">Facetado</string>
+    <string name="viewer_smooth">Suave</string>
 </resources>

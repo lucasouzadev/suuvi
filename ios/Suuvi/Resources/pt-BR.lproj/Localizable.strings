@@ -74,3 +74,5 @@
 "delete.title" = "Apagar esta peça?";
 "delete.message" = "A foto e o 3D saem deste aparelho. O número não é reutilizado.";
 "delete.confirm" = "Apagar";
+"viewer.lowpoly" = "Facetado";
+"viewer.smooth" = "Suave";

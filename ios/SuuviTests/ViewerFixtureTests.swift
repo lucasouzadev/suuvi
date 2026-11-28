@@ -8,7 +8,7 @@ final class ViewerFixtureTests: XCTestCase {
     private struct Tex: Decodable { let step: Int; let ox: Int; let oy: Int }
     private struct Affine: Decodable {
         let name: String; let yaw: Double; let pitch: Double; let scale: Double
-        let size: [Double]; let frame: [Double]; let tex: Tex; let expect: [Double]
+        let size: [Double]; let frame: [Double]; let tex: Tex; let unit: Int?; let expect: [Double]
     }
     private struct Fixture: Decodable { let drag: [Drag]; let zoom: [Zoom]; let framing: [Framing]; let frontAffine: [Affine] }
 
@@ -34,7 +34,7 @@ final class ViewerFixtureTests: XCTestCase {
     func testFrontAffine() throws {
         for c in try load().frontAffine {
             let got = ViewerRules.frontAffine(yaw: c.yaw, pitch: c.pitch, scale: c.scale, width: c.size[0], height: c.size[1],
-                                              frame: (c.frame[0], c.frame[1], c.frame[2], c.frame[3]), step: c.tex.step, ox: c.tex.ox, oy: c.tex.oy)
+                                              frame: (c.frame[0], c.frame[1], c.frame[2], c.frame[3]), step: c.tex.step, ox: c.tex.ox, oy: c.tex.oy, unit: c.unit ?? 16)
             XCTAssertEqual(got.count, 6, c.name)
             for (g, w) in zip(got, c.expect) { XCTAssertEqual(g, w, accuracy: 1e-6, c.name) }
         }

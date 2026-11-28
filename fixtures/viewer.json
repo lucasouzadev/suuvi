@@ -1,5 +1,5 @@
 {
- "_about": "Casos compartilhados do Visualizador 3D. drag: yaw += dx*0.5; pitch = clamp(pitch - dy*0.5, -85, 85) (graus). zoom: clamp(scale*pinch, 0.5, 4). framing: centro (meio da caixa) e raio (meia diagonal) dos vertices, para enquadrar qualquer malha. frontAffine: matriz (a,b,c,d,tx,ty) que leva pixel da imagem (u,v) a tela: x' = a*u + c*v + tx; y' = b*u + d*v + ty, para a face frontal (z = 0 da malha) com a mesma projecao do desenho (yaw, pitch, escala, enquadramento). Tolerancia 1e-6.",
+ "_about": "Casos compartilhados do Visualizador 3D. drag: yaw += dx*0.5; pitch = clamp(pitch - dy*0.5, -85, 85) (graus). zoom: clamp(scale*pinch, 0.5, 4). framing: centro (meio da caixa) e raio (meia diagonal) dos vertices, para enquadrar qualquer malha. frontAffine: matriz (a,b,c,d,tx,ty) que leva pixel da imagem (u,v) a tela: x' = a*u + c*v + tx; y' = b*u + d*v + ty, para a face frontal (z = 0 da malha) com a mesma projecao do desenho (yaw, pitch, escala, enquadramento). Tolerancia 1e-6. Campo opcional 'unit' (padrao 16): unidades da malha por celula da grade; 16 = solido suave (pontos x16), 1 = low-poly (pontos sem escala).",
  "drag": [
   {
    "name": "direita",
@@ -243,6 +243,36 @@
     9.289166039334747,
     -381.25382852285907,
     -156.02445900478557
+   ]
+  },
+  {
+   "name": "low-poly: unidade 1 (malha sem x16)",
+   "yaw": -30,
+   "pitch": 20,
+   "scale": 1,
+   "size": [
+    300,
+    300
+   ],
+   "frame": [
+    0,
+    0,
+    10,
+    40.0
+   ],
+   "tex": {
+    "step": 2,
+    "ox": 16,
+    "oy": 16
+   },
+   "unit": 1,
+   "expect": [
+    1.6237976320958225,
+    -0.3206438843678144,
+    0.0,
+    1.7619236639735782,
+    116.78847577293368,
+    114.98647702984144
    ]
   }
  ]

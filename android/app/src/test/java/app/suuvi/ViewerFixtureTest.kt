@@ -43,7 +43,7 @@ class ViewerFixtureTest {
             val size = c.getJSONArray("size"); val fr = c.getJSONArray("frame"); val tex = c.getJSONObject("tex")
             val got = ViewerRules.frontAffine(
                 c.getDouble("yaw"), c.getDouble("pitch"), c.getDouble("scale"), size.getDouble(0), size.getDouble(1),
-                DoubleArray(4) { fr.getDouble(it) }, tex.getInt("step"), tex.getInt("ox"), tex.getInt("oy"),
+                DoubleArray(4) { fr.getDouble(it) }, tex.getInt("step"), tex.getInt("ox"), tex.getInt("oy"), c.optInt("unit", 16),
             )
             val e = c.getJSONArray("expect")
             for (k in 0 until 6) assertEquals(c.getString("name"), e.getDouble(k), got[k], 1e-6)

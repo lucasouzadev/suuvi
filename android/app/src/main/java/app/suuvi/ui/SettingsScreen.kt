@@ -56,6 +56,9 @@ object Prefs {
     fun setTier(c: Context, v: String) = sp(c).edit().putString("defaultTier", v).apply()
     fun showDaily(c: Context) = sp(c).getBoolean("showDaily", true)
     fun setShowDaily(c: Context, v: Boolean) = sp(c).edit().putBoolean("showDaily", v).apply()
+    /** Visual do 3D: suave (Chaikin + bevel) ou low-poly; a escolha fica guardada. */
+    fun viewerSmooth(c: Context) = sp(c).getBoolean("viewerSmooth", true)
+    fun setViewerSmooth(c: Context, v: Boolean) = sp(c).edit().putBoolean("viewerSmooth", v).apply()
 }
 
 /** Configuracoes: lista agrupada (perfil, preferencias, sobre). Tudo fica no aparelho. */

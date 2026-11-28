@@ -13,13 +13,13 @@ object ViewerRules {
     fun zoom(scale: Double, pinch: Double): Double = minOf(MAX_SCALE, maxOf(MIN_SCALE, scale * pinch))
 
     /** Matriz [a, b, c, d, tx, ty] que leva um pixel (u, v) da imagem a tela na face frontal (z = 0 da malha), com a mesma
-     *  projecao do desenho: x' = a*u + c*v + tx; y' = b*u + d*v + ty. step/ox/oy: Shape. */
-    fun frontAffine(yaw: Double, pitch: Double, scale: Double, width: Double, height: Double, frame: DoubleArray, step: Int, ox: Int, oy: Int): DoubleArray {
+     *  projecao do desenho: x' = a*u + c*v + tx; y' = b*u + d*v + ty. step/ox/oy: Shape; unit: ShapeRules.unit(smooth). */
+    fun frontAffine(yaw: Double, pitch: Double, scale: Double, width: Double, height: Double, frame: DoubleArray, step: Int, ox: Int, oy: Int, unit: Int = ShapeRules.SCALE): DoubleArray {
         val ry = Math.toRadians(yaw); val rp = Math.toRadians(pitch)
         val cy = Math.cos(ry); val sy = Math.sin(ry); val cp = Math.cos(rp); val sp = Math.sin(rp)
         val s = minOf(width, height) / (2 * frame[3]) * scale
-        val k = ShapeRules.SCALE.toDouble() / step
-        val ax = (ShapeRules.SCALE * ox).toDouble(); val ay = (ShapeRules.SCALE * oy).toDouble()
+        val k = unit.toDouble() / step
+        val ax = (unit * ox).toDouble(); val ay = (unit * oy).toDouble()
         return doubleArrayOf(
             s * k * cy, s * sp * sy * k, 0.0, s * k * cp,
             width / 2 + s * ((-ax - frame[0]) * cy - frame[2] * sy),
@@ -40,13 +40,13 @@ object ViewerRules {
 
 /** Forma de reserva (moeda) para pecas sem recorte: disco 64x64 -> contorno -> prisma. */
 object SampleShape {
-    fun coinMesh(): PrismMesh {
+    fun coinMesh(smooth: Boolean = true): PrismMesh {
         val n = 64; val r = 26.0
         val contour = ContourRules.trace(n, n) { x, y ->
             val dx = x + 0.5 - 32; val dy = y + 0.5 - 32
             dx * dx + dy * dy <= r * r
         }
         val pts = ContourRules.simplify(contour, 1).map { IPoint(it.x - 32, it.y - 32) }
-        return ShapeRules.solid(pts, 8) ?: PrismMesh(emptyList(), emptyList())
+        return (if (smooth) ShapeRules.solid(pts, 8) else ShapeRules.lowPoly(pts, 8)) ?: PrismMesh(emptyList(), emptyList())
     }
 }

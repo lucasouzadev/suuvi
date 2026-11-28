@@ -48,16 +48,19 @@ import kotlin.math.sqrt
 
 /** Visualizador 3D da peca: a malha e projetada e sombreada em Canvas; arrastar gira, pinca da zoom. */
 @Composable
-fun ViewerScreen(title: String, image: String?, onBack: () -> Unit) {
+fun ViewerScreen(title: String, image: String?, onBack: () -> Unit, startLow: Boolean = false) {
     var yaw by remember { mutableDoubleStateOf(-30.0) }
     var pitch by remember { mutableDoubleStateOf(20.0) }
     var scale by remember { mutableDoubleStateOf(1.0) }
     val context = androidx.compose.ui.platform.LocalContext.current
+    // Suave (Chaikin + bevel) ou low-poly (facetado); a escolha fica guardada. startLow: so o CI.
+    var smooth by remember { androidx.compose.runtime.mutableStateOf(if (startLow) false else Prefs.viewerSmooth(context)) }
     // Recorte salvo da peca; sem recorte (foto opaca ou so emoji) cai na moeda de reserva.
-    val solid = remember(image) { ShapeLoader.solid(context, image) }
-    val mesh = remember(solid) { solid?.mesh ?: SampleShape.coinMesh() }
+    val solid = remember(image, smooth) { ShapeLoader.solid(context, image, smooth) }
+    val rings = if (smooth) 4 else 2
+    val mesh = remember(solid, smooth) { solid?.mesh ?: SampleShape.coinMesh(smooth) }
     // Foto do recorte aplicada na face frontal; sem tampa em z = 0 (ou sem recorte) fica cor lisa.
-    val texture = remember(solid) { solid?.takeIf { MeshRules.frontCap(it.mesh).isNotEmpty() } }
+    val texture = remember(solid, smooth) { solid?.takeIf { MeshRules.frontCap(it.mesh, rings).isNotEmpty() } }
     val frame = remember(mesh) { ViewerRules.framing(mesh) }
     Column(
         Modifier.fillMaxSize().background(SuuviColor.bg)
@@ -68,6 +71,12 @@ fun ViewerScreen(title: String, image: String?, onBack: () -> Unit) {
             Text(title, fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = SuuviColor.text)
             Box(Modifier.align(Alignment.CenterStart)) {
                 IconAction(R.drawable.ic_chevron_left, stringResource(R.string.a11y_back), onBack)
+            }
+            Box(Modifier.align(Alignment.CenterEnd)) {
+                IconAction(
+                    if (smooth) R.drawable.ic_box else R.drawable.ic_circle,
+                    stringResource(if (smooth) R.string.viewer_lowpoly else R.string.viewer_smooth),
+                ) { smooth = !smooth; Prefs.setViewerSmooth(context, smooth) }
             }
         }
         Canvas(
@@ -92,7 +101,7 @@ fun ViewerScreen(title: String, image: String?, onBack: () -> Unit) {
             data class Face(val tri: List<Int>, val depth: Double, val light: Double, val cap: Path? = null)
             val faces = ArrayList<Face>()
             // Face frontal com foto: os triangulos da tampa viram um unico desenho (so o 1o anel de vertices).
-            val ring = mesh.vertices.size / 4
+            val ring = mesh.vertices.size / rings
             val capPath = Path(); var capCount = 0; var capDepth = 0.0; var capLight = 0.0
             val centerX = size.width / 2; val centerY = size.height / 2
             for (t in mesh.triangles) {
@@ -123,7 +132,7 @@ fun ViewerScreen(title: String, image: String?, onBack: () -> Unit) {
             for (f in faces.sortedByDescending { it.depth }) {
                 if (f.cap != null && texture != null) {
                     drawPath(f.cap, androidx.compose.ui.graphics.lerp(SuuviColor.canvas, SuuviColor.accent, f.light.toFloat()))
-                    val m = ViewerRules.frontAffine(yaw, pitch, scale, size.width.toDouble(), size.height.toDouble(), frame, texture.step, texture.ox, texture.oy)
+                    val m = ViewerRules.frontAffine(yaw, pitch, scale, size.width.toDouble(), size.height.toDouble(), frame, texture.step, texture.ox, texture.oy, texture.unit)
                     val matrix = android.graphics.Matrix().apply {
                         // android.graphics.Matrix: [MSCALE_X, MSKEW_X, MTRANS_X, MSKEW_Y, MSCALE_Y, MTRANS_Y, 0, 0, 1]
                         setValues(floatArrayOf(m[0].toFloat(), m[2].toFloat(), m[4].toFloat(), m[1].toFloat(), m[3].toFloat(), m[5].toFloat(), 0f, 0f, 1f))
