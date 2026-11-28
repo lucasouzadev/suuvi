@@ -27,15 +27,15 @@ enum ViewerRules {
     }
 }
 
-/// Forma de reserva (moeda) para pecas sem recorte: disco 32x32 -> contorno -> prisma.
+/// Forma de reserva (moeda) para pecas sem recorte: disco 64x64 -> contorno -> prisma.
 enum SampleShape {
     static func coinMesh() -> PrismMesh {
-        let n = 32, r = 13.0
+        let n = 64, r = 26.0
         let contour = ContourRules.trace(width: n, height: n) { x, y in
-            let dx = Double(x) + 0.5 - 16, dy = Double(y) + 0.5 - 16
+            let dx = Double(x) + 0.5 - 32, dy = Double(y) + 0.5 - 32
             return dx * dx + dy * dy <= r * r
         }
-        let pts = ContourRules.simplify(contour, eps: 1).map { IPoint(x: $0.x - 16, y: $0.y - 16) }
-        return ShapeRules.solid(pts, depth: 4) ?? PrismMesh(vertices: [], triangles: [])
+        let pts = ContourRules.simplify(contour, eps: 1).map { IPoint(x: $0.x - 32, y: $0.y - 32) }
+        return ShapeRules.solid(pts, depth: 8) ?? PrismMesh(vertices: [], triangles: [])
     }
 }

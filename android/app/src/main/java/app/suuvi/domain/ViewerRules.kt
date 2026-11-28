@@ -23,15 +23,15 @@ object ViewerRules {
     }
 }
 
-/** Forma de reserva (moeda) para pecas sem recorte: disco 32x32 -> contorno -> prisma. */
+/** Forma de reserva (moeda) para pecas sem recorte: disco 64x64 -> contorno -> prisma. */
 object SampleShape {
     fun coinMesh(): PrismMesh {
-        val n = 32; val r = 13.0
+        val n = 64; val r = 26.0
         val contour = ContourRules.trace(n, n) { x, y ->
-            val dx = x + 0.5 - 16; val dy = y + 0.5 - 16
+            val dx = x + 0.5 - 32; val dy = y + 0.5 - 32
             dx * dx + dy * dy <= r * r
         }
-        val pts = ContourRules.simplify(contour, 1).map { IPoint(it.x - 16, it.y - 16) }
-        return ShapeRules.solid(pts, 4) ?: PrismMesh(emptyList(), emptyList())
+        val pts = ContourRules.simplify(contour, 1).map { IPoint(it.x - 32, it.y - 32) }
+        return ShapeRules.solid(pts, 8) ?: PrismMesh(emptyList(), emptyList())
     }
 }
