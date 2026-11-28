@@ -1,0 +1,306 @@
+{
+ "_about": "Casos compartilhados da forma 3D a partir do alpha do recorte. Entrada: 'rows' (# = alpha 255, o = alpha 10, . = 0) ou 'size' [w,h] + 'rect' [x0,y0,x1,y1) preenchido. Regra: passo = ceil(max(w,h)/64); celula = alpha do pixel central do bloco >= 16; sem celulas ou todas preenchidas (imagem opaca) = null; so o maior componente 8-conexo (empate: o primeiro na leitura); contorno com trace + simplify(eps 1); pontos centrados pelo meio da caixa (divisao inteira); depth = max(2, (maior lado + 3) / 6). points e depth null quando nao ha forma.",
+ "cases": [
+  {
+   "name": "vazio",
+   "rows": [
+    "....",
+    "...."
+   ],
+   "points": null,
+   "depth": null
+  },
+  {
+   "name": "opaco",
+   "rows": [
+    "####",
+    "####",
+    "####"
+   ],
+   "points": null,
+   "depth": null
+  },
+  {
+   "name": "limiar: alpha 10 conta como transparente",
+   "rows": [
+    "oooooo",
+    "o####o",
+    "o####o",
+    "oooooo"
+   ],
+   "points": [
+    [
+     -2,
+     -1
+    ],
+    [
+     2,
+     -1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     -2,
+     1
+    ]
+   ],
+   "depth": 2
+  },
+  {
+   "name": "retangulo",
+   "rows": [
+    "......",
+    ".###..",
+    ".###..",
+    "......",
+    "......"
+   ],
+   "points": [
+    [
+     -1,
+     -1
+    ],
+    [
+     2,
+     -1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     -1,
+     1
+    ]
+   ],
+   "depth": 2
+  },
+  {
+   "name": "mancha: fica so o maior componente",
+   "rows": [
+    "#.......",
+    "........",
+    "..####..",
+    "..####..",
+    "..####..",
+    "........"
+   ],
+   "points": [
+    [
+     -2,
+     -1
+    ],
+    [
+     2,
+     -1
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     -2,
+     2
+    ]
+   ],
+   "depth": 2
+  },
+  {
+   "name": "empate: vence o primeiro na leitura",
+   "rows": [
+    "###....",
+    "###....",
+    ".......",
+    "....###",
+    "....###"
+   ],
+   "points": [
+    [
+     -1,
+     -1
+    ],
+    [
+     2,
+     -1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     -1,
+     1
+    ]
+   ],
+   "depth": 2
+  },
+  {
+   "name": "diagonal e 8-conexa",
+   "rows": [
+    "#....",
+    ".#...",
+    "..###",
+    "..###",
+    "....."
+   ],
+   "points": [
+    [
+     -2,
+     -2
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     3,
+     2
+    ],
+    [
+     0,
+     2
+    ]
+   ],
+   "depth": 2
+  },
+  {
+   "name": "toca a borda",
+   "rows": [
+    "###..",
+    "###..",
+    "###..",
+    "..#..",
+    "....."
+   ],
+   "points": [
+    [
+     -1,
+     -2
+    ],
+    [
+     2,
+     -2
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     -1,
+     1
+    ]
+   ],
+   "depth": 2
+  },
+  {
+   "name": "L concavo",
+   "rows": [
+    "..........",
+    ".###......",
+    ".###......",
+    ".###......",
+    ".###......",
+    ".#########",
+    ".#########",
+    ".........."
+   ],
+   "points": [
+    [
+     -4,
+     -3
+    ],
+    [
+     -1,
+     -3
+    ],
+    [
+     -1,
+     1
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     5,
+     3
+    ],
+    [
+     -4,
+     3
+    ]
+   ],
+   "depth": 2
+  },
+  {
+   "name": "grade reduzida 2x",
+   "size": [
+    128,
+    64
+   ],
+   "rect": [
+    16,
+    8,
+    112,
+    56
+   ],
+   "points": [
+    [
+     -24,
+     -12
+    ],
+    [
+     24,
+     -12
+    ],
+    [
+     24,
+     12
+    ],
+    [
+     -24,
+     12
+    ]
+   ],
+   "depth": 8
+  },
+  {
+   "name": "grade reduzida 3x",
+   "size": [
+    150,
+    150
+   ],
+   "rect": [
+    30,
+    30,
+    120,
+    90
+   ],
+   "points": [
+    [
+     -15,
+     -10
+    ],
+    [
+     15,
+     -10
+    ],
+    [
+     15,
+     10
+    ],
+    [
+     -15,
+     10
+    ]
+   ],
+   "depth": 5
+  }
+ ]
+}

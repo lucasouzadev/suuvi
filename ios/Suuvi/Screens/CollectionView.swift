@@ -6,14 +6,14 @@ struct CollectionView: View {
     @Environment(\.dismiss) private var dismiss
     let id: String
 
-    init(id: String, startProfile: Bool = false, onAdd: @escaping () -> Void = {}, onPiece: @escaping (String) -> Void = { _ in }) {
+    init(id: String, startProfile: Bool = false, onAdd: @escaping () -> Void = {}, onPiece: @escaping (PieceItem) -> Void = { _ in }) {
         self.id = id
         self.onAdd = onAdd
         self.onPiece = onPiece
         _showProfile = State(initialValue: startProfile)
     }
     var onAdd: () -> Void = {}
-    var onPiece: (String) -> Void = { _ in }
+    var onPiece: (PieceItem) -> Void = { _ in }
     @State private var showProfile: Bool
     @Query(sort: \SavedPiece.number) private var saved: [SavedPiece]
     private let columns = [GridItem(.flexible(), spacing: SuuviSpace.s4),
@@ -50,10 +50,10 @@ struct CollectionView: View {
             ScrollView {
                 VStack(spacing: SuuviSpace.s5) {
                     LazyVGrid(columns: columns, spacing: SuuviSpace.s4) {
-                        ForEach(0..<CollectionRules.capacity, id: \.self) { i in
+                        ForEach(0..<filled.count, id: \.self) { i in
                             if filled[i] {
                                 PieceCard(piece: d.pieces[i], tilt: CollectionRules.tilt(i))
-                                    .onTapGesture { onPiece(d.pieces[i].title) }
+                                    .onTapGesture { onPiece(d.pieces[i]) }
                             } else {
                                 EmptySlot(tilt: CollectionRules.tilt(i), action: onAdd)
                             }
@@ -67,6 +67,8 @@ struct CollectionView: View {
                         .multilineTextAlignment(.center)
                 }
             }
+            // So para o CI (-startRoute collection5): abre rolado ate o fim para mostrar a 3a linha da grade.
+            .defaultScrollAnchor(UserDefaults.standard.string(forKey: "startRoute") == "collection5" ? .bottom : .top)
             ZStack {
                 Button(action: onAdd) {
                     Text("collection.add")

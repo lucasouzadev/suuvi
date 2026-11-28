@@ -1,5 +1,5 @@
 {
- "_about": "Casos compartilhados do Visualizador 3D. drag: yaw += dx*0.5; pitch = clamp(pitch - dy*0.5, -85, 85) (graus). zoom: clamp(scale*pinch, 0.5, 4).",
+ "_about": "Casos compartilhados do Visualizador 3D. drag: yaw += dx*0.5; pitch = clamp(pitch - dy*0.5, -85, 85) (graus). zoom: clamp(scale*pinch, 0.5, 4). framing: centro (meio da caixa) e raio (meia diagonal) dos vertices, para enquadrar qualquer malha.",
  "drag": [
   {
    "name": "direita",
@@ -81,6 +81,80 @@
    "scale": 2,
    "pinch": 0.5,
    "expect": 1
+  }
+ ],
+ "framing": [
+  {
+   "name": "caixa 4x2x4",
+   "vertices": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     4,
+     0,
+     0
+    ],
+    [
+     4,
+     2,
+     0
+    ],
+    [
+     0,
+     2,
+     0
+    ],
+    [
+     0,
+     0,
+     4
+    ],
+    [
+     4,
+     0,
+     4
+    ],
+    [
+     4,
+     2,
+     4
+    ],
+    [
+     0,
+     2,
+     4
+    ]
+   ],
+   "expect": [
+    2,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "name": "moeda centrada",
+   "vertices": [
+    [
+     -13,
+     -13,
+     0
+    ],
+    [
+     13,
+     13,
+     4
+    ]
+   ],
+   "expect": [
+    0,
+    0,
+    2,
+    18.49324200890693
+   ]
   }
  ]
 }

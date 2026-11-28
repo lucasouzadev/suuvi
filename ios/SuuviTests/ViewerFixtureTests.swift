@@ -4,7 +4,8 @@ import XCTest
 final class ViewerFixtureTests: XCTestCase {
     private struct Drag: Decodable { let name: String; let yaw: Double; let pitch: Double; let dx: Double; let dy: Double; let expect: [Double] }
     private struct Zoom: Decodable { let name: String; let scale: Double; let pinch: Double; let expect: Double }
-    private struct Fixture: Decodable { let drag: [Drag]; let zoom: [Zoom] }
+    private struct Framing: Decodable { let name: String; let vertices: [[Int]]; let expect: [Double] }
+    private struct Fixture: Decodable { let drag: [Drag]; let zoom: [Zoom]; let framing: [Framing] }
 
     private func load() throws -> Fixture {
         let url = URL(fileURLWithPath: #filePath)
@@ -23,6 +24,15 @@ final class ViewerFixtureTests: XCTestCase {
 
     func testZoom() throws {
         for c in try load().zoom { XCTAssertEqual(ViewerRules.zoom(scale: c.scale, pinch: c.pinch), c.expect, accuracy: 1e-9, c.name) }
+    }
+
+    func testFraming() throws {
+        for c in try load().framing {
+            let m = PrismMesh(vertices: c.vertices.map { Vertex3(x: $0[0], y: $0[1], z: $0[2]) }, triangles: [])
+            let f = ViewerRules.framing(m)
+            XCTAssertEqual([f.cx, f.cy, f.cz, f.r].count, c.expect.count, c.name)
+            for (got, want) in zip([f.cx, f.cy, f.cz, f.r], c.expect) { XCTAssertEqual(got, want, accuracy: 1e-9, c.name) }
+        }
     }
 
     func testSampleShapeIsClosedMesh() {

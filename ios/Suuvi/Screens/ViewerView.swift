@@ -4,12 +4,24 @@ import SwiftUI
 struct ViewerView: View {
     @Environment(\.dismiss) private var dismiss
     let title: String
+    let image: String?
+    @State private var model: Model?
     @State private var yaw = -30.0
     @State private var pitch = 20.0
     @State private var scale = 1.0
     @State private var lastDrag = CGSize.zero
     @State private var baseScale = 1.0
-    private let mesh = SampleShape.coinMesh()
+
+    /// Malha da peca + enquadramento; fica pronta depois de ler a imagem (fora do corpo da view).
+    private struct Model {
+        let mesh: PrismMesh
+        let frame: (cx: Double, cy: Double, cz: Double, r: Double)
+    }
+
+    init(title: String, image: String? = nil) {
+        self.title = title
+        self.image = image
+    }
 
     var body: some View {
         VStack(spacing: SuuviSpace.s4) {
@@ -42,18 +54,24 @@ struct ViewerView: View {
         .padding(.bottom, SuuviSpace.s4)
         .background(SuuviColor.bg)
         .navigationBarBackButtonHidden(true)
+        .task {
+            // Recorte salvo da peca; sem recorte (foto opaca ou so emoji) cai na moeda de reserva.
+            let mesh = ShapeLoader.mesh(relative: image) ?? SampleShape.coinMesh()
+            model = Model(mesh: mesh, frame: ViewerRules.framing(mesh))
+        }
     }
 
     private func draw(_ ctx: inout GraphicsContext, _ size: CGSize) {
+        guard let model else { return }
+        let mesh = model.mesh, f = model.frame
         let ry = yaw * .pi / 180, rp = pitch * .pi / 180
         let cy = cos(ry), sy = sin(ry), cp = cos(rp), sp = sin(rp)
-        let center = (x: 0.0, y: 0.0, z: -2.0)
         let pts: [(x: Double, y: Double, z: Double)] = mesh.vertices.map { v in
-            let x = Double(v.x) - center.x, y = Double(v.y) - center.y, z = Double(v.z) + center.z
+            let x = Double(v.x) - f.cx, y = Double(v.y) - f.cy, z = Double(v.z) - f.cz
             let x1 = x * cy + z * sy, z1 = -x * sy + z * cy
             return (x1, y * cp - z1 * sp, y * sp + z1 * cp)
         }
-        let s = Double(min(size.width, size.height)) / 36.0 * scale
+        let s = Double(min(size.width, size.height)) / (2 * f.r) * scale
         let mid = CGPoint(x: size.width / 2, y: size.height / 2)
         struct Face { let tri: [Int]; let depth: Double; let light: Double }
         var faces: [Face] = []

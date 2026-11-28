@@ -36,6 +36,7 @@ import app.suuvi.design.SuuviRadius
 import app.suuvi.design.SuuviSpace
 import app.suuvi.domain.SampleShape
 import app.suuvi.domain.ViewerRules
+import app.suuvi.services.ShapeLoader
 import app.suuvi.ui.components.IconAction
 import kotlin.math.cos
 import kotlin.math.sin
@@ -43,11 +44,14 @@ import kotlin.math.sqrt
 
 /** Visualizador 3D da peca: a malha e projetada e sombreada em Canvas; arrastar gira, pinca da zoom. */
 @Composable
-fun ViewerScreen(title: String, onBack: () -> Unit) {
+fun ViewerScreen(title: String, image: String?, onBack: () -> Unit) {
     var yaw by remember { mutableDoubleStateOf(-30.0) }
     var pitch by remember { mutableDoubleStateOf(20.0) }
     var scale by remember { mutableDoubleStateOf(1.0) }
-    val mesh = remember { SampleShape.coinMesh() }
+    val context = androidx.compose.ui.platform.LocalContext.current
+    // Recorte salvo da peca; sem recorte (foto opaca ou so emoji) cai na moeda de reserva.
+    val mesh = remember(image) { ShapeLoader.mesh(context, image) ?: SampleShape.coinMesh() }
+    val frame = remember(mesh) { ViewerRules.framing(mesh) }
     Column(
         Modifier.fillMaxSize().background(SuuviColor.bg)
             .windowInsetsPadding(WindowInsets.systemBars)
@@ -73,11 +77,11 @@ fun ViewerScreen(title: String, onBack: () -> Unit) {
             val ry = Math.toRadians(yaw); val rp = Math.toRadians(pitch)
             val cy = cos(ry); val sy = sin(ry); val cp = cos(rp); val sp = sin(rp)
             val pts = mesh.vertices.map { v ->
-                val x = v.x.toDouble(); val y = v.y.toDouble(); val z = v.z.toDouble() - 2.0
+                val x = v.x - frame[0]; val y = v.y - frame[1]; val z = v.z - frame[2]
                 val x1 = x * cy + z * sy; val z1 = -x * sy + z * cy
                 doubleArrayOf(x1, y * cp - z1 * sp, y * sp + z1 * cp)
             }
-            val s = minOf(size.width, size.height) / 36.0 * scale
+            val s = minOf(size.width, size.height) / (2 * frame[3]) * scale
             data class Face(val tri: List<Int>, val depth: Double, val light: Double)
             val faces = ArrayList<Face>()
             for (t in mesh.triangles) {

@@ -55,7 +55,7 @@ import app.suuvi.ui.components.StatusMark
 
 /** Colecao: voltar + chip, linha "de X" com @lugar/#n/status, grade 2x2 inclinada, legenda e rodape. */
 @Composable
-fun CollectionScreen(id: String, onBack: () -> Unit, onAdd: () -> Unit = {}, startProfile: Boolean = false, onPiece: (String) -> Unit = {}) {
+fun CollectionScreen(id: String, onBack: () -> Unit, onAdd: () -> Unit = {}, startProfile: Boolean = false, onPiece: (PieceItem) -> Unit = {}) {
     val base = SampleData.collectionDetail(id) ?: return
     val context = androidx.compose.ui.platform.LocalContext.current
     val dao = remember { app.suuvi.data.SuuviDb.get(context).dao() }
@@ -91,12 +91,12 @@ fun CollectionScreen(id: String, onBack: () -> Unit, onAdd: () -> Unit = {}, sta
             verticalArrangement = Arrangement.spacedBy(SuuviSpace.s5),
         ) {
             Column(Modifier.padding(top = SuuviSpace.s2, start = SuuviSpace.s2, end = SuuviSpace.s2), verticalArrangement = Arrangement.spacedBy(SuuviSpace.s4)) {
-                for (row in 0..1) {
+                filled.chunked(2).forEachIndexed { row, cells ->
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(SuuviSpace.s4)) {
-                        for (col in 0..1) {
+                        cells.forEachIndexed { col, isPiece ->
                             val i = row * 2 + col
                             Box(Modifier.weight(1f)) {
-                                if (filled[i]) Box(Modifier.clickable { onPiece(d.pieces[i].title) }) { PieceCard(d.pieces[i], CollectionRules.tilt(i)) }
+                                if (isPiece) Box(Modifier.clickable { onPiece(d.pieces[i]) }) { PieceCard(d.pieces[i], CollectionRules.tilt(i)) }
                                 else EmptySlot(CollectionRules.tilt(i), onAdd)
                             }
                         }

@@ -18,9 +18,9 @@ enum CollectionRules {
     static let capacity = 4
     static let tilts: [Double] = [-2.5, 2.0, 1.5, -2.0]
 
-    /// Quais das 4 posicoes da grade tem peca (true) e quais sao vagas (false).
+    /// Posicoes da grade (2 colunas): no minimo 4; cresce com as pecas e fecha a ultima linha com uma vaga. true = peca, false = vaga.
     static func slots(count: Int) -> [Bool] {
-        (0..<capacity).map { $0 < count }
+        (0..<max(capacity, count + count % 2)).map { $0 < count }
     }
 
     static func tilt(_ index: Int) -> Double { tilts[index % tilts.count] }

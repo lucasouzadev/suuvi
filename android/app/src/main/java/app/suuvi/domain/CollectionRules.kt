@@ -9,8 +9,8 @@ object CollectionRules {
     const val CAPACITY = 4
     val tilts = listOf(-2.5f, 2.0f, 1.5f, -2.0f)
 
-    /** Quais das 4 posicoes da grade tem peca (true) e quais sao vagas (false). */
-    fun slots(count: Int): List<Boolean> = List(CAPACITY) { it < count }
+    /** Posicoes da grade (2 colunas): no minimo 4; cresce com as pecas e fecha a ultima linha com uma vaga. true = peca, false = vaga. */
+    fun slots(count: Int): List<Boolean> = List(maxOf(CAPACITY, count + count % 2)) { it < count }
 
     fun tilt(index: Int): Float = tilts[index % tilts.size]
 }
