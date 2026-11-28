@@ -5,6 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -15,9 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
@@ -86,27 +88,24 @@ fun CollectionScreen(id: String, onBack: () -> Unit, onAdd: () -> Unit = {}, sta
             Text(" #${d.folder.number} ", fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = SuuviColor.textMuted)
             StatusMark(d.status)
         }
-        Column(
-            Modifier.weight(1f).verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(SuuviSpace.s5),
+        // Grade preguicosa: so compoe os cards visiveis, entao crescer com as pecas nao pesa.
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier.weight(1f),
+            contentPadding = PaddingValues(top = SuuviSpace.s2, start = SuuviSpace.s2, end = SuuviSpace.s2),
+            horizontalArrangement = Arrangement.spacedBy(SuuviSpace.s4),
+            verticalArrangement = Arrangement.spacedBy(SuuviSpace.s4),
         ) {
-            Column(Modifier.padding(top = SuuviSpace.s2, start = SuuviSpace.s2, end = SuuviSpace.s2), verticalArrangement = Arrangement.spacedBy(SuuviSpace.s4)) {
-                filled.chunked(2).forEachIndexed { row, cells ->
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(SuuviSpace.s4)) {
-                        cells.forEachIndexed { col, isPiece ->
-                            val i = row * 2 + col
-                            Box(Modifier.weight(1f)) {
-                                if (isPiece) Box(Modifier.clickable { onPiece(d.pieces[i]) }) { PieceCard(d.pieces[i], CollectionRules.tilt(i)) }
-                                else EmptySlot(CollectionRules.tilt(i), onAdd)
-                            }
-                        }
-                    }
-                }
+            items(filled.size, key = { if (filled[it]) d.pieces[it].id else "vaga$it" }) { i ->
+                if (filled[i]) Box(Modifier.clickable { onPiece(d.pieces[i]) }) { PieceCard(d.pieces[i], CollectionRules.tilt(i)) }
+                else EmptySlot(CollectionRules.tilt(i), onAdd)
             }
-            Text(
-                stringResource(R.string.collection_caption), Modifier.fillMaxWidth(),
-                fontSize = 15.sp, color = SuuviColor.textMuted, textAlign = TextAlign.Center,
-            )
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Text(
+                    stringResource(R.string.collection_caption), Modifier.fillMaxWidth().padding(top = SuuviSpace.s3),
+                    fontSize = 15.sp, color = SuuviColor.textMuted, textAlign = TextAlign.Center,
+                )
+            }
         }
         Row(Modifier.fillMaxWidth().height(64.dp), verticalAlignment = Alignment.CenterVertically) {
             Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {

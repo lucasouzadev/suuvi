@@ -52,7 +52,7 @@ fun PieceCard(piece: PieceItem, tilt: Float, modifier: Modifier = Modifier) {
         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
             val ctx = androidx.compose.ui.platform.LocalContext.current
             val bmp = androidx.compose.runtime.remember(piece.imagePath) {
-                piece.imagePath?.let { android.graphics.BitmapFactory.decodeFile(app.suuvi.services.ImageStore.file(ctx, it).path) }
+                piece.imagePath?.let { app.suuvi.services.Thumbs.get(ctx, it) }
             }
             if (bmp != null) {
                 androidx.compose.foundation.Image(

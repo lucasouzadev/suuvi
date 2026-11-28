@@ -8,7 +8,7 @@ struct PieceCard: View {
     var body: some View {
         VStack(spacing: SuuviSpace.s2) {
             Group {
-                if let path = piece.imagePath, let ui = UIImage(contentsOfFile: ImageStore.url(relative: path).path) {
+                if let path = piece.imagePath, let ui = Thumbs.image(relative: path) {
                     Image(uiImage: ui).resizable().scaledToFit().clipShape(RoundedRectangle(cornerRadius: SuuviRadius.sm))
                 } else {
                     EmojiView(glyph: piece.emoji, size: 56)
