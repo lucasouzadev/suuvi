@@ -122,6 +122,7 @@ jobs:
           xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
           xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute createdphoto
           sleep 6
+          xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-edit-photo.png
           xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
           xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute collection2
           sleep 6
@@ -239,6 +240,7 @@ jobs:
             adb exec-out screencap -p > android-collection-after.png
             adb shell am start -S -n app.suuvi/.MainActivity --es route createdphoto
             sleep 6
+            adb exec-out screencap -p > android-edit-photo.png
             adb shell am start -S -n app.suuvi/.MainActivity --es route collection2
             sleep 6
             adb exec-out screencap -p > android-photo-piece.png

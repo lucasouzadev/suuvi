@@ -43,6 +43,7 @@ import app.suuvi.domain.PieceRules
 import kotlinx.coroutines.launch
 import app.suuvi.domain.SampleData
 import app.suuvi.domain.collectionDetail
+import app.suuvi.ui.components.CascadeItem
 import app.suuvi.ui.components.CascadeStack
 import app.suuvi.ui.components.IconAction
 import app.suuvi.ui.components.PillField
@@ -54,8 +55,11 @@ fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = 
     var place by rememberSaveable { mutableStateOf(if (preset) "lisboa" else "") }
     var tag by rememberSaveable { mutableStateOf(if (preset) "viagem" else "") }
     var saved by rememberSaveable { mutableStateOf(preset) }
+    // Imagem guardada da peca (topo da cascata); com "@sample" (so CI) so existe depois de salvar.
+    var shownImage by rememberSaveable { mutableStateOf(if (image == "@sample") null else image) }
     val detail = SampleData.collectionDetail(folderId)
-    val cascade = ((detail?.pieces?.map { it.emoji } ?: emptyList()) + (detail?.folder?.emoji ?: "🏺")).take(3)
+    val baseCascade: List<CascadeItem> = (detail?.pieces?.map { CascadeItem.Emoji(it.emoji) } ?: emptyList()) + CascadeItem.Emoji(detail?.folder?.emoji ?: "🏺")
+    val cascade: List<CascadeItem> = ((shownImage?.let { listOf(CascadeItem.Image(it)) } ?: emptyList()) + baseCascade).take(3)
     val valid = EditRules.isValid(title, place)
     val context = androidx.compose.ui.platform.LocalContext.current
     val scope = androidx.compose.runtime.rememberCoroutineScope()
@@ -66,13 +70,14 @@ fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = 
         scope.launch {
             val existing = dao.savedNumbers(folderId)
             val p = PieceRules.create(title, place, tag, existing, existing.maxOrNull() ?: 0) ?: return@launch
+            val img = if (image == "@sample") app.suuvi.services.ImageStore.saveSample(context) else image   // "@sample": so o CI
             dao.insertSavedPiece(
                 app.suuvi.data.SavedPiece(
-                    java.util.UUID.randomUUID().toString(), folderId, p.number, p.title, p.place, p.tag, "🪙",
-                    if (image == "@sample") app.suuvi.services.ImageStore.saveSample(context) else image,   // "@sample": so o CI
+                    java.util.UUID.randomUUID().toString(), folderId, p.number, p.title, p.place, p.tag, "🪙", img,
                     System.currentTimeMillis(),
                 ),
             )
+            shownImage = img
             tag = p.tag ?: ""
             saved = true
         }
