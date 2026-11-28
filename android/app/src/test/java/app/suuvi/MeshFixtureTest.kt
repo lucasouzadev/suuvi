@@ -9,6 +9,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class MeshFixtureTest {
@@ -30,6 +31,33 @@ class MeshFixtureTest {
             assertEquals(name, rows(c.getJSONArray("triangles")), mesh.triangles)
             assertEquals(name, c.getInt("volume6"), MeshRules.volume6(mesh))
             assertEquals(name, c.getInt("volume6"), 3 * ContourRules.area2(pts) * depth)
+        }
+    }
+
+    @Test
+    fun delaunay() {
+        val cases = root.getJSONArray("delaunay")
+        for (i in 0 until cases.length()) {
+            val c = cases.getJSONObject(i)
+            val name = c.getString("name")
+            val pts = rows(c.getJSONArray("contour")).map { IPoint(it[0], it[1]) }
+            val ears = MeshRules.earClip(pts)!!
+            assertEquals(name, rows(c.getJSONArray("expect")), MeshRules.delaunay(pts, ears))
+        }
+    }
+
+    @Test
+    fun beveled() {
+        val cases = root.getJSONArray("beveled")
+        for (i in 0 until cases.length()) {
+            val c = cases.getJSONObject(i)
+            val name = c.getString("name")
+            val pts = rows(c.getJSONArray("contour")).map { IPoint(it[0], it[1]) }
+            val mesh = MeshRules.beveled(pts, c.getInt("depth"), c.getInt("bevel"))!!
+            assertEquals(name, rows(c.getJSONArray("vertices")).map { Vertex3(it[0], it[1], it[2]) }, mesh.vertices)
+            assertEquals(name, rows(c.getJSONArray("triangles")), mesh.triangles)
+            assertTrue(name, MeshRules.isClosed(mesh))
+            assertTrue(name, MeshRules.volume6Long(mesh) > 0)
         }
     }
 

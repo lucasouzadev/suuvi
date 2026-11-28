@@ -61,6 +61,17 @@ struct ViewerView: View {
         }
     }
 
+    /// Cor opaca (fundo -> acento): sem transparencia nao aparecem fios entre faces vizinhas.
+    private func shade(_ light: Double) -> Color {
+        func rgb(_ c: Color) -> (Double, Double, Double) {
+            var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+            UIColor(c).getRed(&r, green: &g, blue: &b, alpha: &a)
+            return (Double(r), Double(g), Double(b))
+        }
+        let bg = rgb(SuuviColor.canvas), fg = rgb(SuuviColor.accent)
+        return Color(red: bg.0 + (fg.0 - bg.0) * light, green: bg.1 + (fg.1 - bg.1) * light, blue: bg.2 + (fg.2 - bg.2) * light)
+    }
+
     private func draw(_ ctx: inout GraphicsContext, _ size: CGSize) {
         guard let model else { return }
         let mesh = model.mesh, f = model.frame
@@ -95,7 +106,7 @@ struct ViewerView: View {
                 if i == 0 { path.move(to: p) } else { path.addLine(to: p) }
             }
             path.closeSubpath()
-            let color = SuuviColor.accent.opacity(f.light)
+            let color = shade(f.light)
             ctx.fill(path, with: .color(color))
             ctx.stroke(path, with: .color(color), lineWidth: 0.5)
         }

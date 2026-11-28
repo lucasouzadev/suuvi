@@ -1,5 +1,5 @@
 {
- "_about": "Casos compartilhados da forma 3D a partir do alpha do recorte. Entrada: 'rows' (# = alpha 255, o = alpha 10, . = 0) ou 'size' [w,h] + 'rect' [x0,y0,x1,y1) preenchido. Regra: passo = ceil(max(w,h)/64); celula = alpha do pixel central do bloco >= 16; sem celulas ou todas preenchidas (imagem opaca) = null; so o maior componente 8-conexo (empate: o primeiro na leitura); contorno com trace + simplify(eps 1); pontos centrados pelo meio da caixa (divisao inteira); depth = max(2, (maior lado + 3) / 6). points e depth null quando nao ha forma.",
+ "_about": "Casos compartilhados da forma 3D a partir do alpha do recorte. Entrada: 'rows' (# = alpha 255, o = alpha 10, . = 0) ou 'size' [w,h] + 'rect' [x0,y0,x1,y1) preenchido. Regra: passo = ceil(max(w,h)/64); celula = alpha do pixel central do bloco >= 16; sem celulas ou todas preenchidas (imagem opaca) = null; so o maior componente 8-conexo (empate: o primeiro na leitura); contorno com trace + simplify(eps 1); pontos centrados pelo meio da caixa (divisao inteira); depth = max(2, (maior lado + 3) / 6). points e depth null quando nao ha forma. chaikin: corte de quinas (3/4,1/4 e 1/4,3/4 de cada aresta, em inteiros exatos; entrada multipla de 4^rounds). solid: pontos x16 -> chaikin 2 rodadas -> beveled(depth*16, bevel=depth*16/4); confere contagem de vertices/triangulos e a caixa (min/max) da malha.",
  "cases": [
   {
    "name": "vazio",
@@ -46,7 +46,19 @@
      1
     ]
    ],
-   "depth": 2
+   "depth": 2,
+   "solid": {
+    "vertices": 64,
+    "triangles": 124,
+    "bbox": [
+     -32,
+     -16,
+     0,
+     32,
+     16,
+     32
+    ]
+   }
   },
   {
    "name": "retangulo",
@@ -75,7 +87,19 @@
      1
     ]
    ],
-   "depth": 2
+   "depth": 2,
+   "solid": {
+    "vertices": 64,
+    "triangles": 124,
+    "bbox": [
+     -16,
+     -16,
+     0,
+     32,
+     16,
+     32
+    ]
+   }
   },
   {
    "name": "mancha: fica so o maior componente",
@@ -105,7 +129,19 @@
      2
     ]
    ],
-   "depth": 2
+   "depth": 2,
+   "solid": {
+    "vertices": 64,
+    "triangles": 124,
+    "bbox": [
+     -32,
+     -16,
+     0,
+     32,
+     32,
+     32
+    ]
+   }
   },
   {
    "name": "empate: vence o primeiro na leitura",
@@ -134,7 +170,19 @@
      1
     ]
    ],
-   "depth": 2
+   "depth": 2,
+   "solid": {
+    "vertices": 64,
+    "triangles": 124,
+    "bbox": [
+     -16,
+     -16,
+     0,
+     32,
+     16,
+     32
+    ]
+   }
   },
   {
    "name": "diagonal e 8-conexa",
@@ -167,7 +215,19 @@
      2
     ]
    ],
-   "depth": 2
+   "depth": 2,
+   "solid": {
+    "vertices": 80,
+    "triangles": 156,
+    "bbox": [
+     -24,
+     -22,
+     0,
+     48,
+     32,
+     32
+    ]
+   }
   },
   {
    "name": "toca a borda",
@@ -196,7 +256,19 @@
      1
     ]
    ],
-   "depth": 2
+   "depth": 2,
+   "solid": {
+    "vertices": 64,
+    "triangles": 124,
+    "bbox": [
+     -16,
+     -32,
+     0,
+     32,
+     26,
+     32
+    ]
+   }
   },
   {
    "name": "L concavo",
@@ -236,7 +308,19 @@
      3
     ]
    ],
-   "depth": 2
+   "depth": 2,
+   "solid": {
+    "vertices": 96,
+    "triangles": 188,
+    "bbox": [
+     -64,
+     -48,
+     0,
+     80,
+     48,
+     32
+    ]
+   }
   },
   {
    "name": "grade reduzida 2x",
@@ -268,7 +352,19 @@
      12
     ]
    ],
-   "depth": 8
+   "depth": 8,
+   "solid": {
+    "vertices": 64,
+    "triangles": 124,
+    "bbox": [
+     -384,
+     -192,
+     0,
+     384,
+     192,
+     128
+    ]
+   }
   },
   {
    "name": "grade reduzida 3x",
@@ -300,7 +396,145 @@
      10
     ]
    ],
-   "depth": 5
+   "depth": 5,
+   "solid": {
+    "vertices": 64,
+    "triangles": 124,
+    "bbox": [
+     -240,
+     -160,
+     0,
+     240,
+     160,
+     80
+    ]
+   }
+  }
+ ],
+ "chaikin": [
+  {
+   "name": "quadrado 1 rodada",
+   "points": [
+    [
+     0,
+     0
+    ],
+    [
+     16,
+     0
+    ],
+    [
+     16,
+     16
+    ],
+    [
+     0,
+     16
+    ]
+   ],
+   "rounds": 1,
+   "expect": [
+    [
+     4,
+     0
+    ],
+    [
+     12,
+     0
+    ],
+    [
+     16,
+     4
+    ],
+    [
+     16,
+     12
+    ],
+    [
+     12,
+     16
+    ],
+    [
+     4,
+     16
+    ],
+    [
+     0,
+     12
+    ],
+    [
+     0,
+     4
+    ]
+   ]
+  },
+  {
+   "name": "triangulo 2 rodadas",
+   "points": [
+    [
+     0,
+     0
+    ],
+    [
+     64,
+     0
+    ],
+    [
+     0,
+     64
+    ]
+   ],
+   "rounds": 2,
+   "expect": [
+    [
+     24,
+     0
+    ],
+    [
+     40,
+     0
+    ],
+    [
+     48,
+     4
+    ],
+    [
+     48,
+     12
+    ],
+    [
+     40,
+     24
+    ],
+    [
+     24,
+     40
+    ],
+    [
+     12,
+     48
+    ],
+    [
+     4,
+     48
+    ],
+    [
+     0,
+     40
+    ],
+    [
+     0,
+     24
+    ],
+    [
+     4,
+     12
+    ],
+    [
+     12,
+     4
+    ]
+   ]
   }
  ]
 }

@@ -52,6 +52,7 @@ class ViewerFixtureTest {
     fun sampleShapeIsClosedMesh() {
         val m = SampleShape.coinMesh()
         assertTrue(m.triangles.size > 20)
-        assertTrue(MeshRules.volume6(m) > 0)
+        assertTrue(MeshRules.isClosed(m))
+        assertTrue(MeshRules.volume6Long(m) > 0)
     }
 }

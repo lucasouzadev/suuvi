@@ -68,8 +68,17 @@ object ShapeRules {
         return Shape(pts.map { IPoint(it.x - cx, it.y - cy) }, maxOf(2, (extent + 3) / 6))
     }
 
+    const val SCALE = 16
+
+    /** Solido suave: pontos x16 -> Chaikin (2 rodadas) -> prisma com bevel de 1/4 da profundidade. */
+    fun solid(points: List<IPoint>, depth: Int): PrismMesh? {
+        val p = MeshRules.chaikin(points.map { IPoint(it.x * SCALE, it.y * SCALE) }, 2)
+        val d = depth * SCALE
+        return MeshRules.beveled(p, d, d / 4)
+    }
+
     fun mesh(alpha: IntArray, width: Int, height: Int): PrismMesh? {
         val s = shape(alpha, width, height) ?: return null
-        return MeshRules.extrude(s.points, s.depth)
+        return solid(s.points, s.depth)
     }
 }

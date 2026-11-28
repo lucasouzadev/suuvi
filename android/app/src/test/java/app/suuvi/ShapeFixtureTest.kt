@@ -1,5 +1,6 @@
 package app.suuvi
 
+import app.suuvi.domain.IPoint
 import app.suuvi.domain.MeshRules
 import app.suuvi.domain.ShapeRules
 import java.io.File
@@ -49,8 +50,27 @@ class ShapeFixtureTest {
             assertEquals(name, c.getInt("depth"), s.depth)
             val m = ShapeRules.mesh(a, w, h)
             assertNotNull(name, m)
-            assertEquals(name, expect.length() * 2, m!!.vertices.size)
-            assertTrue(name, MeshRules.volume6(m) > 0)
+            val sol = c.getJSONObject("solid")
+            assertEquals(name, sol.getInt("vertices"), m!!.vertices.size)
+            assertEquals(name, sol.getInt("triangles"), m.triangles.size)
+            val bb = sol.getJSONArray("bbox")
+            val got = listOf(m.vertices.minOf { it.x }, m.vertices.minOf { it.y }, m.vertices.minOf { it.z },
+                m.vertices.maxOf { it.x }, m.vertices.maxOf { it.y }, m.vertices.maxOf { it.z })
+            assertEquals(name, List(6) { bb.getInt(it) }, got)
+            assertTrue(name, MeshRules.isClosed(m))
+            assertTrue(name, MeshRules.volume6Long(m) > 0)
+        }
+    }
+
+    @Test
+    fun chaikin() {
+        val cases = root.getJSONArray("chaikin")
+        for (i in 0 until cases.length()) {
+            val c = cases.getJSONObject(i)
+            val pts = c.getJSONArray("points").let { a -> List(a.length()) { a.getJSONArray(it).let { p -> IPoint(p.getInt(0), p.getInt(1)) } } }
+            val out = MeshRules.chaikin(pts, c.getInt("rounds"))
+            val expect = c.getJSONArray("expect").let { a -> List(a.length()) { a.getJSONArray(it).let { p -> IPoint(p.getInt(0), p.getInt(1)) } } }
+            assertEquals(c.getString("name"), expect, out)
         }
     }
 }

@@ -36,6 +36,6 @@ enum SampleShape {
             return dx * dx + dy * dy <= r * r
         }
         let pts = ContourRules.simplify(contour, eps: 1).map { IPoint(x: $0.x - 16, y: $0.y - 16) }
-        return MeshRules.extrude(pts, depth: 4) ?? PrismMesh(vertices: [], triangles: [])
+        return ShapeRules.solid(pts, depth: 4) ?? PrismMesh(vertices: [], triangles: [])
     }
 }

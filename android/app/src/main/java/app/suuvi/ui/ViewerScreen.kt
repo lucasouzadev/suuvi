@@ -105,7 +105,7 @@ fun ViewerScreen(title: String, image: String?, onBack: () -> Unit) {
                     if (i == 0) path.moveTo(p.x, p.y) else path.lineTo(p.x, p.y)
                 }
                 path.close()
-                val color = SuuviColor.accent.copy(alpha = f.light.toFloat())
+                val color = androidx.compose.ui.graphics.lerp(SuuviColor.canvas, SuuviColor.accent, f.light.toFloat())   // opaco: sem fios entre faces
                 drawPath(path, color)
                 drawPath(path, color, style = Stroke(width = 0.5f))
             }

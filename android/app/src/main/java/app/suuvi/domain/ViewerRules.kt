@@ -32,6 +32,6 @@ object SampleShape {
             dx * dx + dy * dy <= r * r
         }
         val pts = ContourRules.simplify(contour, 1).map { IPoint(it.x - 16, it.y - 16) }
-        return MeshRules.extrude(pts, 4) ?: PrismMesh(emptyList(), emptyList())
+        return ShapeRules.solid(pts, 4) ?: PrismMesh(emptyList(), emptyList())
     }
 }

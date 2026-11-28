@@ -62,8 +62,17 @@ enum ShapeRules {
         return Shape(points: pts.map { IPoint(x: $0.x - cx, y: $0.y - cy) }, depth: max(2, (extent + 3) / 6))
     }
 
+    static let scale = 16
+
+    /// Solido suave: pontos x16 -> Chaikin (2 rodadas) -> prisma com bevel de 1/4 da profundidade.
+    static func solid(_ points: [IPoint], depth: Int) -> PrismMesh? {
+        let p = MeshRules.chaikin(points.map { IPoint(x: $0.x * scale, y: $0.y * scale) }, rounds: 2)
+        let d = depth * scale
+        return MeshRules.beveled(p, depth: d, bevel: d / 4)
+    }
+
     static func mesh(alpha: [UInt8], width: Int, height: Int) -> PrismMesh? {
         guard let s = shape(alpha: alpha, width: width, height: height) else { return nil }
-        return MeshRules.extrude(s.points, depth: s.depth)
+        return solid(s.points, depth: s.depth)
     }
 }

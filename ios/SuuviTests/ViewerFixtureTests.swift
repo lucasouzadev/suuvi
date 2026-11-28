@@ -38,6 +38,7 @@ final class ViewerFixtureTests: XCTestCase {
     func testSampleShapeIsClosedMesh() {
         let m = SampleShape.coinMesh()
         XCTAssertGreaterThan(m.triangles.count, 20)
+        XCTAssertTrue(MeshRules.isClosed(m))
         XCTAssertGreaterThan(MeshRules.volume6(m), 0)
     }
 }
