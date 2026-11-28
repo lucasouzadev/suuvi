@@ -48,6 +48,9 @@ fun ShelfScreen(onFolders: () -> Unit = {}, onSearch: () -> Unit = {}, onOpen: (
     val rows = if (segment == 0) {
         FolderRules.ordered(SampleData.foldersUsedBy(saved)).mapNotNull { f -> SampleData.collection.firstOrNull { it.name == f.name } }
     } else SampleData.received
+    // A lista mantem a posicao da primeira linha pela chave; ao reordenar, volta ao topo para nao esconder a linha que subiu.
+    val listState = androidx.compose.foundation.lazy.rememberLazyListState()
+    androidx.compose.runtime.LaunchedEffect(rows.map { it.id }) { listState.scrollToItem(0) }
     val daily = ShelfRules.dailyIndex(ShelfRules.todayEpochDay(), SampleData.dailyPicks.size)
         ?.let { SampleData.dailyPicks[it] }
 
@@ -69,7 +72,7 @@ fun ShelfScreen(onFolders: () -> Unit = {}, onSearch: () -> Unit = {}, onOpen: (
             selected = segment,
             onSelect = { segment = it },
         )
-        LazyColumn(Modifier.weight(1f)) {
+        LazyColumn(Modifier.weight(1f), state = listState) {
             items(rows, key = { it.id }) { row -> ShelfRow(row, onClick = { SampleData.folderId(row.name)?.let(onOpen) }) }
             item {
                 Column(
