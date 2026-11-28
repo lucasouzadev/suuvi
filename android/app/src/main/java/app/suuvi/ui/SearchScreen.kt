@@ -32,6 +32,7 @@ import app.suuvi.design.SuuviSpace
 import app.suuvi.domain.SampleData
 import app.suuvi.domain.SearchItem
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import app.suuvi.domain.SearchRules
 import app.suuvi.domain.searchItems
 import app.suuvi.ui.components.CloseButton
