@@ -1,30 +1,36 @@
-# HANDOFF — 2026-11-28 — suuvi v1 vertical slices
+# HANDOFF — 2026-11-28 — suuvi roadmap items 1–4
 
 ## Goal
-Portfolio app (SwiftUI + Compose), local-first, parity via fixtures/*.json — approved by owner slice by slice (viewer from cutout, grid, lazy thumbs, shelf/folders/search from DB, smooth mesh, Edit shows saved image).
+Roadmap ordered by owner, done in order — approved 2026-11-28: (1) edit/rename/delete saved pieces, (2) note field so the Shelf daily souvenir uses saved pieces, (3) photo texture on the 3D front face, (4) low-poly vs smooth toggle.
 
 ## State (verified, with evidence)
-- Implementation: done through Edit hero photo — branch `main`, SHA `2d83ac7`
-- Merge: pushed straight to main, no open PR
-- Production: n/a (no store build; builds only on explicit owner order)
-- QA: automated PASS — CI run 46100957403 (tokens+fixtures, ios, android tests+apk, android emulator), screenshots viewed.
-- QA physical: PENDING — camera + Lift (Vision/ML Kit) cutout is NOT RUN in CI; 3D drag/pinch; Save tap with a real photo; Edit scroll on small Android; tap piece -> 3D; Search with new pieces; frame rate on device.
+- Implementation: items 1–4 done on main — last SHA `6387e77` (toggle). Earlier: cb02a8c (1), cebdd60 (2), a379ab0 (3).
+- Merge: pushed straight to origin/main. Production: n/a (local-first app, no deploy).
+- QA automated: PASS — CI run 46122778302, 4 jobs green (tokens+fixtures, android unit+apk, ios simulator, android emulator). Screenshots viewed: edit-piece, delete-ask, deleted, shelf-note, viewer-photo, viewer-cutout, viewer-low.
+- QA physical: pending (see below).
 
 ## Decisions (and why)
-- Collection grid: slots(count)=max(4,count+count%2), lazy grid; thumbnails 480 px cached.
-- Mesh: Chaikin x2 + Delaunay + bevel, fixed-point, same fixtures on both platforms; coin fallback on 64 grid.
-- Edit: with image, photo is the front hero card, emoji cards behind, fields below; without image, old cascade.
-- Shelf/Folders order by effective last-use day (saved pieces count).
+- Long-press menu (Edit/Delete) on saved cards, confirmation dialog on delete; piece numbers are never reused (per-folder counter persisted).
+- Note: 4th optional field, max 140 chars; daily pick = any saved piece, one per day, mixed with samples via ShelfRules.dailyOrder.
+- 3D: photo is the front-face texture via one affine (orthographic); sides/bevel keep accent color.
+- Toggle: header button in the Viewer (Lucide box/circle), choice persisted (`viewerSmooth`), low-poly keeps the front photo.
+- Parity: every rule validated by shared fixtures (create, shelf, shape, viewer).
 
-## Files touched (last slice)
-- ios/Suuvi/Components/EditParts.swift, Screens/EditView.swift — HeroStack + layout
-- android/.../ui/components/EditParts.kt, ui/EditScreen.kt — same
-- .github/workflows/ci.yml — edit-photo screenshots
+## Files touched
+- fixtures/create.json, shelf.json, shape.json, viewer.json — shared expectations
+- PieceRules / EditRules / ShelfRules / ShapeRules / MeshRules / ViewerRules (Swift + Kotlin) — rules
+- PieceStore, ImageStore, ShapeLoader, SuuviDatabase v4 (note column + MIGRATION_3_4)
+- Collection/Edit/Shelf/Viewer screens, DailyCard, strings en + pt-BR, design/icons/box.svg
+- .github/workflows/ci.yml — debug routes viewerphoto, viewerlow, editpiece, deleteask, deleted, shelfnote
 
 ## Next step (exact, first action)
-Owner picks the next item (see list below); then plan + approval before any edit.
-Candidates: (1) note field so Shelf "suvenir do dia" can use saved pieces; (2) photo texture on the 3D front face; (3) tap piece in Collection -> Edit/delete/rename saved pieces; (4) toggle low-poly vs smooth; (5) physical test round of camera + Lift.
+Owner runs the PHYSICAL list on a real device; then decide next roadmap items.
 
 ## Risks / blocked / owner decisions needed
-- Lift never verified on a real device or in CI.
-- Owner has not decided on the note field.
+- NOT PROVEN (CI cannot): long-press gesture and Delete tap, counter non-reuse and file removal on device, Vision/ML Kit lift and camera, real cutout looking right as texture, drag/pinch and frame rate in 3D, Edit scroll on small Android, note truncation (single line), toggle tap persistence across launches.
+- Known cosmetic: slight jagged slivers near the heart notch (earlier mesh work).
+
+## Physical test list
+- Create a piece with photo and note; long-press it: Edit prefill (incl. note), save; Delete + confirm; create another and check the number is not reused.
+- Open the Viewer on a real lifted piece: texture alignment, toggle smooth/low-poly, relaunch and check the choice stuck.
+- Shelf: with a noted saved piece, daily card shows it.
