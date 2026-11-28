@@ -6,14 +6,19 @@ struct CollectionView: View {
     @Environment(\.dismiss) private var dismiss
     let id: String
 
-    init(id: String, startProfile: Bool = false, onAdd: @escaping () -> Void = {}, onPiece: @escaping (PieceItem) -> Void = { _ in }) {
+    init(id: String, startProfile: Bool = false, onAdd: @escaping () -> Void = {}, onPiece: @escaping (PieceItem) -> Void = { _ in }, onEdit: @escaping (PieceItem) -> Void = { _ in }) {
         self.id = id
         self.onAdd = onAdd
         self.onPiece = onPiece
+        self.onEdit = onEdit
         _showProfile = State(initialValue: startProfile)
     }
     var onAdd: () -> Void = {}
     var onPiece: (PieceItem) -> Void = { _ in }
+    var onEdit: (PieceItem) -> Void = { _ in }
+    @Environment(\.modelContext) private var context
+    @State private var pendingDelete: PieceItem?
+    @State private var asked = false
     @State private var showProfile: Bool
     @Query(sort: \SavedPiece.number) private var saved: [SavedPiece]
     private let columns = [GridItem(.flexible(), spacing: SuuviSpace.s4),
@@ -21,7 +26,7 @@ struct CollectionView: View {
 
     var body: some View {
         if let base = SampleData.collectionDetail(id: id) {
-            let extra = saved.filter { $0.folderId == id }.map { PieceItem(id: $0.id.uuidString, title: $0.title, emoji: $0.emoji, imagePath: $0.imagePath) }
+            let extra = saved.filter { $0.folderId == id }.map { PieceItem(id: $0.id.uuidString, title: $0.title, emoji: $0.emoji, imagePath: $0.imagePath, saved: true) }
             content(CollectionDetail(folder: base.folder, status: base.status, pieces: base.pieces + extra))
         }
     }
@@ -54,6 +59,12 @@ struct CollectionView: View {
                             if filled[i] {
                                 PieceCard(piece: d.pieces[i], tilt: CollectionRules.tilt(i))
                                     .onTapGesture { onPiece(d.pieces[i]) }
+                                    .contextMenu {
+                                        if d.pieces[i].saved {
+                                            Button("piece.edit") { onEdit(d.pieces[i]) }
+                                            Button("piece.delete", role: .destructive) { pendingDelete = d.pieces[i] }
+                                        }
+                                    }
                             } else {
                                 EmptySlot(tilt: CollectionRules.tilt(i), action: onAdd)
                             }
@@ -95,5 +106,24 @@ struct CollectionView: View {
         .background(SuuviColor.bg)
         .navigationBarBackButtonHidden(true)
         .sheet(isPresented: $showProfile) { CollectionProfileView(detail: d) }
+        .confirmationDialog("delete.title", isPresented: Binding(get: { pendingDelete != nil }, set: { if !$0 { pendingDelete = nil } }),
+                            titleVisibility: .visible, presenting: pendingDelete) { p in
+            Button("delete.confirm", role: .destructive) { delete(p) }
+        } message: { _ in Text("delete.message") }
+        .onAppear(perform: debugAsk)
+        .onChange(of: saved.count) { debugAsk() }
+    }
+
+    private func delete(_ p: PieceItem) {
+        guard let m = saved.first(where: { $0.id.uuidString == p.id }) else { return }
+        PieceStore.delete(m, among: saved, context: context)
+    }
+
+    /// So para o CI (-startRoute deleteask): abre o dialogo de apagar na primeira peca salva.
+    private func debugAsk() {
+        guard !asked, UserDefaults.standard.string(forKey: "startRoute") == "deleteask",
+              let m = saved.filter({ $0.folderId == id }).first else { return }
+        asked = true
+        pendingDelete = PieceItem(id: m.id.uuidString, title: m.title, emoji: m.emoji, imagePath: m.imagePath, saved: true)
     }
 }

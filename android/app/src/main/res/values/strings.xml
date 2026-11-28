@@ -70,4 +70,11 @@
     <string name="capture_failed">Couldn\'t cut out the object. Try again or use another photo.</string>
     <string name="viewer_hint">Drag to rotate, pinch to zoom</string>
     <string name="capture_library">Choose from library</string>
+    <string name="edit_title_edit">Edit piece</string>
+    <string name="piece_edit">Edit</string>
+    <string name="piece_delete">Delete</string>
+    <string name="delete_title">Delete this piece?</string>
+    <string name="delete_message">The photo and the 3D are removed from this device. The number is not reused.</string>
+    <string name="delete_confirm">Delete</string>
+    <string name="delete_cancel">Cancel</string>
 </resources>

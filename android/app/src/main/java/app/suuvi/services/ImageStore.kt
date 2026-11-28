@@ -54,5 +54,12 @@ object ImageStore {
         return "cutouts/$name"
     }
 
+    /** Apaga a foto e o recorte de uma peca (mesmo nome-base em photos/ e cutouts/). Nao falha se ja nao existem. */
+    fun deleteFiles(ctx: Context, relative: String?) {
+        val base = relative?.substringAfterLast('/')?.substringBeforeLast('.').orEmpty()
+        if (base.isEmpty()) return
+        for (r in listOf("photos/$base.jpg", "cutouts/$base.png")) file(ctx, r).delete()
+    }
+
     fun cutoutFile(ctx: Context, photo: File) = File(dir(ctx, "cutouts"), photo.nameWithoutExtension + ".png")
 }

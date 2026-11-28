@@ -20,6 +20,15 @@ interface SuuviDao {
     @Query("SELECT * FROM saved_pieces ORDER BY createdAt DESC")
     fun allSavedPieces(): Flow<List<SavedPiece>>
 
+    @Query("SELECT * FROM saved_pieces WHERE id = :id")
+    suspend fun savedPiece(id: String): SavedPiece?
+
+    @Query("UPDATE saved_pieces SET title = :title, place = :place, tag = :tag WHERE id = :id")
+    suspend fun updateSavedPiece(id: String, title: String, place: String, tag: String?)
+
+    @Query("DELETE FROM saved_pieces WHERE id = :id")
+    suspend fun deleteSavedPiece(id: String)
+
     @Query("SELECT number FROM saved_pieces WHERE folderId = :folderId")
     suspend fun savedNumbers(folderId: String): List<Int>
 

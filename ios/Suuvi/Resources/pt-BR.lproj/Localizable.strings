@@ -67,3 +67,9 @@
 "capture.library" = "Escolher da galeria";
 "capture.failed" = "Não foi possível recortar o objeto. Tente de novo ou use outra foto.";
 "viewer.hint" = "Arraste para girar, pinça para ampliar";
+"edit.title.edit" = "Editar peça";
+"piece.edit" = "Editar";
+"piece.delete" = "Apagar";
+"delete.title" = "Apagar esta peça?";
+"delete.message" = "A foto e o 3D saem deste aparelho. O número não é reutilizado.";
+"delete.confirm" = "Apagar";

@@ -8,6 +8,12 @@ struct NewPiece: Equatable {
     let lastIssued: Int
 }
 
+struct EditedPiece: Equatable {
+    let title: String
+    let place: String
+    let tag: String?
+}
+
 /// Criacao de peca (salvar na Edicao). Mesmas regras no Android (PieceRules.kt); fixtures/create.json valida as duas.
 enum PieceRules {
     /// Sem espacos das pontas, sem '@' inicial, minusculo.
@@ -29,4 +35,16 @@ enum PieceRules {
         let n = Numbering.next(existing: existing, lastIssued: lastIssued)
         return NewPiece(number: n, title: t, place: p, tag: g.isEmpty ? nil : g, lastIssued: n)
     }
+
+    /// Edicao de peca existente: mesma normalizacao e validacao da criacao; o #n nao muda. nil se invalido.
+    static func update(title: String, place: String, tag: String) -> EditedPiece? {
+        let t = title.trimmingCharacters(in: .whitespaces)
+        let p = normalizePlace(place)
+        guard !t.isEmpty, !p.isEmpty, t.count <= EditRules.maxTitle else { return nil }
+        let g = EditRules.normalizeTag(tag)
+        return EditedPiece(title: t, place: p, tag: g.isEmpty ? nil : g)
+    }
+
+    /// Ultimo #n emitido na colecao: o maior entre o contador guardado e os numeros existentes. Apagar nao baixa o contador.
+    static func issued(existing: [Int], stored: Int) -> Int { max(stored, existing.max() ?? 0) }
 }

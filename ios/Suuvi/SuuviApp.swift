@@ -8,11 +8,12 @@ enum Route: Hashable {
     case collection(String)
     case edit(String, preset: Bool, auto: Bool = false, image: String? = nil)
     case viewer(String, image: String? = nil)
+    case editPiece(String, pieceId: String)
 }
 
 @main
 struct SuuviApp: App {
-    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders | collection | edit | editdone | created | createdphoto | collection2 | collection5 | viewercutout | profile | settings | capture | capturelifted | search | viewer
+    /// Rota inicial opcional (usada pelo CI para tirar print): -startRoute folders | collection | edit | editdone | created | createdphoto | collection2 | collection5 | editpiece | deleteask | deleted | viewercutout | profile | settings | capture | capturelifted | search | viewer
     private static let start = UserDefaults.standard.string(forKey: "startRoute")
     @State private var path: [Route] = {
         switch SuuviApp.start {
@@ -25,7 +26,8 @@ struct SuuviApp: App {
         case "viewercutout": return [.folders, .collection("f1"), .viewer("Coração", image: ImageStore.saveSampleCutout())]
         case "createdphoto": return [.folders, .collection("f2"), .edit("f2", preset: false, auto: true, image: "@sample")]
         case "collection2": return [.folders, .collection("f2")]
-        case "collection5": return [.folders, .collection("f1")]
+        case "collection5", "deleteask", "deleted": return [.folders, .collection("f1")]
+        case "editpiece": return [.folders, .collection("f1"), .editPiece("f1", pieceId: "first")]
         case "created": return [.folders, .collection("f1"), .edit("f1", preset: false, auto: true)]
         case "edit": return [.folders, .collection("f1"), .edit("f1", preset: false)]
         case "editdone": return [.folders, .collection("f1"), .edit("f1", preset: true)]
@@ -55,10 +57,12 @@ struct SuuviApp: App {
                         case .folders:
                             FoldersView(onOpen: { path.append(.collection($0)) }).toolbar(.hidden, for: .navigationBar)
                         case .collection(let id):
-                            CollectionView(id: id, startProfile: SuuviApp.start == "profile" && path.count == 2, onAdd: { path.append(.capture(id, sample: false)) }, onPiece: { path.append(.viewer($0.title, image: $0.imagePath)) })
+                            CollectionView(id: id, startProfile: SuuviApp.start == "profile" && path.count == 2, onAdd: { path.append(.capture(id, sample: false)) }, onPiece: { path.append(.viewer($0.title, image: $0.imagePath)) }, onEdit: { path.append(.editPiece(id, pieceId: $0.id)) })
                                 .toolbar(.hidden, for: .navigationBar)
                         case .viewer(let title, let image):
                             ViewerView(title: title, image: image).toolbar(.hidden, for: .navigationBar)
+                        case .editPiece(let id, let pieceId):
+                            EditView(folderId: id, pieceId: pieceId).toolbar(.hidden, for: .navigationBar)
                         case .edit(let id, let preset, let auto, let image):
                             EditView(folderId: id, preset: preset, autoCreate: auto, image: image).toolbar(.hidden, for: .navigationBar)
                         }

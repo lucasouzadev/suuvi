@@ -67,3 +67,9 @@
 "capture.library" = "Choose from library";
 "capture.failed" = "Couldn't cut out the object. Try again or use another photo.";
 "viewer.hint" = "Drag to rotate, pinch to zoom";
+"edit.title.edit" = "Edit piece";
+"piece.edit" = "Edit";
+"piece.delete" = "Delete";
+"delete.title" = "Delete this piece?";
+"delete.message" = "The photo and the 3D are removed from this device. The number is not reused.";
+"delete.confirm" = "Delete";

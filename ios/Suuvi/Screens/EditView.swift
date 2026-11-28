@@ -9,6 +9,9 @@ struct EditView: View {
     let folderId: String
     private let autoCreate: Bool
     private let image: String?
+    /// Edicao de peca ja salva (id do SavedPiece; "first" = primeira da colecao, so CI). nil = peca nova.
+    private let pieceId: String?
+    @State private var loaded = false
     @State private var title: String
     @State private var place: String
     @State private var tag: String
@@ -16,8 +19,9 @@ struct EditView: View {
     /// Imagem guardada da peca (aparece no topo da cascata); com "@sample" (so CI) so existe depois de salvar.
     @State private var shownImage: String?
 
-    init(folderId: String, preset: Bool = false, autoCreate: Bool = false, image: String? = nil) {
+    init(folderId: String, preset: Bool = false, autoCreate: Bool = false, image: String? = nil, pieceId: String? = nil) {
         self.folderId = folderId
+        self.pieceId = pieceId
         self.image = image
         self.autoCreate = autoCreate
         _shownImage = State(initialValue: image == "@sample" ? nil : image)
@@ -25,6 +29,19 @@ struct EditView: View {
         _place = State(initialValue: preset ? "lisboa" : "")
         _tag = State(initialValue: preset ? "viagem" : "")
         _saved = State(initialValue: preset)
+    }
+
+    private var editing: SavedPiece? {
+        guard let pid = pieceId else { return nil }
+        let mine = allSaved.filter { $0.folderId == folderId }
+        return pid == "first" ? mine.sorted { $0.number < $1.number }.first : mine.first { $0.id.uuidString == pid }
+    }
+
+    /// Edicao: preenche os campos com a peca salva (uma vez; a lista pode chegar depois da tela).
+    private func load() {
+        guard pieceId != nil, !loaded, let p = editing else { return }
+        title = p.title; place = p.place; tag = p.tag ?? ""; shownImage = p.imagePath
+        loaded = true
     }
 
     private var valid: Bool { EditRules.isValid(title: title, place: place) }
@@ -45,7 +62,7 @@ struct EditView: View {
     var body: some View {
         VStack(spacing: SuuviSpace.s4) {
             ZStack {
-                Text("edit.title").font(.system(size: 17, weight: .semibold)).foregroundStyle(SuuviColor.text)
+                Text(pieceId == nil ? LocalizedStringKey("edit.title") : LocalizedStringKey("edit.title.edit")).font(.system(size: 17, weight: .semibold)).foregroundStyle(SuuviColor.text)
                 HStack {
                     IconButton(icon: "ic_chevron_left", label: "a11y.back") { dismiss() }
                     Spacer()
@@ -99,7 +116,9 @@ struct EditView: View {
         .padding(.horizontal, SuuviSpace.s5)
         .background(SuuviColor.bg)
         .navigationBarBackButtonHidden(true)
+        .onChange(of: allSaved.count) { load() }
         .onAppear {
+            load()
             // So para o CI: cria uma peca sozinha, para provar que salvar grava no banco.
             if autoCreate && !saved { title = image == "@sample" ? "Cha" : "Bonde 29"; place = "lisboa"; tag = "viagem"; save() }
         }
@@ -107,12 +126,20 @@ struct EditView: View {
 
     /// Valida, normaliza, emite o #n e grava. Nada acontece se a peca for invalida.
     private func save() {
+        if pieceId != nil {
+            guard let p = editing, let e = PieceRules.update(title: title, place: place, tag: tag) else { return }
+            p.title = e.title; p.place = e.place; p.tag = e.tag
+            try? context.save()
+            dismiss()
+            return
+        }
         let existing = allSaved.filter { $0.folderId == folderId }.map(\.number)
-        guard let p = PieceRules.create(title: title, place: place, tag: tag, existing: existing, lastIssued: existing.max() ?? 0)
+        guard let p = PieceRules.create(title: title, place: place, tag: tag, existing: existing, lastIssued: PieceRules.issued(existing: existing, stored: PieceStore.stored(folderId)))
         else { return }
         let img = image == "@sample" ? ImageStore.saveSample() : image   // "@sample": so o CI
         context.insert(SavedPiece(folderId: folderId, number: p.number, title: p.title, place: p.place, tag: p.tag, imagePath: img))
         shownImage = img
+        PieceStore.setIssued(p.number, folder: folderId)
         try? context.save()
         tag = p.tag ?? ""
         saved = true

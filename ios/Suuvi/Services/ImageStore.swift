@@ -51,6 +51,14 @@ enum ImageStore {
         return "cutouts/" + name
     }
 
+    /// Apaga a foto e o recorte de uma peca (mesmo nome-base em photos/ e cutouts/). Nao falha se ja nao existem.
+    static func deleteFiles(relative: String?) {
+        guard let rel = relative else { return }
+        let base = URL(fileURLWithPath: rel).deletingPathExtension().lastPathComponent
+        guard !base.isEmpty else { return }
+        for r in ["photos/\(base).jpg", "cutouts/\(base).png"] { try? FileManager.default.removeItem(at: url(relative: r)) }
+    }
+
     static func cutoutURL(for photo: URL) -> URL {
         dir("cutouts").appendingPathComponent(photo.deletingPathExtension().lastPathComponent + ".png")
     }

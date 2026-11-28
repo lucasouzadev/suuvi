@@ -21,6 +21,25 @@ final class PieceFixtureTests: XCTestCase {
         }
     }
 
+    private struct Upd: Decodable {
+        struct E: Decodable { let title: String; let place: String; let tag: String? }
+        let name: String; let title: String; let place: String; let tag: String; let expect: E?
+    }
+    private struct Iss: Decodable { let name: String; let existing: [Int]; let stored: Int; let expect: Int }
+    private struct UpdFixture: Decodable { let update: [Upd]; let issued: [Iss] }
+
+    func testUpdateAndIssued() throws {
+        let url = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("fixtures/create.json")
+        let fx = try JSONDecoder().decode(UpdFixture.self, from: Data(contentsOf: url))
+        for c in fx.update {
+            let want = c.expect.map { EditedPiece(title: $0.title, place: $0.place, tag: $0.tag) }
+            XCTAssertEqual(PieceRules.update(title: c.title, place: c.place, tag: c.tag), want, c.name)
+        }
+        for c in fx.issued { XCTAssertEqual(PieceRules.issued(existing: c.existing, stored: c.stored), c.expect, c.name) }
+    }
+
     func testCreate() throws {
         let url = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()

@@ -5,6 +5,8 @@ struct PieceItem: Identifiable {
     let title: String
     let emoji: String
     var imagePath: String? = nil
+    /// true = peca salva pelo usuario (pode editar/apagar); false = exemplo.
+    var saved: Bool = false
 }
 
 struct CollectionDetail {

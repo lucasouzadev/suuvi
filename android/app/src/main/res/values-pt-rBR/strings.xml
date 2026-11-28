@@ -70,4 +70,11 @@
     <string name="capture_failed">Não foi possível recortar o objeto. Tente de novo ou use outra foto.</string>
     <string name="viewer_hint">Arraste para girar, pinça para ampliar</string>
     <string name="capture_library">Escolher da galeria</string>
+    <string name="edit_title_edit">Editar peça</string>
+    <string name="piece_edit">Editar</string>
+    <string name="piece_delete">Apagar</string>
+    <string name="delete_title">Apagar esta peça?</string>
+    <string name="delete_message">A foto e o 3D saem deste aparelho. O número não é reutilizado.</string>
+    <string name="delete_confirm">Apagar</string>
+    <string name="delete_cancel">Cancelar</string>
 </resources>

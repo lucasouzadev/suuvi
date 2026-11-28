@@ -1,7 +1,7 @@
 package app.suuvi.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,6 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 import androidx.compose.foundation.BorderStroke
 import app.suuvi.R
 import app.suuvi.design.SuuviColor
@@ -56,15 +57,39 @@ import app.suuvi.ui.components.PieceCard
 import app.suuvi.ui.components.StatusMark
 
 /** Colecao: voltar + chip, linha "de X" com @lugar/#n/status, grade 2x2 inclinada, legenda e rodape. */
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
-fun CollectionScreen(id: String, onBack: () -> Unit, onAdd: () -> Unit = {}, startProfile: Boolean = false, onPiece: (PieceItem) -> Unit = {}) {
+fun CollectionScreen(id: String, onBack: () -> Unit, onAdd: () -> Unit = {}, startProfile: Boolean = false, onPiece: (PieceItem) -> Unit = {}, onEdit: (PieceItem) -> Unit = {}, askDeleteFirst: Boolean = false) {
     val base = SampleData.collectionDetail(id) ?: return
     val context = androidx.compose.ui.platform.LocalContext.current
     val dao = remember { app.suuvi.data.SuuviDb.get(context).dao() }
     val saved by dao.savedPieces(id).collectAsState(initial = emptyList())
-    val d = base.copy(pieces = base.pieces + saved.map { PieceItem(it.id, it.title, it.emoji, it.imagePath) })
+    val d = base.copy(pieces = base.pieces + saved.map { PieceItem(it.id, it.title, it.emoji, it.imagePath, saved = true) })
     val filled = CollectionRules.slots(d.pieces.size)
     var showProfile by rememberSaveable { mutableStateOf(startProfile) }
+    var menuFor by remember { mutableStateOf<String?>(null) }
+    var pendingDelete by remember { mutableStateOf<PieceItem?>(null) }
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    // So para o CI (--es route deleteask): abre o dialogo de apagar na primeira peca salva.
+    androidx.compose.runtime.LaunchedEffect(askDeleteFirst, saved.size) {
+        if (askDeleteFirst && pendingDelete == null) saved.firstOrNull()?.let { pendingDelete = PieceItem(it.id, it.title, it.emoji, it.imagePath, saved = true) }
+    }
+    pendingDelete?.let { p ->
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { pendingDelete = null },
+            title = { Text(stringResource(R.string.delete_title)) },
+            text = { Text(stringResource(R.string.delete_message)) },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = {
+                    pendingDelete = null
+                    scope.launch { dao.savedPiece(p.id)?.let { app.suuvi.services.PieceStore.delete(context, dao, it) } }
+                }) { Text(stringResource(R.string.delete_confirm), color = SuuviColor.accentInk) }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(onClick = { pendingDelete = null }) { Text(stringResource(R.string.delete_cancel), color = SuuviColor.text) }
+            },
+        )
+    }
     if (showProfile) CollectionProfileSheet(d, onDismiss = { showProfile = false })
     Column(
         Modifier.fillMaxSize().background(SuuviColor.bg)
@@ -97,7 +122,16 @@ fun CollectionScreen(id: String, onBack: () -> Unit, onAdd: () -> Unit = {}, sta
             verticalArrangement = Arrangement.spacedBy(SuuviSpace.s4),
         ) {
             items(filled.size, key = { if (filled[it]) d.pieces[it].id else "vaga$it" }) { i ->
-                if (filled[i]) Box(Modifier.clickable { onPiece(d.pieces[i]) }) { PieceCard(d.pieces[i], CollectionRules.tilt(i)) }
+                if (filled[i]) {
+                    val piece = d.pieces[i]
+                    Box(Modifier.combinedClickable(onClick = { onPiece(piece) }, onLongClick = { if (piece.saved) menuFor = piece.id })) {
+                        PieceCard(piece, CollectionRules.tilt(i))
+                        androidx.compose.material3.DropdownMenu(expanded = menuFor == piece.id, onDismissRequest = { menuFor = null }) {
+                            androidx.compose.material3.DropdownMenuItem(text = { Text(stringResource(R.string.piece_edit)) }, onClick = { menuFor = null; onEdit(piece) })
+                            androidx.compose.material3.DropdownMenuItem(text = { Text(stringResource(R.string.piece_delete)) }, onClick = { menuFor = null; pendingDelete = piece })
+                        }
+                    }
+                }
                 else EmptySlot(CollectionRules.tilt(i), onAdd)
             }
             item(span = { GridItemSpan(maxLineSpan) }) {

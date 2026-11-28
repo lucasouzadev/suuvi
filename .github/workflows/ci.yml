@@ -136,6 +136,18 @@ jobs:
           sleep 6
           xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-collection5.png
           xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
+          xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute editpiece
+          sleep 6
+          xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-edit-piece.png
+          xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
+          xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute deleteask
+          sleep 6
+          xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-delete-ask.png
+          xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
+          xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute deleted
+          sleep 6
+          xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-deleted.png
+          xcrun simctl terminate "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi
           xcrun simctl launch "${{ steps.sim.outputs.udid }}" app.suuvi.Suuvi -startRoute search
           sleep 6
           xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-search-after.png
@@ -253,6 +265,15 @@ jobs:
             adb shell input swipe 540 1800 540 500 400
             sleep 2
             adb exec-out screencap -p > android-collection5-end.png
+            adb shell am start -S -n app.suuvi/.MainActivity --es route editpiece
+            sleep 6
+            adb exec-out screencap -p > android-edit-piece.png
+            adb shell am start -S -n app.suuvi/.MainActivity --es route deleteask
+            sleep 6
+            adb exec-out screencap -p > android-delete-ask.png
+            adb shell am start -S -n app.suuvi/.MainActivity --es route deleted
+            sleep 6
+            adb exec-out screencap -p > android-deleted.png
             adb shell am start -S -n app.suuvi/.MainActivity --es route search
             sleep 6
             adb exec-out screencap -p > android-search-after.png

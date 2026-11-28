@@ -1,5 +1,5 @@
 {
- "_about": "Casos compartilhados da criacao de peca (salvar na Edicao). create: normaliza (titulo sem espacos das pontas; lugar sem espacos, sem '@' inicial, minusculo; tag sem '#', minuscula, vazia = null), valida (titulo e lugar nao vazios apos normalizar, titulo ate 40) e emite o proximo #n = max(existing, lastIssued)+1. expect = null quando invalido; lastIssued = numero emitido. image: imagePath(cutouts, photos) = primeiro recorte nao nulo, senao a primeira foto, senao null (caminhos relativos a pasta do app).",
+ "_about": "Casos compartilhados da criacao de peca (salvar na Edicao). create: normaliza (titulo sem espacos das pontas; lugar sem espacos, sem '@' inicial, minusculo; tag sem '#', minuscula, vazia = null), valida (titulo e lugar nao vazios apos normalizar, titulo ate 40) e emite o proximo #n = max(existing, lastIssued)+1. expect = null quando invalido; lastIssued = numero emitido. image: imagePath(cutouts, photos) = primeiro recorte nao nulo, senao a primeira foto, senao null (caminhos relativos a pasta do app). update: editar peca existente = mesma normalizacao e validacao da criacao, sem mexer no #n (expect null quando invalido). issued: ultimo #n emitido = max(contador guardado, maior numero existente); apagar nao baixa o contador, entao o numero nunca volta.",
  "cases": [
   {
    "name": "primeira peca normaliza tudo",
@@ -124,6 +124,77 @@
    "cutouts": [],
    "photos": [],
    "expect": null
+  }
+ ],
+ "update": [
+  {
+   "name": "normaliza como na criacao",
+   "title": "  Bonde 29 ",
+   "place": " @Lisboa ",
+   "tag": "#Viagem",
+   "expect": {
+    "title": "Bonde 29",
+    "place": "lisboa",
+    "tag": "viagem"
+   }
+  },
+  {
+   "name": "tag vazia vira null",
+   "title": "Fado",
+   "place": "porto",
+   "tag": "  ",
+   "expect": {
+    "title": "Fado",
+    "place": "porto",
+    "tag": null
+   }
+  },
+  {
+   "name": "titulo vazio",
+   "title": "  ",
+   "place": "porto",
+   "tag": "",
+   "expect": null
+  },
+  {
+   "name": "lugar vazio",
+   "title": "Fado",
+   "place": " @ ",
+   "tag": "",
+   "expect": null
+  },
+  {
+   "name": "titulo longo demais",
+   "title": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "place": "porto",
+   "tag": "",
+   "expect": null
+  }
+ ],
+ "issued": [
+  {
+   "name": "sem nada",
+   "existing": [],
+   "stored": 0,
+   "expect": 0
+  },
+  {
+   "name": "contador maior que os existentes (apagou a ultima)",
+   "existing": [
+    1,
+    2
+   ],
+   "stored": 3,
+   "expect": 3
+  },
+  {
+   "name": "contador antigo, existentes maiores",
+   "existing": [
+    1,
+    5
+   ],
+   "stored": 2,
+   "expect": 5
   }
  ]
 }

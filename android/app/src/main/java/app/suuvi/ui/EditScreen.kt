@@ -45,12 +45,13 @@ import app.suuvi.domain.SampleData
 import app.suuvi.domain.collectionDetail
 import app.suuvi.ui.components.HeroStack
 import app.suuvi.ui.components.CascadeStack
+import kotlinx.coroutines.flow.first
 import app.suuvi.ui.components.IconAction
 import app.suuvi.ui.components.PillField
 
 /** Edicao de peca: cascata a esquerda, tres campos em pilula a direita, botao que muda de rotulo ao salvar. */
 @Composable
-fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = false, image: String? = null, onBack: () -> Unit) {
+fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = false, image: String? = null, pieceId: String? = null, onBack: () -> Unit) {
     var title by rememberSaveable { mutableStateOf(if (preset) "Moeda de Lisboa" else "") }
     var place by rememberSaveable { mutableStateOf(if (preset) "lisboa" else "") }
     var tag by rememberSaveable { mutableStateOf(if (preset) "viagem" else "") }
@@ -63,12 +64,26 @@ fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = 
     val context = androidx.compose.ui.platform.LocalContext.current
     val scope = androidx.compose.runtime.rememberCoroutineScope()
     val dao = androidx.compose.runtime.remember { app.suuvi.data.SuuviDb.get(context).dao() }
+    // Edicao de peca ja salva (id; "first" = primeira da colecao, so CI): preenche os campos uma vez.
+    var editing by androidx.compose.runtime.remember { mutableStateOf<app.suuvi.data.SavedPiece?>(null) }
+    androidx.compose.runtime.LaunchedEffect(pieceId) {
+        if (pieceId == null) return@LaunchedEffect
+        val found = if (pieceId == "first") firstSaved(dao, folderId) else dao.savedPiece(pieceId)
+        found?.let { title = it.title; place = it.place; tag = it.tag ?: ""; shownImage = it.imagePath; editing = it }
+    }
 
     /** Valida, normaliza, emite o #n e grava. Nada acontece se a peca for invalida. */
     fun save() {
         scope.launch {
+            if (pieceId != null) {
+                val cur = editing ?: return@launch
+                val e = PieceRules.update(title, place, tag) ?: return@launch
+                dao.updateSavedPiece(cur.id, e.title, e.place, e.tag)
+                onBack()
+                return@launch
+            }
             val existing = dao.savedNumbers(folderId)
-            val p = PieceRules.create(title, place, tag, existing, existing.maxOrNull() ?: 0) ?: return@launch
+            val p = PieceRules.create(title, place, tag, existing, PieceRules.issued(existing, app.suuvi.services.PieceStore.stored(context, folderId))) ?: return@launch
             val img = if (image == "@sample") app.suuvi.services.ImageStore.saveSample(context) else image   // "@sample": so o CI
             dao.insertSavedPiece(
                 app.suuvi.data.SavedPiece(
@@ -77,6 +92,7 @@ fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = 
                 ),
             )
             shownImage = img
+            app.suuvi.services.PieceStore.setIssued(context, folderId, p.number)
             tag = p.tag ?: ""
             saved = true
         }
@@ -94,7 +110,7 @@ fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = 
         verticalArrangement = Arrangement.spacedBy(SuuviSpace.s4),
     ) {
         Box(Modifier.fillMaxWidth().height(56.dp), contentAlignment = Alignment.Center) {
-            Text(stringResource(R.string.edit_title), fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = SuuviColor.text)
+            Text(stringResource(if (pieceId == null) R.string.edit_title else R.string.edit_title_edit), fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = SuuviColor.text)
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 IconAction(R.drawable.ic_chevron_left, stringResource(R.string.a11y_back), onBack)
                 androidx.compose.foundation.layout.Spacer(Modifier.weight(1f))
@@ -161,3 +177,7 @@ fun EditScreen(folderId: String, preset: Boolean = false, autoCreate: Boolean = 
         }
     }
 }
+
+/** So para o CI e para "first": a peca salva de menor numero da colecao. */
+private suspend fun firstSaved(dao: app.suuvi.data.SuuviDao, folderId: String): app.suuvi.data.SavedPiece? =
+    dao.savedPieces(folderId).first().firstOrNull()
